@@ -254,6 +254,9 @@ fun SettingsCategoryScreen(
                         onSessionUsageOverlaySizeChange = { size -> coroutineScope.launch { preferencesRepository.setSessionUsageOverlaySize(size) } },
                         onSessionUsageOverlayOpacityChange = { opacity -> coroutineScope.launch { preferencesRepository.setSessionUsageOverlayOpacity(opacity) } },
                         onUsageGlimpseEnabledChange = { enabled -> coroutineScope.launch { preferencesRepository.setUsageGlimpseEnabled(enabled) } },
+                        onAwakeOverlayEnabledChange = { enabled -> coroutineScope.launch { preferencesRepository.setAwakeOverlayEnabled(enabled) } },
+                        onAwakeOverlayTriggerMinutesChange = { minutes -> coroutineScope.launch { preferencesRepository.setAwakeOverlayTriggerMinutes(minutes) } },
+                        onAwakeOverlayHideMinutesChange = { minutes -> coroutineScope.launch { preferencesRepository.setAwakeOverlayHideMinutes(minutes) } },
                         onNavigateToEyeCare = { navController.navigate(Screen.EyeCare.route) },
                         onMindfulGatewayEnabledChange = { enabled -> coroutineScope.launch { preferencesRepository.setMindfulGatewayEnabled(enabled) } },
                         onMindfulGatewayDefaultsSave = { maxUses, refreshMinutes, maxEmergencyUses, remindersEnabled, strictModeEnabled, pausePointEnabled, endOverlayEnabled, autoQuitEnabled ->

@@ -5,7 +5,9 @@ import android.app.WallpaperManager
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,6 +62,9 @@ fun FeaturesSettings(
     onSessionUsageOverlaySizeChange: (Int) -> Unit,
     onSessionUsageOverlayOpacityChange: (Int) -> Unit,
     onUsageGlimpseEnabledChange: (Boolean) -> Unit,
+    onAwakeOverlayEnabledChange: (Boolean) -> Unit,
+    onAwakeOverlayTriggerMinutesChange: (Int) -> Unit,
+    onAwakeOverlayHideMinutesChange: (Int) -> Unit,
     onNavigateToEyeCare: () -> Unit,
     onMindfulGatewayEnabledChange: (Boolean) -> Unit,
     onEarlyKickEnabledChange: (Boolean) -> Unit,
@@ -183,6 +188,32 @@ fun FeaturesSettings(
             icon = Icons.Outlined.Visibility,
             shape = RoundedCornerShape(8.dp)
         )
+
+        Spacer(modifier = Modifier.height(4.dp))
+        SettingsToggle(
+            title = stringResource(R.string.features_awake_overlay_title),
+            description = stringResource(R.string.features_awake_overlay_description),
+            checked = preferences.awakeOverlayEnabled,
+            onCheckedChange = onAwakeOverlayEnabledChange,
+            icon = Icons.Outlined.Alarm,
+            shape = RoundedCornerShape(8.dp)
+        )
+
+        AnimatedVisibility(
+            visible = preferences.awakeOverlayEnabled,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            Column {
+                Spacer(modifier = Modifier.height(4.dp))
+                AwakeOverlayTuning(
+                    triggerMinutes = preferences.awakeOverlayTriggerMinutes,
+                    hideMinutes = preferences.awakeOverlayHideMinutes,
+                    onTriggerChange = onAwakeOverlayTriggerMinutesChange,
+                    onHideChange = onAwakeOverlayHideMinutesChange
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsToggle(
@@ -1200,4 +1231,100 @@ fun MindfulGatewayDefaultsBottomSheet(
             }
         }
     }
+}
+
+@Composable
+private fun AwakeOverlayTuning(
+    triggerMinutes: Int,
+    hideMinutes: Int,
+    onTriggerChange: (Int) -> Unit,
+    onHideChange: (Int) -> Unit
+) {
+    var showTriggerDialog by remember { mutableStateOf(false) }
+    var showHideDialog by remember { mutableStateOf(false) }
+
+    SettingsActionItem(
+        title = stringResource(R.string.features_awake_overlay_trigger_title),
+        summary = stringResource(R.string.features_awake_overlay_trigger_value, triggerMinutes),
+        onClick = { showTriggerDialog = true },
+        icon = Icons.Outlined.Schedule,
+        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
+    )
+
+    Spacer(modifier = Modifier.height(4.dp))
+
+    SettingsActionItem(
+        title = stringResource(R.string.features_awake_overlay_hide_title),
+        summary = stringResource(R.string.features_awake_overlay_hide_value, hideMinutes),
+        onClick = { showHideDialog = true },
+        icon = Icons.Outlined.Timer,
+        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
+    )
+
+    if (showTriggerDialog) {
+        MinuteChoiceDialog(
+            title = stringResource(R.string.features_awake_overlay_trigger_dialog),
+            current = triggerMinutes,
+            options = listOf(1, 5, 10, 15, 30, 60),
+            onSelect = {
+                onTriggerChange(it)
+                showTriggerDialog = false
+            },
+            onDismiss = { showTriggerDialog = false }
+        )
+    }
+
+    if (showHideDialog) {
+        MinuteChoiceDialog(
+            title = stringResource(R.string.features_awake_overlay_hide_dialog),
+            current = hideMinutes,
+            options = listOf(1, 5, 10, 30),
+            onSelect = {
+                onHideChange(it)
+                showHideDialog = false
+            },
+            onDismiss = { showHideDialog = false }
+        )
+    }
+}
+
+@Composable
+private fun MinuteChoiceDialog(
+    title: String,
+    current: Int,
+    options: List<Int>,
+    onSelect: (Int) -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            androidx.compose.foundation.lazy.LazyColumn(
+                modifier = Modifier.height(240.dp)
+            ) {
+                items(options) { minutes ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onSelect(minutes) }
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(selected = minutes == current, onClick = { onSelect(minutes) })
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.duration_minutes_short, minutes),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.settings_language_cancel))
+            }
+        }
+    )
 }

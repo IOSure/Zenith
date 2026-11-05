@@ -38,6 +38,7 @@ import com.etrisad.zenith.service.earlykick.EarlyKickHandler
 import com.etrisad.zenith.service.earlykick.EarlyKickManager
 import com.etrisad.zenith.ui.components.overlay.SessionUsageOverlayManager
 import com.etrisad.zenith.ui.components.overlay.UsageGlimpseOverlayManager
+import com.etrisad.zenith.ui.components.overlay.AwakeTimeOverlayManager
 import com.etrisad.zenith.ui.components.pausepoint.PausePointTaskType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -120,6 +121,14 @@ class AppUsageMonitorService : Service() {
     private val GLIMPSE_INTERVAL_MS = 5 * 60 * 1000L
     private val GLIMPSE_DISPLAY_MS = 5000L
 
+    private var awakeOverlayManager: AwakeTimeOverlayManager? = null
+    private var awakeOverlayJob: kotlinx.coroutines.Job? = null
+    @Volatile
+    private var awakeSessionStart = 0L
+    @Volatile
+    private var awakeOverlayHiddenUntil = 0L
+    private val AWAKE_OVERLAY_TICK_MS = 5_000L
+
     @Volatile
     private var eyeCareCumulativeSeconds = 0
     @Volatile
@@ -156,6 +165,8 @@ class AppUsageMonitorService : Service() {
                 Intent.ACTION_SCREEN_ON -> {
                     isScreenOn = true
                     AppStateHolder.isScreenOn.value = true
+                    awakeSessionStart = System.currentTimeMillis()
+                    awakeOverlayHiddenUntil = 0L
                     currentSessionPackage = null
                     cachedForegroundApp = null
                     cachedForegroundAppTime = 0L
@@ -188,6 +199,8 @@ class AppUsageMonitorService : Service() {
                 Intent.ACTION_SCREEN_OFF -> {
                     isScreenOn = false
                     AppStateHolder.isScreenOn.value = false
+                    awakeSessionStart = 0L
+                    awakeOverlayManager?.hide()
                     currentShieldCache = null
                     currentSessionPackage = null
                     monitoringJob?.cancel()
@@ -516,6 +529,14 @@ class AppUsageMonitorService : Service() {
 
         usageGlimpseManager = UsageGlimpseOverlayManager(this)
 
+        awakeOverlayManager = AwakeTimeOverlayManager(this) {
+            val hideMinutes = (SharedMonitoringState.currentPreferences?.awakeOverlayHideMinutes ?: 10)
+                .coerceIn(1, 240)
+            awakeOverlayHiddenUntil = System.currentTimeMillis() + hideMinutes * 60_000L
+            awakeOverlayManager?.hide()
+        }
+        startAwakeOverlayTracker()
+
         launchCollectors()
         createGoalNotificationChannel()
         createBedtimeNotificationChannel()
@@ -532,6 +553,7 @@ class AppUsageMonitorService : Service() {
             registerReceiver(screenStateReceiver, filter)
         }
         isScreenOn = powerManager.isInteractive
+        if (isScreenOn) awakeSessionStart = System.currentTimeMillis()
         AppStateHolder.isPowerSaveMode.value = powerManager.isPowerSaveMode
 
         lastCheckedDayDate = java.time.LocalDate.now()
@@ -1091,6 +1113,47 @@ class AppUsageMonitorService : Service() {
                 )
                 delay(GLIMPSE_DISPLAY_MS)
                 usageGlimpseManager?.hide()
+            }
+        }
+    }
+
+    private fun startAwakeOverlayTracker() {
+        awakeOverlayJob?.cancel()
+        awakeOverlayJob = serviceScope.launch {
+            while (true) {
+                delay(AWAKE_OVERLAY_TICK_MS)
+                val manager = awakeOverlayManager ?: continue
+                val prefs = SharedMonitoringState.currentPreferences
+                if (prefs == null || !prefs.awakeOverlayEnabled || !isScreenOn || awakeSessionStart == 0L) {
+                    if (manager.isShowing) manager.hide()
+                    continue
+                }
+
+                val now = System.currentTimeMillis()
+                val elapsed = now - awakeSessionStart
+                val triggerMillis = prefs.awakeOverlayTriggerMinutes.coerceIn(1, 240) * 60_000L
+                if (elapsed < triggerMillis || now < awakeOverlayHiddenUntil) {
+                    continue
+                }
+                if (manager.isShowing) continue
+
+                val isDark = when (prefs.themeConfig) {
+                    com.etrisad.zenith.data.preferences.ThemeConfig.LIGHT -> false
+                    com.etrisad.zenith.data.preferences.ThemeConfig.DARK -> true
+                    else -> {
+                        val nightModeFlags = resources.configuration.uiMode and
+                            android.content.res.Configuration.UI_MODE_NIGHT_MASK
+                        nightModeFlags == android.content.res.Configuration.UI_MODE_NIGHT_YES
+                    }
+                }
+                manager.show(
+                    sessionStartMillis = awakeSessionStart,
+                    isDark = isDark,
+                    fontOption = prefs.fontOption,
+                    dynamicColor = prefs.dynamicColor,
+                    expressiveColors = prefs.expressiveColors,
+                    gsFlexSettings = prefs.gsFlexSettings
+                )
             }
         }
     }
@@ -2672,6 +2735,9 @@ class AppUsageMonitorService : Service() {
         stopEyeCareTimer()
         usageGlimpseJob?.cancel()
         usageGlimpseManager?.hide()
+        awakeOverlayJob?.cancel()
+        awakeOverlayManager?.hide()
+        awakeSessionStart = 0L
         serviceJob.cancel()
     }
 

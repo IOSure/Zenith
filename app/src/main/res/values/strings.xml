@@ -3272,4 +3272,16 @@
     <string name="ach_fortress_builder_tier_6">Citadel</string>
     <string name="ach_fortress_builder_tier_7">Eternal Fortress</string>
     <string name="permission_settings_unavailable">Couldn\'t open system settings on this device</string>
+
+    <!-- Screen-on time overlay -->
+    <string name="awake_overlay_label">On for</string>
+    <string name="features_awake_overlay_title">Screen-on time overlay</string>
+    <string name="features_awake_overlay_description">Show how long the screen has stayed on after a set time. Double-tap the pill to hide it for a while.</string>
+    <string name="features_awake_overlay_trigger_title">Show after</string>
+    <string name="features_awake_overlay_trigger_value">%1$d min of screen-on time</string>
+    <string name="features_awake_overlay_hide_title">Double-tap hides for</string>
+    <string name="features_awake_overlay_hide_value">%1$d min</string>
+    <string name="features_awake_overlay_trigger_dialog">Show overlay after</string>
+    <string name="features_awake_overlay_hide_dialog">Hide overlay for</string>
+    <string name="duration_minutes_short">%1$d min</string>
 </resources>

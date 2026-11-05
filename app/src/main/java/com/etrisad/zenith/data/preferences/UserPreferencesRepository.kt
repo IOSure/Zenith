@@ -270,6 +270,9 @@ class UserPreferencesRepository(private val context: Context) {
         val SESSION_USAGE_OVERLAY_ENABLED = booleanPreferencesKey("session_usage_overlay_enabled")
         val SESSION_USAGE_OVERLAY_SIZE = intPreferencesKey("session_usage_overlay_size")
         val SESSION_USAGE_OVERLAY_OPACITY = intPreferencesKey("session_usage_overlay_opacity")
+        val AWAKE_OVERLAY_ENABLED = booleanPreferencesKey("awake_overlay_enabled")
+        val AWAKE_OVERLAY_TRIGGER_MINUTES = intPreferencesKey("awake_overlay_trigger_minutes")
+        val AWAKE_OVERLAY_HIDE_MINUTES = intPreferencesKey("awake_overlay_hide_minutes")
         val WHITELISTED_PACKAGES = stringPreferencesKey("whitelisted_packages")
         val AUTO_BACKUP_ENABLED = booleanPreferencesKey("auto_backup_enabled")
         val BACKUP_DIRECTORY_URI = stringPreferencesKey("backup_directory_uri")
@@ -529,6 +532,9 @@ val ACHIEVEMENT_BANNERS_SEEN = stringPreferencesKey("achievement_banners_seen")
             sessionUsageOverlayEnabled = settings[PreferencesKeys.SESSION_USAGE_OVERLAY_ENABLED] ?: false,
             sessionUsageOverlaySize = settings[PreferencesKeys.SESSION_USAGE_OVERLAY_SIZE] ?: 100,
             sessionUsageOverlayOpacity = settings[PreferencesKeys.SESSION_USAGE_OVERLAY_OPACITY] ?: 90,
+            awakeOverlayEnabled = settings[PreferencesKeys.AWAKE_OVERLAY_ENABLED] ?: false,
+            awakeOverlayTriggerMinutes = settings[PreferencesKeys.AWAKE_OVERLAY_TRIGGER_MINUTES] ?: 30,
+            awakeOverlayHideMinutes = settings[PreferencesKeys.AWAKE_OVERLAY_HIDE_MINUTES] ?: 10,
             whitelistedPackages = settings[PreferencesKeys.WHITELISTED_PACKAGES]?.split(",")?.filter { it.isNotEmpty() }?.toSet() ?: emptySet(),
             excludedFromTrackingPackages = settings[PreferencesKeys.EXCLUDED_FROM_TRACKING_PACKAGES]?.split(",")?.filter { it.isNotEmpty() }?.toSet() ?: emptySet(),
             privatePackages = settings[PreferencesKeys.PRIVATE_PACKAGES]?.split(",")?.filter { it.isNotEmpty() }?.toSet() ?: emptySet(),
@@ -1216,6 +1222,18 @@ achievementBannersSeen = settings[PreferencesKeys.ACHIEVEMENT_BANNERS_SEEN] ?: "
 
     suspend fun setSessionUsageOverlayOpacity(opacity: Int) {
         context.dataStore.edit { preferences -> preferences[PreferencesKeys.SESSION_USAGE_OVERLAY_OPACITY] = opacity }
+    }
+
+    suspend fun setAwakeOverlayEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences -> preferences[PreferencesKeys.AWAKE_OVERLAY_ENABLED] = enabled }
+    }
+
+    suspend fun setAwakeOverlayTriggerMinutes(minutes: Int) {
+        context.dataStore.edit { preferences -> preferences[PreferencesKeys.AWAKE_OVERLAY_TRIGGER_MINUTES] = minutes.coerceIn(1, 240) }
+    }
+
+    suspend fun setAwakeOverlayHideMinutes(minutes: Int) {
+        context.dataStore.edit { preferences -> preferences[PreferencesKeys.AWAKE_OVERLAY_HIDE_MINUTES] = minutes.coerceIn(1, 240) }
     }
 
     suspend fun setWhitelistedPackages(packages: Set<String>) {
@@ -2477,6 +2495,9 @@ data class UserPreferences(
     val sessionUsageOverlayEnabled: Boolean = false,
     val sessionUsageOverlaySize: Int = 100,
     val sessionUsageOverlayOpacity: Int = 90,
+    val awakeOverlayEnabled: Boolean = false,
+    val awakeOverlayTriggerMinutes: Int = 30,
+    val awakeOverlayHideMinutes: Int = 10,
     val whitelistedPackages: Set<String> = emptySet(),
     val excludedFromTrackingPackages: Set<String> = emptySet(),
     val privatePackages: Set<String> = emptySet(),

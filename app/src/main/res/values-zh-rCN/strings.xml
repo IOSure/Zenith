@@ -3273,4 +3273,16 @@
     <string name="ach_fortress_builder_tier_6">城堡</string>
     <string name="ach_fortress_builder_tier_7">永恒堡垒</string>
     <string name="permission_settings_unavailable">无法在此设备上打开系统设置</string>
+
+    <!-- Screen-on time overlay -->
+    <string name="awake_overlay_label">已使用</string>
+    <string name="features_awake_overlay_title">亮屏计时浮层</string>
+    <string name="features_awake_overlay_description">屏幕持续亮起达到设定时间后，显示本次亮屏时长；双击浮层可临时隐藏</string>
+    <string name="features_awake_overlay_trigger_title">显示时机</string>
+    <string name="features_awake_overlay_trigger_value">亮屏 %1$d 分钟后</string>
+    <string name="features_awake_overlay_hide_title">双击隐藏</string>
+    <string name="features_awake_overlay_hide_value">隐藏 %1$d 分钟</string>
+    <string name="features_awake_overlay_trigger_dialog">亮屏多久后显示</string>
+    <string name="features_awake_overlay_hide_dialog">隐藏多久</string>
+    <string name="duration_minutes_short">%1$d 分钟</string>
 </resources>
