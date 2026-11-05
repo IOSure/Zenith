@@ -23,3 +23,9 @@ local.properties
 *.aab
 *.dm
 /.artifacts/
+
+# release signing (never commit)
+/keystore/
+keystore.properties
+*.jks
+*.keystore
