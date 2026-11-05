@@ -1,7 +1,10 @@
 package com.etrisad.zenith.util
 
 import android.app.AppOpsManager
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Process
 import android.provider.Settings
@@ -98,3 +101,33 @@ fun isAndroidGo(context: Context): Boolean {
 fun hasCalendarPermission(context: Context): Boolean {
     return ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED
 }
+
+/**
+ * Starts the first settings screen that this device can actually handle.
+ *
+ * Some OEM ROMs strip individual Settings activities (for example the
+ * notification policy access screen), and calling startActivity() for them
+ * throws ActivityNotFoundException. Returns false when none of the candidates
+ * can be opened, so callers can show a hint instead of crashing.
+ */
+fun openSystemSettings(context: Context, primary: Intent, vararg fallbacks: Intent): Boolean {
+    for (candidate in listOf(primary) + fallbacks) {
+        val intent = Intent(candidate).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            context.startActivity(intent)
+            return true
+        } catch (_: ActivityNotFoundException) {
+        } catch (_: SecurityException) {
+        } catch (_: Exception) {
+        }
+    }
+    return false
+}
+
+fun openNotificationPolicySettings(context: Context): Boolean = openSystemSettings(
+    context,
+    Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS),
+    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        .setData(Uri.fromParts("package", context.packageName, null)),
+    Intent(Settings.ACTION_SETTINGS),
+)

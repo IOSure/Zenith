@@ -3271,4 +3271,5 @@
     <string name="ach_fortress_builder_tier_5">Bastion</string>
     <string name="ach_fortress_builder_tier_6">Citadel</string>
     <string name="ach_fortress_builder_tier_7">Eternal Fortress</string>
+    <string name="permission_settings_unavailable">Couldn\'t open system settings on this device</string>
 </resources>

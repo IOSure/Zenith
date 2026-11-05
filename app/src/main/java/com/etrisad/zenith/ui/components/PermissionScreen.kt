@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,6 +30,7 @@ import com.etrisad.zenith.R
 import com.etrisad.zenith.util.hasAllPermissions
 import com.etrisad.zenith.util.hasUsageStatsPermission
 import com.etrisad.zenith.util.isAccessibilityServiceEnabled
+import com.etrisad.zenith.util.openSystemSettings
 
 @Composable
 fun PermissionScreen(
@@ -104,9 +106,13 @@ fun PermissionScreen(
                 description = stringResource(R.string.intercept_usage_stats_description),
                 isGranted = hasUsageStats,
                 onClick = {
-                    context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    })
+                    if (!openSystemSettings(context, Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.permission_settings_unavailable),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 },
                 icon = Icons.Outlined.BarChart
             )
@@ -116,11 +122,19 @@ fun PermissionScreen(
                 description = stringResource(R.string.intercept_system_overlay_description),
                 isGranted = hasOverlay,
                 onClick = {
-                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    val opened = openSystemSettings(
+                        context,
+                        Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).setData(
+                            Uri.fromParts("package", context.packageName, null)
+                        )
+                    )
+                    if (!opened) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.permission_settings_unavailable),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    context.startActivity(intent)
                 },
                 icon = Icons.Outlined.Layers
             )
@@ -160,10 +174,7 @@ fun PermissionScreen(
             onDismiss = { showBankingWarning = false },
             onProceed = {
                 showBankingWarning = false
-                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-                context.startActivity(intent)
+                openSystemSettings(context, Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
             },
             onDontShowAgain = {}
         )

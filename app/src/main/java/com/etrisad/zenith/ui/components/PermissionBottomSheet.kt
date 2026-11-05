@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -59,6 +60,8 @@ import com.etrisad.zenith.util.isAccessibilityServiceEnabled
 import com.etrisad.zenith.util.isAndroidGo
 import com.etrisad.zenith.util.isIgnoringBatteryOptimizations
 import com.etrisad.zenith.util.isNotificationListenerEnabled
+import com.etrisad.zenith.util.openNotificationPolicySettings
+import com.etrisad.zenith.util.openSystemSettings
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -191,9 +194,14 @@ fun PermissionBottomSheet(
 
     fun openAccessibilitySettings(ctx: android.content.Context) {
         val wasAlreadyEnabled = isAccessibilityServiceEnabled(ctx)
-        ctx.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        })
+        if (!openSystemSettings(ctx, Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))) {
+            Toast.makeText(
+                ctx,
+                ctx.getString(R.string.permission_settings_unavailable),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
         if (!wasAlreadyEnabled) {
             scope.launch {
                 val deadline = System.currentTimeMillis() + 120_000L
@@ -325,10 +333,13 @@ fun PermissionBottomSheet(
                 description = stringResource(R.string.permission_usage_stats_description),
                 isGranted = hasUsageStats,
                 onClick = {
-                    val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    if (!openSystemSettings(context, Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.permission_settings_unavailable),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    context.startActivity(intent)
                 },
                 icon = Icons.Outlined.BarChart,
                 position = GroupPosition.Middle
@@ -341,10 +352,13 @@ fun PermissionBottomSheet(
                 description = stringResource(R.string.permission_notification_policy_description),
                 isGranted = hasNotificationPolicy,
                 onClick = {
-                    val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    if (!openNotificationPolicySettings(context)) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.permission_settings_unavailable),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    context.startActivity(intent)
                 },
                 icon = Icons.Outlined.DoNotDisturbOn,
                 position = GroupPosition.Middle
@@ -357,11 +371,19 @@ fun PermissionBottomSheet(
                 description = if (isAndroidGo(context)) stringResource(R.string.permission_system_overlay_go_description) else stringResource(R.string.permission_system_overlay_description),
                 isGranted = hasOverlay,
                 onClick = {
-                    val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
-                        data = Uri.fromParts("package", context.packageName, null)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    val opened = openSystemSettings(
+                        context,
+                        Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).setData(
+                            Uri.fromParts("package", context.packageName, null)
+                        )
+                    )
+                    if (!opened) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.permission_settings_unavailable),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
-                    context.startActivity(intent)
                 },
                 icon = Icons.Outlined.Layers,
                 position = if (preferences.accessibilityRequired) GroupPosition.Middle else GroupPosition.Bottom
@@ -423,10 +445,13 @@ fun PermissionBottomSheet(
                             if (!preferences.interceptWarningDismissed) {
                                 showInterceptWarning = true
                             } else {
-                                val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                if (!openSystemSettings(context, Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.permission_settings_unavailable),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
-                                context.startActivity(intent)
                             }
                         },
                         onInfoClick = { showInterceptWarning = true },
@@ -489,18 +514,12 @@ fun PermissionBottomSheet(
                         isGranted = !isBatteryOptimized,
                         icon = Icons.Outlined.BatteryStd,
                         onClick = {
-                            try {
-                                val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                    data = Uri.parse("package:${context.packageName}")
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                context.startActivity(intent)
-                            } catch (e: Exception) {
-                                val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                }
-                                context.startActivity(intent)
-                            }
+                            openSystemSettings(
+                                context,
+                                Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
+                                    .setData(Uri.parse("package:${context.packageName}")),
+                                Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                            )
                         },
                         position = GroupPosition.Top,
                         isInsideCollapse = true

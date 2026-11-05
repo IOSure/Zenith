@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import com.etrisad.zenith.R
 import com.etrisad.zenith.util.hasNotificationPolicyAccess
+import com.etrisad.zenith.util.openNotificationPolicySettings
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.etrisad.zenith.ui.onboarding.onboardingAnchor
@@ -603,10 +604,13 @@ fun BedtimeScreen(
                         onToggle = {
                             if (it && !hasNotificationPolicyAccess(bedtimeContext)) {
                                 Toast.makeText(bedtimeContext, bedtimeContext.getString(R.string.bedtime_dnd_permission_toast), Toast.LENGTH_LONG).show()
-                                bedtimeContext.startActivity(
-                                    Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
-                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                )
+                                if (!openNotificationPolicySettings(bedtimeContext)) {
+                                    Toast.makeText(
+                                        bedtimeContext,
+                                        bedtimeContext.getString(R.string.permission_settings_unavailable),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             } else {
                                 viewModel.setBedtimeDndEnabled(it)
                             }
