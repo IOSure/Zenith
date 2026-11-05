@@ -101,6 +101,15 @@ class ZenithService : AccessibilityService() {
     private val websiteDomainFetchTime = java.util.concurrent.ConcurrentHashMap<String, Long>()
     private val periodUsageCache = java.util.concurrent.ConcurrentHashMap<String, Long>()
 
+    private var monitorKickRegistered = false
+    private val monitorKickReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_SCREEN_ON, Intent.ACTION_USER_PRESENT -> ensureMonitorServiceRunning()
+            }
+        }
+    }
+
     companion object {
         var isServiceRunning = false
             set(value) { field = value; AppStateHolder.isAccessibilityServiceRunning.value = value }
@@ -209,6 +218,14 @@ class ZenithService : AccessibilityService() {
         applyAccessibilityServiceInfo(SharedMonitoringState.accessibilityLimitedMode)
 
         isServiceRunning = true
+
+        // The accessibility service is long-lived (system bound), so use it to
+        // bring the usage monitor back after the screen turns on. That service
+        // hosts the screen-on overlay; without this kick Android may have killed
+        // it while the screen was off and the overlay would stay missing until
+        // the user opens Zenith.
+        ensureMonitorServiceRunning()
+        registerMonitorKickReceiver()
 
         val app = application as com.etrisad.zenith.ZenithApplication
         shieldRepository = app.shieldRepository
@@ -1859,9 +1876,40 @@ class ZenithService : AccessibilityService() {
         }
     }
 
+    private fun ensureMonitorServiceRunning() {
+        try {
+            AppUsageMonitorService.startMonitorService(applicationContext)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun registerMonitorKickReceiver() {
+        if (monitorKickRegistered) return
+        try {
+            val filter = android.content.IntentFilter().apply {
+                addAction(Intent.ACTION_SCREEN_ON)
+                addAction(Intent.ACTION_USER_PRESENT)
+            }
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(monitorKickReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            } else {
+                registerReceiver(monitorKickReceiver, filter)
+            }
+            monitorKickRegistered = true
+        } catch (_: Exception) {
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         isServiceRunning = false
+        if (monitorKickRegistered) {
+            try {
+                unregisterReceiver(monitorKickReceiver)
+            } catch (_: Exception) {
+            }
+            monitorKickRegistered = false
+        }
         cancelAccessibilityActivePersistentNotification()
         bypassCheckRunnable?.let { mainHandler.removeCallbacks(it) }
         bypassCheckRunnable = null

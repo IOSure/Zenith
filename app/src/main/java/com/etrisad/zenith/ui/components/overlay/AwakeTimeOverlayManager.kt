@@ -100,7 +100,8 @@ class AwakeTimeOverlayManager(
         lifecycleOwner = owner
 
         val alpha = (opacityPercent / 100f).coerceIn(0.2f, 1f)
-        val view = ComposeView(context).apply {
+        val uiContext = localizedUiContext()
+        val view = ComposeView(uiContext).apply {
             setViewTreeLifecycleOwner(owner)
             setViewTreeViewModelStoreOwner(object : ViewModelStoreOwner {
                 override val viewModelStore: ViewModelStore = store
@@ -155,6 +156,22 @@ class AwakeTimeOverlayManager(
             return
         }
         destroyView()
+    }
+
+    /**
+     * The application resources of a service do not always pick up the Android 13
+     * per-app locale, which made this overlay fall back to English inside a
+     * Chinese UI. Compose resources are resolved from the view context, so build
+     * one with the process locale (kept in sync by AppLanguage).
+     */
+    private fun localizedUiContext(): Context {
+        return try {
+            val configuration = android.content.res.Configuration(context.resources.configuration)
+            configuration.setLocale(com.etrisad.zenith.util.AppLanguage.currentLocale(context))
+            context.createConfigurationContext(configuration)
+        } catch (_: Exception) {
+            context
+        }
     }
 
     private fun destroyView() {

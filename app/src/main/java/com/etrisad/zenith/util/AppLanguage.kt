@@ -62,10 +62,40 @@ object AppLanguage {
     }
 
     /**
+     * Locale the app should render with right now: the explicit in-app choice,
+     * the Android 13+ per-app language, or the system locale.
+     */
+    fun currentLocale(context: Context): Locale {
+        localeFor(selection(context))?.let { return it }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            try {
+                val locales = context.getSystemService(android.app.LocaleManager::class.java)
+                    ?.applicationLocales
+                if (locales != null && locales.size() > 0) return locales.get(0)
+            } catch (_: Exception) {
+            }
+        }
+        val locales = context.resources.configuration.locales
+        if (locales.size() > 0) return locales.get(0)
+        return Locale.getDefault()
+    }
+
+    /**
+     * Locale Android picked for this process before any in-app override: the
+     * system locale, or the per-app language from Android 13 settings.
+     */
+    @Volatile
+    private var frameworkLocale: Locale? = null
+
+    /**
      * Returns a context whose resources resolve against the selected language.
      * Intended for [android.app.Application.attachBaseContext] and every activity.
      */
     fun wrap(base: Context): Context {
+        if (frameworkLocale == null) {
+            val locales = base.resources.configuration.locales
+            frameworkLocale = if (locales.size() == 0) Locale.getDefault() else locales.get(0)
+        }
         val locale = localeFor(selection(base)) ?: return base
         Locale.setDefault(locale)
         val configuration = Configuration(base.resources.configuration)
@@ -78,10 +108,14 @@ object AppLanguage {
      * Applies the selection to the long-lived application resources so that
      * services, notifications and widgets created later pick it up without a
      * process restart.
+     *
+     * With [SYSTEM] the framework locale (system or Android 13 per-app locale)
+     * must be preserved instead of being replaced by the JVM default locale,
+     * otherwise service and overlay resources silently fall back to English.
      */
     @Suppress("DEPRECATION")
     fun applyTo(context: Context) {
-        val locale = localeFor(selection(context)) ?: systemLocale
+        val locale = currentLocale(context)
         Locale.setDefault(locale)
         val configuration = Configuration(context.resources.configuration)
         configuration.setLocale(locale)
