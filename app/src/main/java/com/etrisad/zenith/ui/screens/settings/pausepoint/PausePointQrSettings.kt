@@ -43,10 +43,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.qr.QrScanner
@@ -150,7 +152,7 @@ fun PausePointQrManagerContent(
                         modifier = Modifier.padding(24.dp)
                     ) {
                         Text(
-                            text = "Camera permission required",
+                            text = stringResource(R.string.winddown_camera_permission_required),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
@@ -158,15 +160,21 @@ fun PausePointQrManagerContent(
                         )
                         Text(
                             text = if (cameraPermanentlyDenied)
-                                "Camera access was denied. Enable it in system Settings to scan QR codes."
+                                stringResource(R.string.winddown_camera_permission_denied)
                             else
-                                "Grant camera access to scan QR codes.",
+                                stringResource(R.string.winddown_camera_permission_grant),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
                         )
                         Button(onClick = onCameraButtonClick) {
-                            Text(if (cameraPermanentlyDenied) "Open Settings" else "Grant Permission")
+                            Text(
+                                if (cameraPermanentlyDenied) {
+                                    stringResource(R.string.winddown_open_settings)
+                                } else {
+                                    stringResource(R.string.winddown_grant_permission)
+                                }
+                            )
                         }
                     }
                 }
@@ -196,7 +204,7 @@ fun PausePointQrManagerContent(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Code saved!",
+                        text = stringResource(R.string.winddown_code_saved),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -208,7 +216,7 @@ fun PausePointQrManagerContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        PreferenceCategory(title = "Saved Codes (${codes.size})")
+        PreferenceCategory(title = stringResource(R.string.winddown_saved_codes_title, codes.size))
 
         if (codes.isEmpty()) {
             EmptyCodesCard()
@@ -285,14 +293,14 @@ private fun QrCodeRow(
             }) {
                 Icon(
                     imageVector = Icons.Outlined.ContentCopy,
-                    contentDescription = "Copy",
+                    contentDescription = stringResource(R.string.winddown_copy),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             IconButton(onClick = onRemove) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.winddown_delete),
                     tint = MaterialTheme.colorScheme.error
                 )
             }
@@ -323,7 +331,7 @@ private fun EmptyCodesCard() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "No codes saved yet",
+                text = stringResource(R.string.winddown_no_codes_saved),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center

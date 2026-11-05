@@ -30,9 +30,11 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,8 +53,8 @@ fun WhitelistBottomSheet(
     initialWhitelisted: Set<String>,
     onDismiss: () -> Unit,
     onSave: (Set<String>) -> Unit,
-    title: String = "Bypass Restrictions",
-    subtitle: String = "Still tracked in stats, but skips schedules, shields, and goals.",
+    title: String = stringResource(R.string.intercept_bypass_restrictions),
+    subtitle: String = stringResource(R.string.intercept_bypass_restrictions_subtitle),
     allowedPackages: Set<String>? = null,
     priorityPackages: Set<String> = emptySet()
 ) {
@@ -184,12 +186,12 @@ fun WhitelistBottomSheet(
                                 onSearch = { },
                                 expanded = false,
                                 onExpandedChange = {},
-                                placeholder = { Text("Search apps...") },
+                                placeholder = { Text(stringResource(R.string.intercept_search_apps_placeholder)) },
                                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                                 trailingIcon = {
                                     if (searchQuery.isNotEmpty()) {
                                         IconButton(onClick = { searchQuery = "" }) {
-                                            Icon(Icons.Outlined.Close, contentDescription = "Clear search")
+                                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.intercept_clear_search))
                                         }
                                     }
                                 }
@@ -246,7 +248,7 @@ fun WhitelistBottomSheet(
                             if (userApps.isNotEmpty()) {
                                 item(key = "user_apps_header") {
                                     Text(
-                                        "User Apps",
+                                        stringResource(R.string.intercept_user_apps),
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary,
@@ -276,7 +278,7 @@ fun WhitelistBottomSheet(
                             if (preinstalledApps.isNotEmpty()) {
                                 item(key = "preinstalled_apps_header") {
                                     Text(
-                                        "Preinstalled Apps",
+                                        stringResource(R.string.intercept_preinstalled_apps),
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.secondary,
@@ -316,13 +318,13 @@ fun WhitelistBottomSheet(
                                         ListItem(
                                             headlineContent = {
                                                 Text(
-                                                    "System Apps",
+                                                    stringResource(R.string.intercept_system_apps),
                                                     style = MaterialTheme.typography.titleMedium,
                                                     fontWeight = FontWeight.SemiBold
                                                 )
                                             },
                                             supportingContent = {
-                                                Text("${systemApps.size} apps hidden by default")
+                                                Text(stringResource(R.string.intercept_apps_hidden_by_default, systemApps.size))
                                             },
                                             trailingContent = {
                                                 Icon(
@@ -374,7 +376,7 @@ fun WhitelistBottomSheet(
                     .padding(24.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = "Save selection")
+                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = stringResource(R.string.intercept_save_selection))
             }
         }
     }
@@ -440,13 +442,13 @@ fun WhitelistAppItem(
                     Text(app.packageName, style = MaterialTheme.typography.bodySmall)
                     if (app.isSystemApp) {
                         Text(
-                            text = "System Core",
+                            text = stringResource(R.string.intercept_system_core),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary
                         )
                     } else if (app.isPreinstalledApp) {
                         Text(
-                            text = "Preinstalled",
+                            text = stringResource(R.string.intercept_preinstalled),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.secondary
                         )

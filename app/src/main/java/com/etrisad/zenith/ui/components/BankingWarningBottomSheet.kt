@@ -22,11 +22,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.service.SharedMonitoringState
@@ -50,6 +52,9 @@ fun BankingWarningBottomSheet(
 
     val repository = remember { UserPreferencesRepository(context) }
     val preferences by repository.userPreferencesFlow.collectAsState(initial = UserPreferences())
+
+    val detectedAppsTitle = stringResource(R.string.warn_banking_detected_apps)
+    val acknowledgeText = stringResource(R.string.warn_banking_acknowledge)
 
     val installedBankingApps = remember {
         val allInstalled = context.packageManager.getInstalledApplications(0)
@@ -98,7 +103,7 @@ fun BankingWarningBottomSheet(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Before You Continue",
+                text = stringResource(R.string.warn_banking_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
@@ -106,16 +111,7 @@ fun BankingWarningBottomSheet(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Zenith is safe. ") }
-                    append("All data is ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("processed entirely on your device") }
-                    append(" and ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("never leaves it") }
-                    append(". The accessibility service is ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("only used to detect which app is currently open") }
-                    append(" nothing else.")
-                },
+                text = stringResource(R.string.warn_banking_safe_intro),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -123,7 +119,7 @@ fun BankingWarningBottomSheet(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = "Some banking apps block access when a third-party accessibility service is detected. This notice helps you avoid being locked out.",
+                text = stringResource(R.string.warn_banking_notice_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -147,7 +143,7 @@ fun BankingWarningBottomSheet(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "What you need to do",
+                            text = stringResource(R.string.warn_banking_what_to_do),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -165,11 +161,7 @@ fun BankingWarningBottomSheet(
                             modifier = Modifier.width(24.dp)
                         )
                         Text(
-                            text = buildAnnotatedString {
-                                append("After enabling Zenith, ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("disable it before opening any mobile banking app") }
-                                append(".")
-                            },
+                            text = stringResource(R.string.warn_banking_step1),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
@@ -186,13 +178,7 @@ fun BankingWarningBottomSheet(
                             modifier = Modifier.width(24.dp)
                         )
                         Text(
-                            text = buildAnnotatedString {
-                                append("If a banking app ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("blocks your access") }
-                                append(" or shows a security warning, go to ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Settings > Accessibility > Zenith") }
-                                append(" and turn it off.")
-                            },
+                            text = stringResource(R.string.warn_banking_step2),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
@@ -209,11 +195,7 @@ fun BankingWarningBottomSheet(
                             modifier = Modifier.width(24.dp)
                         )
                         Text(
-                            text = buildAnnotatedString {
-                                append("You can safely ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("re-enable Zenith afterwards") }
-                                append(" no data was collected or shared during the time it was off.")
-                            },
+                            text = stringResource(R.string.warn_banking_step3),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
@@ -230,13 +212,7 @@ fun BankingWarningBottomSheet(
                             modifier = Modifier.width(24.dp)
                         )
                         Text(
-                            text = buildAnnotatedString {
-                                append("You can also add sensitive apps to ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Settings > Privacy & Data > Private & Hidden Apps > Private") }
-                                append(" so Zenith will completely ignore them. You can also enable ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Limited Mode") }
-                                append(" under Privacy & Data to reduce accessibility access to app-switch events only.")
-                            },
+                            text = stringResource(R.string.warn_banking_step4),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
@@ -252,10 +228,7 @@ fun BankingWarningBottomSheet(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Why does this happen?") }
-                            append(" Some banking apps detect third-party accessibility services as a security measure. This is unrelated to Zenith. The same block happens with any accessibility service.")
-                        },
+                        text = stringResource(R.string.warn_banking_why_happen),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
                     )
@@ -272,7 +245,7 @@ fun BankingWarningBottomSheet(
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
                             text = buildAnnotatedString {
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Banking apps detected on your device:") }
+                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(detectedAppsTitle) }
                             },
                             style = MaterialTheme.typography.labelLarge
                         )
@@ -367,7 +340,7 @@ fun BankingWarningBottomSheet(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = buildAnnotatedString {
-                            append("I have read and understand the above. I accept the risks of using Zenith alongside my banking apps.")
+                            append(acknowledgeText)
                             append(" ")
                             withStyle(
                                 SpanStyle(
@@ -388,7 +361,7 @@ fun BankingWarningBottomSheet(
                 exit = fadeOut(animationSpec = spring(dampingRatio = 0.8f, stiffness = 600f)) + slideOutVertically { it / 2 }
             ) {
                 Text(
-                    text = "Please check this box before proceeding",
+                    text = stringResource(R.string.warn_banking_check_required),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(start = 16.dp, top = 4.dp)
@@ -409,7 +382,7 @@ fun BankingWarningBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Show persistent warning notification",
+                    text = stringResource(R.string.warn_banking_persistent_notification),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.weight(1f)
                 )
@@ -427,7 +400,7 @@ fun BankingWarningBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Don't show this again",
+                    text = stringResource(R.string.warn_dont_show_again),
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.weight(1f)
                 )
@@ -443,7 +416,7 @@ fun BankingWarningBottomSheet(
                             onDismiss()
                         }
                     },
-                    text = "Back",
+                    text = stringResource(R.string.warn_action_back),
                     type = ZenithButtonType.Outlined,
                     isLast = false,
                     size = ZenithButtonSize.ExtraLarge
@@ -456,7 +429,7 @@ fun BankingWarningBottomSheet(
                         }
                         onProceed()
                     },
-                    text = "Proceed",
+                    text = stringResource(R.string.warn_action_proceed),
                     type = ZenithButtonType.Filled,
                     isFirst = false,
                     size = ZenithButtonSize.ExtraLarge,

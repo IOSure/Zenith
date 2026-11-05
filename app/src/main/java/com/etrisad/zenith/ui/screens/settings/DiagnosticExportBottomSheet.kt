@@ -56,6 +56,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -63,6 +64,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ZenithButtonSize
 import com.etrisad.zenith.ui.components.ZenithButtonType
 import com.etrisad.zenith.ui.components.ZenithButtonWeighted
@@ -129,7 +131,7 @@ fun DiagnosticExportBottomSheet(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Diagnostic ZIP Saved",
+                        text = stringResource(R.string.reels_settings_diag_zip_saved),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -137,7 +139,7 @@ fun DiagnosticExportBottomSheet(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "Your file is ready. Please attach it to a GitHub issue so it can be investigated.",
+                        text = stringResource(R.string.reels_settings_diag_zip_saved_body),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -164,7 +166,7 @@ fun DiagnosticExportBottomSheet(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Saved file",
+                                    text = stringResource(R.string.reels_settings_saved_file),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer,
                                     fontWeight = FontWeight.Bold
@@ -193,21 +195,24 @@ fun DiagnosticExportBottomSheet(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Report a Bug",
+                        text = stringResource(R.string.reels_settings_report_bug),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    val privacyKeepsOnDevice = stringResource(R.string.reels_settings_privacy_keeps_on_device)
+                    val privacyCreatesZip = stringResource(R.string.reels_settings_privacy_creates_zip)
+                    val privacyNothingUploaded = stringResource(R.string.reels_settings_privacy_nothing_uploaded)
+
                     Text(
                         text = buildAnnotatedString {
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Zenith keeps everything on your device. ") }
-                            append("This creates a ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("diagnostic ZIP on your device") }
-                            append(" so you can attach it to a GitHub issue. ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Nothing is uploaded automatically") }
-                            append(".")
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(privacyKeepsOnDevice) }
+                            append(" ")
+                            append(privacyCreatesZip)
+                            append(" ")
+                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(privacyNothingUploaded) }
                         },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
@@ -230,7 +235,7 @@ fun DiagnosticExportBottomSheet(
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
-                                    text = "What will be included",
+                                    text = stringResource(R.string.reels_settings_what_included),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -239,21 +244,21 @@ fun DiagnosticExportBottomSheet(
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            DiagnosticIncludedRow("1.", "Export time, app version and flavor.")
+                            DiagnosticIncludedRow("1.", stringResource(R.string.reels_settings_included_1))
                             Spacer(modifier = Modifier.height(12.dp))
-                            DiagnosticIncludedRow("2.", "Device model and Android version (no name or personal data).")
+                            DiagnosticIncludedRow("2.", stringResource(R.string.reels_settings_included_2))
                             Spacer(modifier = Modifier.height(12.dp))
-                            DiagnosticIncludedRow("3.", "Sanitized settings (values and counts only).")
+                            DiagnosticIncludedRow("3.", stringResource(R.string.reels_settings_included_3))
                             Spacer(modifier = Modifier.height(12.dp))
-                            DiagnosticIncludedRow("4.", "Database snapshot (row counts, latest date and schema version).")
+                            DiagnosticIncludedRow("4.", stringResource(R.string.reels_settings_included_4))
                             Spacer(modifier = Modifier.height(12.dp))
-                            DiagnosticIncludedRow("5.", "System permission states (granted or not, no details).")
+                            DiagnosticIncludedRow("5.", stringResource(R.string.reels_settings_included_5))
                             Spacer(modifier = Modifier.height(12.dp))
-                            DiagnosticIncludedRow("6.", "Log summary (counts per category and time range).")
+                            DiagnosticIncludedRow("6.", stringResource(R.string.reels_settings_included_6))
                             Spacer(modifier = Modifier.height(12.dp))
-                            DiagnosticIncludedRow("7.", "In-memory app logs (DB, overlay and usage-bar-graph buffers, app names redacted).")
+                            DiagnosticIncludedRow("7.", stringResource(R.string.reels_settings_included_7))
                             Spacer(modifier = Modifier.height(12.dp))
-                            DiagnosticIncludedRow("8.", "Best-effort app logcat (may be empty on some devices, app names redacted).")
+                            DiagnosticIncludedRow("8.", stringResource(R.string.reels_settings_included_8))
 
                             Spacer(modifier = Modifier.height(16.dp))
 
@@ -264,10 +269,14 @@ fun DiagnosticExportBottomSheet(
 
                             Spacer(modifier = Modifier.height(12.dp))
 
+                            val whyHelpsTitle = stringResource(R.string.reels_settings_why_helps)
+                            val whyHelpsBody = stringResource(R.string.reels_settings_why_helps_body)
+
                             Text(
                                 text = buildAnnotatedString {
-                                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append("Why does this help? ") }
-                                    append("Version, device and sanitized settings plus recent logs are usually enough to reproduce and fix a bug. App package names in logs are redacted before export.")
+                                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(whyHelpsTitle) }
+                                    append(" ")
+                                    append(whyHelpsBody)
                                 },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f)
@@ -291,14 +300,14 @@ fun DiagnosticExportBottomSheet(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Never included",
+                                    text = stringResource(R.string.reels_settings_never_included),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Your name, bio, avatar or banner \u2022 Raw QR / NFC values \u2022 App package names (redacted as <redacted>) \u2022 Raw backup folder URI",
+                                text = stringResource(R.string.reels_settings_never_included_body),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -334,12 +343,12 @@ fun DiagnosticExportBottomSheet(
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    "Save location",
+                                    stringResource(R.string.reels_settings_save_location),
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = targetDisplayName ?: "Not selected \u2014 tap to choose",
+                                    text = targetDisplayName ?: stringResource(R.string.reels_settings_not_selected),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = if (hasTarget) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.error,
                                     maxLines = 2,
@@ -367,7 +376,7 @@ fun DiagnosticExportBottomSheet(
                     if (hasTarget) {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "You can tap the box above to pick a different file any time.",
+                            text = stringResource(R.string.reels_settings_pick_different_file),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -411,7 +420,7 @@ fun DiagnosticExportBottomSheet(
                             onClick = {
                                 clipboard.setText(AnnotatedString(targetDisplayName.orEmpty()))
                             },
-                            text = "Copy Name",
+                            text = stringResource(R.string.reels_settings_copy_name),
                             icon = Icons.Outlined.ContentCopy,
                             type = ZenithButtonType.Outlined,
                             isLast = false,
@@ -419,7 +428,7 @@ fun DiagnosticExportBottomSheet(
                         )
                         ZenithButtonWeighted(
                             onClick = onOpenGitHub,
-                            text = "GitHub Issues",
+                            text = stringResource(R.string.reels_settings_github_issues),
                             icon = Icons.Outlined.OpenInNew,
                             type = ZenithButtonType.Filled,
                             isFirst = false,
@@ -437,7 +446,7 @@ fun DiagnosticExportBottomSheet(
                                     onDismiss()
                                 }
                             },
-                            text = "Done",
+                            text = stringResource(R.string.reels_settings_done),
                             type = ZenithButtonType.Text,
                             size = ZenithButtonSize.ExtraLarge
                         )
@@ -476,6 +485,8 @@ fun DiagnosticExportBottomSheet(
                         label = "errorBg"
                     )
 
+                    val understandText = stringResource(R.string.reels_settings_understand_checkbox)
+
                     Surface(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
@@ -497,7 +508,7 @@ fun DiagnosticExportBottomSheet(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = buildAnnotatedString {
-                                    append("I understand this ZIP is saved on my device and I will attach it to a GitHub issue myself.")
+                                    append(understandText)
                                     append(" ")
                                     withStyle(SpanStyle(color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Bold)) { append("*") }
                                 },
@@ -512,7 +523,7 @@ fun DiagnosticExportBottomSheet(
                         exit = fadeOut(animationSpec = spring(dampingRatio = 0.8f, stiffness = 600f)) + slideOutVertically { it / 2 }
                     ) {
                         Text(
-                            text = "Please choose a save location and check this box before exporting",
+                            text = stringResource(R.string.reels_settings_export_requires),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(start = 16.dp, top = 4.dp)
@@ -530,7 +541,7 @@ fun DiagnosticExportBottomSheet(
                                     onDismiss()
                                 }
                             },
-                            text = "Back",
+                            text = stringResource(R.string.reels_settings_back),
                             type = ZenithButtonType.Outlined,
                             isLast = false,
                             size = ZenithButtonSize.ExtraLarge,
@@ -538,7 +549,8 @@ fun DiagnosticExportBottomSheet(
                         )
                         ZenithButtonWeighted(
                             onClick = onExport,
-                            text = if (isExporting) "Exporting..." else "Export ZIP",
+                            text = if (isExporting) stringResource(R.string.reels_settings_exporting)
+                            else stringResource(R.string.reels_settings_export_zip),
                             type = ZenithButtonType.Filled,
                             isFirst = false,
                             size = ZenithButtonSize.ExtraLarge,

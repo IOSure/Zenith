@@ -1,5 +1,6 @@
 package com.etrisad.zenith.ui.components.pausepoint
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.DirectionsWalk
 import androidx.compose.material.icons.outlined.AccessTime
@@ -12,46 +13,95 @@ import androidx.compose.material.icons.outlined.Nfc
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.ToggleOn
 import androidx.compose.material.icons.outlined.TouchApp
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.etrisad.zenith.R
 import kotlin.random.Random
 
-enum class PausePointTaskType(val displayName: String, val description: String, val icon: ImageVector) {
-    WAITING("Waiting", "Wait for a set duration before continuing", Icons.Outlined.AccessTime),
-    BREATHING("Breathing", "Follow a breathing exercise", Icons.Outlined.Nature),
-    WALK("Walk", "Walk a certain number of steps", Icons.AutoMirrored.Outlined.DirectionsWalk),
-    QR_SCAN("QR Scan", "Scan a QR code", Icons.Outlined.QrCodeScanner),
-    NFC_SCAN("NFC Scan", "Scan a registered NFC tag", Icons.Outlined.Nfc),
-    NUMBER_SLIDE("Number Slide", "Slide the tiles to solve the puzzle", Icons.Outlined.GridView),
-    SWITCH("Switch Puzzle", "Match the switch sequence", Icons.Outlined.ToggleOn),
-    COUNTING("Counting", "Complete a counting exercise", Icons.Outlined.FitnessCenter),
-    TYPING("Typing", "Type a specific text correctly", Icons.Outlined.Keyboard),
-    MATH("Math", "Solve a quick math problem", Icons.Outlined.Calculate),
-    CHOOSE_APP("Choose App", "Open a suggested goal app", Icons.Outlined.TouchApp)
+enum class PausePointTaskType(
+    val displayName: String,
+    val description: String,
+    @StringRes val displayNameRes: Int,
+    @StringRes val descriptionRes: Int,
+    val icon: ImageVector
+) {
+    WAITING(
+        "Waiting", "Wait for a set duration before continuing",
+        R.string.pause_task_waiting_name, R.string.pause_task_waiting_desc,
+        Icons.Outlined.AccessTime
+    ),
+    BREATHING(
+        "Breathing", "Follow a breathing exercise",
+        R.string.pause_task_breathing_name, R.string.pause_task_breathing_desc,
+        Icons.Outlined.Nature
+    ),
+    WALK(
+        "Walk", "Walk a certain number of steps",
+        R.string.pause_task_walk_name, R.string.pause_task_walk_desc,
+        Icons.AutoMirrored.Outlined.DirectionsWalk
+    ),
+    QR_SCAN(
+        "QR Scan", "Scan a QR code",
+        R.string.pause_task_qr_scan_name, R.string.pause_task_qr_scan_desc,
+        Icons.Outlined.QrCodeScanner
+    ),
+    NFC_SCAN(
+        "NFC Scan", "Scan a registered NFC tag",
+        R.string.pause_task_nfc_scan_name, R.string.pause_task_nfc_scan_desc,
+        Icons.Outlined.Nfc
+    ),
+    NUMBER_SLIDE(
+        "Number Slide", "Slide the tiles to solve the puzzle",
+        R.string.pause_task_number_slide_name, R.string.pause_task_number_slide_desc,
+        Icons.Outlined.GridView
+    ),
+    SWITCH(
+        "Switch Puzzle", "Match the switch sequence",
+        R.string.pause_task_switch_name, R.string.pause_task_switch_desc,
+        Icons.Outlined.ToggleOn
+    ),
+    COUNTING(
+        "Counting", "Complete a counting exercise",
+        R.string.pause_task_counting_name, R.string.pause_task_counting_desc,
+        Icons.Outlined.FitnessCenter
+    ),
+    TYPING(
+        "Typing", "Type a specific text correctly",
+        R.string.pause_task_typing_name, R.string.pause_task_typing_desc,
+        Icons.Outlined.Keyboard
+    ),
+    MATH(
+        "Math", "Solve a quick math problem",
+        R.string.pause_task_math_name, R.string.pause_task_math_desc,
+        Icons.Outlined.Calculate
+    ),
+    CHOOSE_APP(
+        "Choose App", "Open a suggested goal app",
+        R.string.pause_task_choose_app_name, R.string.pause_task_choose_app_desc,
+        Icons.Outlined.TouchApp
+    )
 }
 
 sealed class PausePointTask {
     abstract val type: PausePointTaskType
-    abstract val instruction: String
 
     data class Waiting(
         val durationSeconds: Int = 15
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.WAITING
-        override val instruction get() = "Wait for $durationSeconds seconds before proceeding"
     }
 
     data class Breathing(
         val rounds: Int = 3
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.BREATHING
-        override val instruction get() = "Take $rounds deep breaths"
     }
 
     data class Walk(
         val steps: Int = 10
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.WALK
-        override val instruction get() = "Take $steps steps away and back"
     }
 
     data class QrScan(
@@ -60,9 +110,6 @@ sealed class PausePointTask {
         val acceptAny: Boolean = false
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.QR_SCAN
-        override val instruction get() =
-            if (validCodes.isNotEmpty()) "Scan a QR code that matches one of your saved codes"
-            else "Scan the QR code to proceed"
     }
 
     data class NfcScan(
@@ -70,16 +117,12 @@ sealed class PausePointTask {
         val acceptAny: Boolean = false
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.NFC_SCAN
-        override val instruction get() =
-            if (validTagIds.isNotEmpty()) "Tap one of your registered NFC tags to proceed"
-            else "Tap an NFC tag to proceed"
     }
 
     data class NumberSlide(
         val size: Int = 3
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.NUMBER_SLIDE
-        override val instruction get() = "Slide the tiles to solve the puzzle"
     }
 
     data class Switch(
@@ -87,7 +130,6 @@ sealed class PausePointTask {
         val timeoutSeconds: Int? = null
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.SWITCH
-        override val instruction get() = "Match the switch sequence to continue"
     }
 
     data class Math(
@@ -95,7 +137,6 @@ sealed class PausePointTask {
         val operator: MathOperator = MathOperator.ADD
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.MATH
-        override val instruction get() = "Solve the math problem to continue"
     }
 
     data class Counting(
@@ -103,25 +144,28 @@ sealed class PausePointTask {
         val label: String = ""
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.COUNTING
-        override val instruction get() = if (label.isNotEmpty()) "Do $targetNumber $label" else "Count to $targetNumber"
     }
 
     data class Typing(
         val sentence: String = sentencePool.random()
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.TYPING
-        override val instruction get() = "Type the following sentence correctly"
     }
 
     data class ChooseApp(
         val suggestedPackage: String = "",
-        val suggestedAppName: String = "a productive app"
+        val suggestedAppName: String = FALLBACK_APP_NAME
     ) : PausePointTask() {
         override val type get() = PausePointTaskType.CHOOSE_APP
-        override val instruction get() = "Open $suggestedAppName instead"
     }
 
     companion object {
+        /**
+         * Sentinel name used when no goal app is available. Display code replaces it with
+         * a localized string instead of showing the English default.
+         */
+        const val FALLBACK_APP_NAME = "a productive app"
+
         val sentencePool = listOf(
             "Stay focused and mindful.",
             "Small steps lead to big changes.",
@@ -132,7 +176,72 @@ sealed class PausePointTask {
             "Focus on what matters most.",
             "One task at a time."
         )
+
+        /** Resource ids of [sentencePool], in the same order, for localized display. */
+        val sentencePoolRes: List<Int> = listOf(
+            R.string.pause_task_sentence_1,
+            R.string.pause_task_sentence_2,
+            R.string.pause_task_sentence_3,
+            R.string.pause_task_sentence_4,
+            R.string.pause_task_sentence_5,
+            R.string.pause_task_sentence_6,
+            R.string.pause_task_sentence_7,
+            R.string.pause_task_sentence_8
+        )
     }
+}
+
+/**
+ * Localized instruction shown above a pause point task. Kept out of the sealed class because
+ * resolving @StringRes needs a composable context.
+ */
+@Composable
+fun PausePointTask.localizedInstruction(): String = when (this) {
+    is PausePointTask.Waiting ->
+        stringResource(R.string.pause_task_instruction_waiting, durationSeconds)
+    is PausePointTask.Breathing ->
+        stringResource(R.string.pause_task_instruction_breathing, rounds)
+    is PausePointTask.Walk ->
+        stringResource(R.string.pause_task_instruction_walk, steps)
+    is PausePointTask.QrScan ->
+        if (validCodes.isNotEmpty()) stringResource(R.string.pause_task_instruction_qr_saved)
+        else stringResource(R.string.pause_task_instruction_qr_any)
+    is PausePointTask.NfcScan ->
+        if (validTagIds.isNotEmpty()) stringResource(R.string.pause_task_instruction_nfc_saved)
+        else stringResource(R.string.pause_task_instruction_nfc_any)
+    is PausePointTask.NumberSlide ->
+        stringResource(R.string.pause_task_instruction_number_slide)
+    is PausePointTask.Switch ->
+        stringResource(R.string.pause_task_instruction_switch)
+    is PausePointTask.Math ->
+        stringResource(R.string.pause_task_instruction_math)
+    is PausePointTask.Counting ->
+        if (label.isNotEmpty()) stringResource(
+            R.string.pause_task_instruction_counting_named, targetNumber, label
+        ) else stringResource(R.string.pause_task_instruction_counting, targetNumber)
+    is PausePointTask.Typing ->
+        stringResource(R.string.pause_task_instruction_typing)
+    is PausePointTask.ChooseApp ->
+        stringResource(R.string.pause_task_instruction_choose_app, localizedAppName())
+}
+
+/** Display name of the suggested goal app, localized when the task only carries the fallback. */
+@Composable
+fun PausePointTask.ChooseApp.localizedAppName(): String =
+    if (suggestedAppName == PausePointTask.FALLBACK_APP_NAME) {
+        stringResource(R.string.pause_task_choose_app_fallback)
+    } else {
+        suggestedAppName
+    }
+
+/**
+ * Sentence to display and type for the Typing task: default pool sentences are shown in the
+ * current language, custom sentences are shown exactly as the user entered them.
+ */
+@Composable
+fun PausePointTask.Typing.localizedSentence(): String {
+    val index = PausePointTask.sentencePool.indexOf(sentence)
+    return if (index >= 0) stringResource(PausePointTask.sentencePoolRes[index]) else sentence
 }
 
 enum class MathOperator(val symbol: String, val displaySymbol: String) {
@@ -362,7 +471,7 @@ object PausePointEngine {
                     val randomGoal = goalPackageNames.random()
                     PausePointTask.ChooseApp(
                         suggestedPackage = randomGoal,
-                        suggestedAppName = goalAppNames[randomGoal] ?: "a productive app"
+                        suggestedAppName = goalAppNames[randomGoal] ?: PausePointTask.FALLBACK_APP_NAME
                     )
                 } else {
                     PausePointTask.Waiting()

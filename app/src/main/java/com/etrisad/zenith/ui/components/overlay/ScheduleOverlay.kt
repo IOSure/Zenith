@@ -23,12 +23,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.ScheduleEntity
 import com.etrisad.zenith.data.local.entity.ScheduleMode
 import com.etrisad.zenith.data.preferences.UserPreferences
@@ -417,7 +419,11 @@ fun PortraitScheduleLayout(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = if (isGoalLockExtended) "Goal Lock Active: ${schedule.name}" else "Schedule Active: ${schedule.name}",
+                    text = if (isGoalLockExtended) {
+                        stringResource(R.string.overlay_goal_lock_active, schedule.name)
+                    } else {
+                        stringResource(R.string.overlay_schedule_active, schedule.name)
+                    },
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -442,7 +448,10 @@ fun PortraitScheduleLayout(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Goal-Locked by: ${linkedGoal?.appName ?: "Unknown Goal"}",
+                            text = stringResource(
+                                R.string.overlay_goal_locked_by,
+                                linkedGoal?.appName ?: stringResource(R.string.overlay_unknown_goal)
+                            ),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
@@ -456,7 +465,7 @@ fun PortraitScheduleLayout(
                     )
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "Goal Progress: ${(goalProgress * 100).toInt()}%",
+                            text = stringResource(R.string.overlay_goal_progress, (goalProgress * 100).toInt()),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -472,7 +481,7 @@ fun PortraitScheduleLayout(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Complete the linked goal to unlock this app.",
+                            text = stringResource(R.string.overlay_complete_linked_goal_to_unlock_app),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -480,8 +489,8 @@ fun PortraitScheduleLayout(
                     }
                 } else {
                     val modeText = if (schedule.mode == ScheduleMode.BLOCK)
-                        "This app is blocked by your schedule."
-                    else "Only selected apps are allowed during this schedule."
+                        stringResource(R.string.overlay_blocked_by_schedule_body)
+                    else stringResource(R.string.overlay_only_selected_allowed)
 
                     Text(
                         text = modeText,
@@ -500,7 +509,7 @@ fun PortraitScheduleLayout(
                 Icon(Icons.Outlined.Timer, null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "${schedule.startTime} - ${schedule.endTime}",
+                    text = stringResource(R.string.overlay_time_range, schedule.startTime, schedule.endTime),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -540,7 +549,7 @@ fun PortraitScheduleLayout(
                 }
             } else {
                 Text(
-                    text = "Emergency Use: Select Duration",
+                    text = stringResource(R.string.overlay_emergency_use_select_duration),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -612,7 +621,7 @@ fun LandscapeScheduleLayout(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "Emergency: ${schedule.emergencyUseCount}",
+                        text = stringResource(R.string.overlay_emergency_count, schedule.emergencyUseCount),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -660,7 +669,11 @@ fun LandscapeScheduleLayout(
                 )
 
                 Text(
-                    text = if (isGoalLockExtended) "Goal Locked: ${schedule.name}" else "Active: ${schedule.name}",
+                    text = if (isGoalLockExtended) {
+                        stringResource(R.string.overlay_goal_locked_schedule, schedule.name)
+                    } else {
+                        stringResource(R.string.overlay_active_schedule, schedule.name)
+                    },
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -673,7 +686,10 @@ fun LandscapeScheduleLayout(
                         Icon(Icons.Outlined.Flag, null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.tertiary)
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Goal-Locked: ${linkedGoal?.appName ?: "Unknown"}",
+                            text = stringResource(
+                                R.string.overlay_goal_locked_by_short,
+                                linkedGoal?.appName ?: stringResource(R.string.overlay_unknown)
+                            ),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.tertiary,
                             fontWeight = FontWeight.Bold
@@ -681,15 +697,15 @@ fun LandscapeScheduleLayout(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Progress: ${(goalProgress * 100).toInt()}%",
+                        text = stringResource(R.string.overlay_progress_percent, (goalProgress * 100).toInt()),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 } else {
                     val modeText = if (schedule.mode == ScheduleMode.BLOCK)
-                        "This app is blocked by your schedule."
-                    else "Only selected apps are allowed during this schedule."
+                        stringResource(R.string.overlay_blocked_by_schedule_body)
+                    else stringResource(R.string.overlay_only_selected_allowed)
 
                     Text(
                         text = modeText,
@@ -705,7 +721,7 @@ fun LandscapeScheduleLayout(
                     Icon(Icons.Outlined.Timer, null, modifier = Modifier.size(16.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "${schedule.startTime} - ${schedule.endTime}",
+                        text = stringResource(R.string.overlay_time_range, schedule.startTime, schedule.endTime),
                         style = MaterialTheme.typography.bodySmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -745,7 +761,7 @@ fun LandscapeScheduleLayout(
                 Spacer(modifier = Modifier.weight(1f))
                 if (isGoalLocked) {
                     Text(
-                        text = "Goal Not Completed",
+                        text = stringResource(R.string.overlay_goal_not_completed),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
@@ -767,7 +783,7 @@ fun LandscapeScheduleLayout(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Complete the linked goal to unlock",
+                        text = stringResource(R.string.overlay_complete_linked_goal_to_unlock),
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -778,7 +794,11 @@ fun LandscapeScheduleLayout(
                     }
                 } else if (!isEmergencyUnlocked) {
                     Text(
-                        text = if (schedule.mode == ScheduleMode.BLOCK) "Blocked by Schedule" else "Not on Allow-list",
+                        text = if (schedule.mode == ScheduleMode.BLOCK) {
+                            stringResource(R.string.overlay_blocked_by_schedule_title)
+                        } else {
+                            stringResource(R.string.overlay_not_on_allow_list)
+                        },
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
@@ -789,7 +809,7 @@ fun LandscapeScheduleLayout(
                     }
                 } else {
                     Text(
-                        text = "Emergency Use: Select Duration",
+                        text = stringResource(R.string.overlay_emergency_use_select_duration),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         textAlign = TextAlign.Center
@@ -834,7 +854,7 @@ private fun ScheduleFullScreenProgress(
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "used today",
+                    text = stringResource(R.string.overlay_used_today),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -849,7 +869,7 @@ private fun ScheduleFullScreenProgress(
         }
 
         Text(
-            text = "${schedule.startTime} - ${schedule.endTime}",
+            text = stringResource(R.string.overlay_time_range, schedule.startTime, schedule.endTime),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.SemiBold
@@ -886,7 +906,7 @@ private fun ScheduleFullScreenProgressMini(
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "used today",
+                    text = stringResource(R.string.overlay_used_today),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -901,7 +921,7 @@ private fun ScheduleFullScreenProgressMini(
         }
 
         Text(
-            text = "${schedule.startTime} - ${schedule.endTime}",
+            text = stringResource(R.string.overlay_time_range, schedule.startTime, schedule.endTime),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.SemiBold

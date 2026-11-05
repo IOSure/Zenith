@@ -102,6 +102,16 @@
 - **Backup & Restore**: Securely save your settings and schedules with automated periodic backups or manual exports.
 - **Expressive Design**: Fully compliant with Material Design 3 Expressive guidelines, featuring fluid motion, adaptive typography (GSFlex), and floating navigation components.
 
+## Languages
+
+Zenith ships with English and Simplified Chinese (简体中文):
+
+- The app follows the system language by default.
+- On Android 13+ the system per-app language picker is available through `res/xml/locales_config.xml`.
+- In the app, go to **Settings → General → Language & region** to switch between **System default**, **English**, and **简体中文** immediately.
+
+Translations live in `app/src/main/res/values/strings.xml` (English source) and `app/src/main/res/values-zh-rCN/strings.xml`. New UI text goes into both files, keeping positional format arguments (`%1$s`, `%2$d`, …) identical.
+
 ## Installation Guide
 
 1. Clone this repository.

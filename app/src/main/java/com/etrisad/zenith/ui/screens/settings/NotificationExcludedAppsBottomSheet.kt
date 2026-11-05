@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -124,13 +126,13 @@ fun NotificationExcludedAppsBottomSheet(
                         .padding(top = 24.dp)
                 ) {
                     Text(
-                        text = "Exclude Notifications",
+                        text = stringResource(R.string.notifications_exclude_notifications_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = "Notifications from selected apps will never be intercepted, silenced, or logged by Zenith during focus sessions or schedules. Saving deletes stored intercepted notifications for newly added apps.",
+                        text = stringResource(R.string.notifications_exclude_notifications_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 12.dp)
@@ -144,12 +146,12 @@ fun NotificationExcludedAppsBottomSheet(
                                 onSearch = { },
                                 expanded = false,
                                 onExpandedChange = {},
-                                placeholder = { Text("Search apps...") },
+                                placeholder = { Text(stringResource(R.string.notifications_search_apps_placeholder)) },
                                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                                 trailingIcon = {
                                     if (searchQuery.isNotEmpty()) {
                                         IconButton(onClick = { searchQuery = "" }) {
-                                            Icon(Icons.Outlined.Close, contentDescription = "Clear search")
+                                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.notifications_clear_search))
                                         }
                                     }
                                 }
@@ -206,7 +208,7 @@ fun NotificationExcludedAppsBottomSheet(
                             if (userApps.isNotEmpty()) {
                                 item(key = "user_apps_header") {
                                     Text(
-                                        "User Apps",
+                                        stringResource(R.string.notifications_user_apps),
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary,
@@ -236,7 +238,7 @@ fun NotificationExcludedAppsBottomSheet(
                             if (preinstalledApps.isNotEmpty()) {
                                 item(key = "preinstalled_apps_header") {
                                     Text(
-                                        "Preinstalled Apps",
+                                        stringResource(R.string.notifications_preinstalled_apps),
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.secondary,
@@ -276,13 +278,13 @@ fun NotificationExcludedAppsBottomSheet(
                                         ListItem(
                                             headlineContent = {
                                                 Text(
-                                                    "System Apps",
+                                                    stringResource(R.string.notifications_system_apps),
                                                     style = MaterialTheme.typography.titleMedium,
                                                     fontWeight = FontWeight.SemiBold
                                                 )
                                             },
                                             supportingContent = {
-                                                Text("${systemApps.size} apps hidden by default")
+                                                Text(stringResource(R.string.notifications_system_apps_hidden, systemApps.size))
                                             },
                                             trailingContent = {
                                                 Icon(
@@ -334,7 +336,7 @@ fun NotificationExcludedAppsBottomSheet(
                     .padding(24.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = "Save notification exclusions")
+                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = stringResource(R.string.notifications_save_exclusions))
             }
         }
     }

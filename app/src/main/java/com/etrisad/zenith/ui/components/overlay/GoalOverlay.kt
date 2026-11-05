@@ -24,11 +24,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.core.graphics.drawable.toBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.ShieldEntity
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.website.WebsiteRepository
@@ -273,7 +275,7 @@ fun PortraitGoalLayout(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "Goal Pursuit",
+                    text = stringResource(R.string.goal_overlay_goal_pursuit),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -287,7 +289,7 @@ fun PortraitGoalLayout(
                 )
 
                 Text(
-                    text = "You're working towards your usage goal.",
+                    text = stringResource(R.string.goal_overlay_goal_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -297,7 +299,7 @@ fun PortraitGoalLayout(
         }
         ZenithButton(
             onClick = onGoalDismiss,
-            text = "Got it, let's continue",
+            text = stringResource(R.string.goal_overlay_got_it),
             icon = Icons.Outlined.CheckCircle,
             fillMaxWidth = true
         )
@@ -386,7 +388,7 @@ fun LandscapeGoalLayout(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Goal Pursuit",
+                    text = stringResource(R.string.goal_overlay_goal_pursuit),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -395,7 +397,7 @@ fun LandscapeGoalLayout(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "You're working towards your usage goal.",
+                    text = stringResource(R.string.goal_overlay_goal_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -479,7 +481,7 @@ private fun GoalProgressHeaderRow(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = if (progress >= 1f) "Goal Achieved" else "${(progress * 100).toInt()}% Done",
+            text = if (progress >= 1f) stringResource(R.string.goal_overlay_goal_achieved) else stringResource(R.string.goal_overlay_percent_done, (progress * 100).toInt()),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -487,7 +489,7 @@ private fun GoalProgressHeaderRow(
         )
         TotalUsagePill(totalGlobalUsageToday, userPrefs)
         Text(
-            text = "Target: ${shield.timeLimitMinutes}m",
+            text = stringResource(R.string.goal_overlay_target_minutes, shield.timeLimitMinutes),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.align(Alignment.CenterEnd)
@@ -534,18 +536,16 @@ private fun GoalResultSection(
 
 @Composable
 private fun GoalAchievedMessage() {
-    val achievedMessages = remember {
-        listOf(
-            "Target reached! Keep the momentum going.",
-            "Goal achieved! You're doing great.",
-            "Mission accomplished! Stay focused.",
-            "Limit reached! Time to level up.",
-            "You made it! Keep up the good work.",
-            "Goal unlocked! Stay productive.",
-            "Outstanding! You've met your target."
-        )
-    }
-    val randomAchievedMessage = remember { achievedMessages.random() }
+    val achievedMessages = listOf(
+        stringResource(R.string.goal_overlay_achieved_msg_1),
+        stringResource(R.string.goal_overlay_achieved_msg_2),
+        stringResource(R.string.goal_overlay_achieved_msg_3),
+        stringResource(R.string.goal_overlay_achieved_msg_4),
+        stringResource(R.string.goal_overlay_achieved_msg_5),
+        stringResource(R.string.goal_overlay_achieved_msg_6),
+        stringResource(R.string.goal_overlay_achieved_msg_7)
+    )
+    val randomAchievedMessage = remember(achievedMessages) { achievedMessages.random() }
 
     Box(
         modifier = Modifier
@@ -587,7 +587,7 @@ private fun GoalEstimatedFinish(remainingMillis: Long) {
     )
     Spacer(modifier = Modifier.height(8.dp))
     Text(
-        text = "Estimated finish",
+        text = stringResource(R.string.goal_overlay_estimated_finish),
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontWeight = FontWeight.Medium
@@ -629,7 +629,7 @@ private fun GoalFullScreenProgress(
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "used today",
+                    text = stringResource(R.string.goal_overlay_used_today),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -644,7 +644,7 @@ private fun GoalFullScreenProgress(
         }
 
         Text(
-            text = "Target: ${shield.timeLimitMinutes}m",
+            text = stringResource(R.string.goal_overlay_target_minutes, shield.timeLimitMinutes),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.SemiBold
@@ -671,7 +671,7 @@ fun GoalProgressMini(shield: ShieldEntity, totalUsageToday: Long, totalGlobalUsa
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = if (progress >= 1f) "Achieved" else "${(progress * 100).toInt()}%",
+                    text = if (progress >= 1f) stringResource(R.string.goal_overlay_achieved) else "${(progress * 100).toInt()}%",
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -679,7 +679,7 @@ fun GoalProgressMini(shield: ShieldEntity, totalUsageToday: Long, totalGlobalUsa
                 )
                 TotalUsagePill(totalGlobalUsageToday, userPrefs)
                 Text(
-                    text = "${shield.timeLimitMinutes}m",
+                    text = stringResource(R.string.misc2_minutes_short, shield.timeLimitMinutes),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.CenterEnd)
@@ -727,7 +727,7 @@ private fun GoalFullScreenProgressMini(
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "used today",
+                    text = stringResource(R.string.goal_overlay_used_today),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -742,7 +742,7 @@ private fun GoalFullScreenProgressMini(
         }
 
         Text(
-            text = "Target: ${shield.timeLimitMinutes}m",
+            text = stringResource(R.string.goal_overlay_target_minutes, shield.timeLimitMinutes),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = FontWeight.SemiBold
@@ -766,14 +766,14 @@ fun GoalLandscapeContent(onGoalDismiss: () -> Unit) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Keep it up!",
+            text = stringResource(R.string.goal_overlay_keep_it_up),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.weight(1f))
         ZenithButton(
             onClick = onGoalDismiss,
-            text = "Continue",
+            text = stringResource(R.string.goal_overlay_continue),
             modifier = Modifier.fillMaxWidth(0.8f)
         )
     }

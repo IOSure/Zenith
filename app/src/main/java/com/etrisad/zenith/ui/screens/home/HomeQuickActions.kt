@@ -1,5 +1,6 @@
 package com.etrisad.zenith.ui.screens.home
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -92,10 +93,12 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.HomeQuickActionsDefaults
 import com.etrisad.zenith.ui.components.ZenithButton
 import com.etrisad.zenith.ui.components.ZenithButtonSize
@@ -106,24 +109,24 @@ import kotlinx.coroutines.launch
 import kotlin.math.pow
 enum class QuickActionType(
     val id: String,
-    val label: String,
+    @StringRes val labelRes: Int,
     val icon: ImageVector,
     val route: String? = null
 ) {
-    ALARM("alarm", "Alarm", Icons.Outlined.Alarm),
-    POMODORO("pomodoro", "Pomodoro", Icons.Outlined.Timer),
-    STATS("stats", "Stats", Icons.Outlined.Insights),
-    BEDTIME("bedtime", "Bedtime", Icons.Outlined.Bedtime),
+    ALARM("alarm", R.string.about_quick_action_alarm, Icons.Outlined.Alarm),
+    POMODORO("pomodoro", R.string.about_quick_action_pomodoro, Icons.Outlined.Timer),
+    STATS("stats", R.string.about_quick_action_stats, Icons.Outlined.Insights),
+    BEDTIME("bedtime", R.string.about_quick_action_bedtime, Icons.Outlined.Bedtime),
     REELS_SHIELD(
-        "reels_shield", "Reels Shield", Icons.Outlined.SwapVert,
+        "reels_shield", R.string.about_quick_action_reels_shield, Icons.Outlined.SwapVert,
         Screen.ReelsShield.route
     ),
-    FOCUS("focus", "Focus", Icons.Outlined.Shield, Screen.Focus.route),
-    SETTINGS("settings", "Settings", Icons.Outlined.Settings, Screen.Settings.route),
-    EYE_CARE("eye_care", "Eye Care", Icons.Outlined.RemoveRedEye, Screen.EyeCare.route),
-    GRACE_PERIOD("grace_period", "Grace Period", Icons.Outlined.FreeBreakfast, Screen.GracePeriod.route),
-    LOCKDOWN("lockdown", "Lockdown", Icons.Outlined.Lock, Screen.Lockdown.route),
-    PAUSE_POINT("pause_point", "Pause Point", Icons.Outlined.PauseCircle, Screen.PausePoint.route);
+    FOCUS("focus", R.string.about_quick_action_focus, Icons.Outlined.Shield, Screen.Focus.route),
+    SETTINGS("settings", R.string.about_quick_action_settings, Icons.Outlined.Settings, Screen.Settings.route),
+    EYE_CARE("eye_care", R.string.about_quick_action_eye_care, Icons.Outlined.RemoveRedEye, Screen.EyeCare.route),
+    GRACE_PERIOD("grace_period", R.string.about_quick_action_grace_period, Icons.Outlined.FreeBreakfast, Screen.GracePeriod.route),
+    LOCKDOWN("lockdown", R.string.about_lockdown, Icons.Outlined.Lock, Screen.Lockdown.route),
+    PAUSE_POINT("pause_point", R.string.about_quick_action_pause_point, Icons.Outlined.PauseCircle, Screen.PausePoint.route);
 
     companion object {
         val ALL: List<QuickActionType> = entries.toList()
@@ -331,15 +334,15 @@ internal fun QuickActionsEditSheet(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Quick Actions",
+                    text = stringResource(R.string.about_quick_actions_title),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = if (full) {
-                        "Row is full · remove a tile before adding another"
+                        stringResource(R.string.about_quick_actions_row_full)
                     } else {
-                        "Hold a tile and drag it onto the row · up to ${HomeQuickActionsDefaults.MAX}"
+                        stringResource(R.string.about_quick_actions_hint, HomeQuickActionsDefaults.MAX)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = if (full) MaterialTheme.colorScheme.primary
@@ -359,7 +362,7 @@ internal fun QuickActionsEditSheet(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Close,
-                    contentDescription = "Close editor",
+                    contentDescription = stringResource(R.string.about_close_editor),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(18.dp)
                 )
@@ -453,7 +456,7 @@ internal fun QuickActionsEditSheet(
 
         if (available.isEmpty()) {
             Text(
-                text = "Every quick action is already on the row.",
+                text = stringResource(R.string.about_quick_actions_all_added),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 20.dp)
@@ -467,7 +470,7 @@ internal fun QuickActionsEditSheet(
             type = ZenithButtonType.Filled,
             size = ZenithButtonSize.Large,
             fillMaxWidth = true,
-            text = "Save"
+            text = stringResource(R.string.about_save)
         )
     }
 }
@@ -555,7 +558,11 @@ internal fun QuickActionDragLayer(
             }
             Spacer(modifier = Modifier.height(6.dp * densityScale))
             Text(
-                text = type?.label ?: "Move",
+                text = if (type != null) {
+                    stringResource(type.labelRes)
+                } else {
+                    stringResource(R.string.about_move)
+                },
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -592,7 +599,7 @@ internal fun HomeCustomizeMenuSheet(
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp)) {
             Text(
-                text = "Customize Home",
+                text = stringResource(R.string.about_customize_home),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp)
@@ -600,14 +607,14 @@ internal fun HomeCustomizeMenuSheet(
             Spacer(modifier = Modifier.height(8.dp))
             HomeCustomizeMenuItem(
                 icon = Icons.Outlined.Tune,
-                title = "Daily Screen Time Target",
-                subtitle = "Change the goal shown on your dashboard",
+                title = stringResource(R.string.about_daily_screen_time_target),
+                subtitle = stringResource(R.string.about_daily_screen_time_target_summary),
                 onClick = { hideThen(onEditTarget) }
             )
             HomeCustomizeMenuItem(
                 icon = Icons.Outlined.SwapVert,
-                title = "Edit Quick Actions",
-                subtitle = "Add, remove or reorder the shortcuts below",
+                title = stringResource(R.string.about_edit_quick_actions),
+                subtitle = stringResource(R.string.about_edit_quick_actions_summary),
                 onClick = { hideThen(onEditQuickActions) }
             )
         }
@@ -728,7 +735,7 @@ internal fun QuickActionCardContent(
     ) {
         bedtimeStatus.timeRemaining
     } else {
-        type.label
+        stringResource(type.labelRes)
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -784,7 +791,7 @@ internal fun QuickActionCardContent(
                 } else {
                     Icon(
                         imageVector = type.icon,
-                        contentDescription = type.label,
+                        contentDescription = stringResource(type.labelRes),
                         modifier = Modifier.size(24.dp * densityScale),
                         tint = ringColor
                     )
@@ -1031,7 +1038,7 @@ internal fun QuickActionsEditRow(
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.Close,
-                                    contentDescription = "Remove quick action",
+                                    contentDescription = stringResource(R.string.about_remove_quick_action),
                                     tint = if (canRemove) MaterialTheme.colorScheme.primary
                                     else MaterialTheme.colorScheme.outline.copy(alpha = 0.45f),
                                     modifier = Modifier.size(14.dp)

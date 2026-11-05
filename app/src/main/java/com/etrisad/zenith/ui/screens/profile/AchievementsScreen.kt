@@ -41,9 +41,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -123,7 +125,10 @@ fun AchievementsScreen(
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "of ${state.achievements.size} badges unlocked",
+                        text = stringResource(
+                            R.string.misc_ach_badges_unlocked,
+                            state.achievements.size
+                        ),
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f)
@@ -152,7 +157,7 @@ fun AchievementsScreen(
 
         item(key = "acc_label") {
             Text(
-                text = "Accumulation - grow over time",
+                text = stringResource(R.string.misc_ach_accumulation_label),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.tertiary,
@@ -248,7 +253,7 @@ private fun AchievementFullRow(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = if (earned) tierDisplayName(achievement.def, achievement.earnedLevel)
-                        else achievement.def.title,
+                        else stringResource(achievement.def.title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = if (earned) MaterialTheme.colorScheme.tertiary
@@ -257,7 +262,7 @@ private fun AchievementFullRow(
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = achievement.def.desc,
+                        text = stringResource(achievement.def.desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 2,
@@ -273,7 +278,7 @@ private fun AchievementFullRow(
                     )
                 } else {
                     Text(
-                        text = "Locked",
+                        text = stringResource(R.string.misc_ach_locked),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )

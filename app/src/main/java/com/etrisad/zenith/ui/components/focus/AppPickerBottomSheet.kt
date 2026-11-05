@@ -20,11 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.background
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.website.WebsiteRepository
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
@@ -73,7 +75,10 @@ fun AppPickerBottomSheet(
                         .padding(horizontal = 16.dp)
                         .padding(top = 24.dp)
                 ) {
-                    val defaultTitle = if (uiState.selectedFocusType == FocusType.GOAL) "Select Productive App" else "Select App to Shield"
+                    val defaultTitle = stringResource(
+                        if (uiState.selectedFocusType == FocusType.GOAL) R.string.focus_select_productive_app
+                        else R.string.focus_select_app_to_shield
+                    )
                     Text(
                         text = title ?: defaultTitle,
                         style = MaterialTheme.typography.titleLarge,
@@ -90,12 +95,12 @@ fun AppPickerBottomSheet(
                         Tab(
                             selected = uiState.pickerTab == PickerTab.APPS,
                             onClick = { onTabChange?.invoke(PickerTab.APPS) },
-                            text = { Text("Apps", fontWeight = FontWeight.Bold) }
+                            text = { Text(stringResource(R.string.focus_tab_apps), fontWeight = FontWeight.Bold) }
                         )
                         Tab(
                             selected = uiState.pickerTab == PickerTab.WEBSITES,
                             onClick = { onTabChange?.invoke(PickerTab.WEBSITES) },
-                            text = { Text("Websites", fontWeight = FontWeight.Bold) }
+                            text = { Text(stringResource(R.string.focus_tab_websites), fontWeight = FontWeight.Bold) }
                         )
                     }
 
@@ -115,12 +120,12 @@ fun AppPickerBottomSheet(
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 shape = RoundedCornerShape(24.dp),
-                                placeholder = { Text("Search apps...") },
+                                placeholder = { Text(stringResource(R.string.focus_search_apps_hint)) },
                                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                                 trailingIcon = {
                                     if (uiState.searchQuery.isNotEmpty()) {
                                         IconButton(onClick = { onSearchQueryChange("") }) {
-                                            Icon(Icons.Outlined.Close, contentDescription = "Clear")
+                                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.focus_clear))
                                         }
                                     }
                                 }
@@ -132,12 +137,12 @@ fun AppPickerBottomSheet(
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 shape = RoundedCornerShape(24.dp),
-                                placeholder = { Text("Enter website URL...") },
+                                placeholder = { Text(stringResource(R.string.focus_enter_website_url)) },
                                 leadingIcon = { Icon(Icons.Outlined.Language, contentDescription = null) },
                                 trailingIcon = {
                                     if (uiState.websiteSearchQuery.isNotEmpty()) {
                                         IconButton(onClick = { onWebsiteSearchChange?.invoke("") }) {
-                                            Icon(Icons.Outlined.Close, contentDescription = "Clear")
+                                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.focus_clear))
                                         }
                                     }
                                 }
@@ -196,7 +201,7 @@ private fun AppsContent(
         ) {
             if (uiState.topApps.isNotEmpty() && uiState.searchQuery.isEmpty()) {
                 item {
-                    PickerSectionHeader(title = "Top Used Apps")
+                    PickerSectionHeader(title = stringResource(R.string.focus_top_used_apps))
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
@@ -235,7 +240,9 @@ private fun AppsContent(
 
             item {
                 PickerSectionHeader(
-                    title = if (uiState.searchQuery.isEmpty()) "All Apps" else "Search Results"
+                    title = stringResource(
+                        if (uiState.searchQuery.isEmpty()) R.string.focus_all_apps else R.string.focus_search_results
+                    )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -255,13 +262,13 @@ private fun AppsContent(
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    text = "No apps found",
+                                    text = stringResource(R.string.focus_no_apps_found),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.outline
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
-                                    text = "Core system apps and apps that bypass restrictions are hidden",
+                                    text = stringResource(R.string.focus_hidden_apps_note),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.outline
                                 )
@@ -330,7 +337,7 @@ private fun WebsitesContent(
         ) {
             if (uiState.websiteSuggestions.isNotEmpty()) {
             item {
-                PickerSectionHeader(title = "Suggestions")
+                PickerSectionHeader(title = stringResource(R.string.focus_suggestions))
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -472,7 +479,7 @@ private fun WebsitesContent(
                             trailingContent = {
                                 Icon(
                                     imageVector = Icons.Outlined.Search,
-                                    contentDescription = "Open",
+                                    contentDescription = stringResource(R.string.focus_open),
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             },
@@ -494,7 +501,7 @@ private fun WebsitesContent(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Type a website domain or URL",
+                                text = stringResource(R.string.focus_type_website_url),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.outline
                             )
@@ -524,13 +531,13 @@ private fun WebsitesContent(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Type a website name to get suggestions",
+                                text = stringResource(R.string.focus_type_website_name),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.outline
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = "e.g. youtube, twitter, notion",
+                                text = stringResource(R.string.focus_website_example),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.outline
                             )

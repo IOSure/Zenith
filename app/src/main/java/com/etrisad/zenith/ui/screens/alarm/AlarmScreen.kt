@@ -25,8 +25,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.onboarding.onboardingAnchor
 import com.etrisad.zenith.data.model.AlarmItem
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
@@ -152,6 +154,7 @@ fun AlarmScreen(
     fun duplicateSelected() {
         val targets = alarmList.filter { it.id in selectedAlarmIds }
         if (targets.isEmpty()) return
+        val copySuffix = context.getString(R.string.alarm2_copy_suffix)
         scope.launch {
             val created = mutableListOf<AlarmItem>()
             targets.forEach { orig ->
@@ -161,7 +164,8 @@ fun AlarmScreen(
                 val newName = if (genericNumber != null) {
                     AlarmItem.nextName(allAlarms + created)
                 } else {
-                    val copyBase = if (baseName.endsWith(" (Copy)")) baseName else "$baseName (Copy)"
+                    val suffixText = " $copySuffix"
+                    val copyBase = if (baseName.endsWith(suffixText)) baseName else "$baseName$suffixText"
                     var candidate = copyBase
                     var suffix = 2
                     val taken = (allAlarms.map { it.name } + created.map { it.name }).toSet()
@@ -226,12 +230,12 @@ fun AlarmScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "No alarms set",
+                                text = stringResource(R.string.alarm_screen_no_alarms),
                                 style = MaterialTheme.typography.titleMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                             Text(
-                                text = "Tap + to add an alarm",
+                                text = stringResource(R.string.alarm_screen_tap_to_add_alarm),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                             )
@@ -253,7 +257,7 @@ fun AlarmScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "Sort by",
+                                text = stringResource(R.string.alarm_screen_sort_by),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
@@ -438,7 +442,7 @@ fun AlarmScreen(
                 ) {
                     Icon(
                         Icons.Filled.Add,
-                        contentDescription = "Add Alarm",
+                        contentDescription = stringResource(R.string.alarm_screen_add_alarm),
                         modifier = Modifier.size(36.dp)
                     )
                 }
@@ -691,7 +695,7 @@ private fun SelectionTopBar(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Close,
-                contentDescription = "Close selection",
+                contentDescription = stringResource(R.string.alarm_screen_close_selection),
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
@@ -699,7 +703,7 @@ private fun SelectionTopBar(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = "$selectedCount selected",
+            text = stringResource(R.string.alarm_screen_selected_count, selectedCount),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(1f)
@@ -713,7 +717,11 @@ private fun SelectionTopBar(
         ) {
             Icon(
                 imageVector = if (selectedCount == totalCount) Icons.Outlined.Deselect else Icons.Outlined.SelectAll,
-                contentDescription = if (selectedCount == totalCount) "Deselect all" else "Select all",
+                contentDescription = if (selectedCount == totalCount) {
+                    stringResource(R.string.alarm_screen_deselect_all)
+                } else {
+                    stringResource(R.string.alarm_screen_select_all)
+                },
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -727,7 +735,7 @@ private fun SelectionTopBar(
         ) {
             Icon(
                 imageVector = Icons.Outlined.ContentCopy,
-                contentDescription = "Duplicate selected",
+                contentDescription = stringResource(R.string.alarm_screen_duplicate_selected),
                 tint = if (selectedCount > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
             )
         }
@@ -741,7 +749,7 @@ private fun SelectionTopBar(
         ) {
             Icon(
                 imageVector = Icons.Outlined.Delete,
-                contentDescription = "Delete selected",
+                contentDescription = stringResource(R.string.alarm_screen_delete_selected),
                 tint = if (selectedCount > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
             )
         }
@@ -881,10 +889,18 @@ private fun AlarmListItem(
                         ) {
                             val hours = timeUntilMillis / (3600 * 1000)
                             val minutes = (timeUntilMillis % (3600 * 1000)) / (60 * 1000)
-                            val countdownText = if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
-                            
+                            val countdownText = if (hours > 0) {
+                                stringResource(
+                                    R.string.alarm_screen_countdown_hours_minutes,
+                                    hours,
+                                    minutes
+                                )
+                            } else {
+                                stringResource(R.string.alarm_screen_countdown_minutes, minutes)
+                            }
+
                             Text(
-                                text = "In $countdownText",
+                                text = countdownText,
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = if (isHighlighted) MaterialTheme.colorScheme.onPrimaryContainer
@@ -946,7 +962,7 @@ private fun AlarmListItem(
                     if (alarm.dismissTaskTypeNames.isNotEmpty() || alarm.mathChallengeEnabled) {
                         Icon(
                             imageVector = Icons.Outlined.Extension,
-                            contentDescription = "Dismiss mission",
+                            contentDescription = stringResource(R.string.alarm_screen_dismiss_mission),
                             modifier = Modifier.size(20.dp),
                             tint = if (isHighlighted) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
                                     else MaterialTheme.colorScheme.onSurfaceVariant

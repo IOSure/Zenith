@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.CalendarEventProvider
 import com.etrisad.zenith.data.CurrentCalendarEvent
 import com.etrisad.zenith.data.local.entity.FocusType
@@ -365,21 +367,19 @@ fun ShieldOverlaySheetContent(
         }
     }
 
-    val motivationalMessages = remember {
-        listOf(
-            "Time for a quick stretch!",
-            "Have you had enough water today?",
-            "Take 3 deep breaths...",
-            "Ready to crush your goals?",
-            "Productivity is a marathon, not a sprint.",
-            "Check your to-do list for a quick win!",
-            "A small step today is a big leap tomorrow.",
-            "Stay focused, stay mindful.",
-            "Remember your homework or tasks!",
-            "Do one small productive thing now.",
-            "Do 15 Pushup"
-        )
-    }
+    val motivationalMessages = listOf(
+        stringResource(R.string.alarm_overlay_msg_stretch),
+        stringResource(R.string.alarm_overlay_msg_water),
+        stringResource(R.string.alarm_overlay_msg_breathe),
+        stringResource(R.string.alarm_overlay_msg_goals),
+        stringResource(R.string.alarm_overlay_msg_marathon),
+        stringResource(R.string.alarm_overlay_msg_todo),
+        stringResource(R.string.alarm_overlay_msg_small_step),
+        stringResource(R.string.alarm_overlay_msg_stay_focused),
+        stringResource(R.string.alarm_overlay_msg_homework),
+        stringResource(R.string.alarm_overlay_msg_one_thing),
+        stringResource(R.string.alarm_overlay_msg_pushups)
+    )
     val randomMessage = remember(isDelaying) {
         if (isDelaying) motivationalMessages.random() else ""
     }
@@ -654,7 +654,7 @@ fun PortraitInterceptLayout(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "Mindful Pause",
+                    text = stringResource(R.string.alarm_overlay_mindful_pause),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -668,7 +668,7 @@ fun PortraitInterceptLayout(
                 )
 
                 Text(
-                    text = if (shield != null) "Zenith Shield is active for this app." else "Mindful Gateway is guarding your focus.",
+                    text = if (shield != null) stringResource(R.string.alarm_overlay_shield_active) else stringResource(R.string.alarm_overlay_gateway_guarding_focus),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -802,9 +802,9 @@ fun LandscapeInterceptLayout(
                         if (isIncentiveBlocked) {
                             val tier = incentiveTier ?: IncentiveTier.LOCKED
                             val displayText = when {
-                                tier == IncentiveTier.LOCKED -> "Locked"
-                                tier.bonusUses < Int.MAX_VALUE -> "$bonusUsesLeft left"
-                                else -> "Unlocked"
+                                tier == IncentiveTier.LOCKED -> stringResource(R.string.alarm_overlay_locked)
+                                tier.bonusUses < Int.MAX_VALUE -> stringResource(R.string.alarm_overlay_bonus_uses_left, bonusUsesLeft)
+                                else -> stringResource(R.string.alarm_overlay_unlocked)
                             }
                             val icon = when {
                                 tier == IncentiveTier.LOCKED -> Icons.Outlined.Lock
@@ -888,7 +888,7 @@ fun LandscapeInterceptLayout(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = "Mindful Pause",
+                    text = stringResource(R.string.alarm_overlay_mindful_pause),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -897,7 +897,7 @@ fun LandscapeInterceptLayout(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = if (shield != null) "Zenith Shield is active for this app." else "Mindful Gateway is guarding your focus.",
+                    text = if (shield != null) stringResource(R.string.alarm_overlay_shield_active) else stringResource(R.string.alarm_overlay_gateway_guarding_focus),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -954,7 +954,6 @@ fun ShieldProgressSection(
     totalGlobalUsageToday: Long,
     userPrefs: UserPreferences
 ) {
-    val periodLabel = if (shield?.limitPeriod == LimitPeriod.WEEKLY) "this week" else "today"
     val totalLimitMillis = shield?.let { it.timeLimitMinutes * 60 * 1000L } ?: 0L
     val remainingMillis = if (totalLimitMillis > 0) (totalLimitMillis - totalUsageToday).coerceAtLeast(0L) else 0L
     val progress = if (totalLimitMillis > 0) remainingMillis.toFloat() / totalLimitMillis else 0f
@@ -982,7 +981,10 @@ fun ShieldProgressSection(
                 TotalUsagePill(totalGlobalUsageToday, userPrefs)
                 if (totalLimitMillis > 0) {
                     Text(
-                        text = "${formatMillis(remainingMillis)} left $periodLabel",
+                        text = if (shield?.limitPeriod == LimitPeriod.WEEKLY)
+                            stringResource(R.string.alarm_overlay_left_this_week, formatMillis(remainingMillis))
+                        else
+                            stringResource(R.string.alarm_overlay_left_today, formatMillis(remainingMillis)),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.CenterEnd)
@@ -1041,7 +1043,7 @@ private fun ShieldFullScreenProgress(
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = if (limitPeriod == LimitPeriod.WEEKLY) "used this week" else "used today",
+                    text = if (limitPeriod == LimitPeriod.WEEKLY) stringResource(R.string.alarm_overlay_used_this_week) else stringResource(R.string.alarm_overlay_used_today),
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -1057,7 +1059,7 @@ private fun ShieldFullScreenProgress(
 
         if (totalLimitMillis > 0) {
             Text(
-                text = "${formatMillis(remainingMillis)} limit left",
+                text = stringResource(R.string.alarm_overlay_limit_left, formatMillis(remainingMillis)),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold
@@ -1097,7 +1099,7 @@ fun ShieldProgressMini(shield: ShieldEntity?, totalUsageToday: Long, totalGlobal
                 TotalUsagePill(totalGlobalUsageToday, userPrefs)
                 if (totalLimitMillis > 0) {
                     Text(
-                        text = "${formatMillis(remainingMillis)} left",
+                        text = stringResource(R.string.alarm_overlay_left, formatMillis(remainingMillis)),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.CenterEnd)
@@ -1150,7 +1152,7 @@ private fun ShieldFullScreenProgressMini(
             )
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = if (limitPeriod == LimitPeriod.WEEKLY) "used this week" else "used today",
+                    text = if (limitPeriod == LimitPeriod.WEEKLY) stringResource(R.string.alarm_overlay_used_this_week) else stringResource(R.string.alarm_overlay_used_today),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -1166,7 +1168,7 @@ private fun ShieldFullScreenProgressMini(
 
         if (totalLimitMillis > 0) {
             Text(
-                text = "${formatMillis(remainingMillis)} limit left",
+                text = stringResource(R.string.alarm_overlay_limit_left, formatMillis(remainingMillis)),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold
@@ -1263,7 +1265,7 @@ fun ShieldLandscapeContent(
             ) {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = if (isEmergencyUnlocked) "Emergency Use: Select Duration" else "How long do you want to use it?",
+                    text = if (isEmergencyUnlocked) stringResource(R.string.alarm_overlay_emergency_select_duration) else stringResource(R.string.alarm_overlay_how_long_to_use),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center
@@ -1336,7 +1338,7 @@ fun LimitReachedContent(
             when {
                 incentiveTier == IncentiveTier.LOCKED -> {
                     Text(
-                        text = "Incentive Lock Active",
+                        text = stringResource(R.string.alarm_overlay_incentive_lock_active),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.error,
                         fontWeight = FontWeight.ExtraBold,
@@ -1344,14 +1346,14 @@ fun LimitReachedContent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Complete all your app goals to unlock!\nCurrently at $percentage% completion.",
+                        text = stringResource(R.string.alarm_overlay_incentive_lock_body, percentage),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Stay focused! You're making great progress.",
+                        text = stringResource(R.string.alarm_overlay_incentive_stay_focused),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -1360,7 +1362,7 @@ fun LimitReachedContent(
                 }
                 incentiveTier.bonusUses < Int.MAX_VALUE && bonusUsesLeft <= 0 -> {
                     Text(
-                        text = "No Bonus Uses Left",
+                        text = stringResource(R.string.alarm_overlay_no_bonus_uses_left),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.error,
                         fontWeight = FontWeight.ExtraBold,
@@ -1368,7 +1370,7 @@ fun LimitReachedContent(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "You used all your bonus uses for today.\nProgress: $percentage%, keep going to unlock more!",
+                        text = stringResource(R.string.alarm_overlay_bonus_uses_used_body, percentage),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -1397,7 +1399,7 @@ fun LimitReachedContent(
         }
 
         Text(
-            text = "Uses limit reached.\nRefresh in $countdownText",
+            text = stringResource(R.string.alarm_overlay_uses_limit_reached, countdownText),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error,
             fontWeight = FontWeight.Bold,
@@ -1405,7 +1407,7 @@ fun LimitReachedContent(
         )
     } else {
         Text(
-            text = if (limitPeriod == LimitPeriod.WEEKLY) "Weekly limit reached.\nCome back next week." else "Daily limit reached.\nCome back tomorrow.",
+            text = if (limitPeriod == LimitPeriod.WEEKLY) stringResource(R.string.alarm_overlay_weekly_limit_reached) else stringResource(R.string.alarm_overlay_daily_limit_reached),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error,
             fontWeight = FontWeight.Bold,
@@ -1430,7 +1432,7 @@ fun IncentiveBonusUseSection(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Goals Progress: $percentage%",
+            text = stringResource(R.string.alarm_overlay_goals_progress, percentage),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -1447,7 +1449,8 @@ fun IncentiveBonusUseSection(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "You have $bonusUsesLeft bonus use${if (bonusUsesLeft != 1) "s" else ""} remaining.",
+            text = if (bonusUsesLeft == 1) stringResource(R.string.alarm_overlay_bonus_use_remaining_one, bonusUsesLeft)
+                   else stringResource(R.string.alarm_overlay_bonus_use_remaining_other, bonusUsesLeft),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -1455,7 +1458,7 @@ fun IncentiveBonusUseSection(
         Spacer(modifier = Modifier.height(16.dp))
         ZenithButton(
             onClick = onConsumeBonusUse,
-            text = "Use with Bonus",
+            text = stringResource(R.string.alarm_overlay_use_with_bonus),
             icon = Icons.Outlined.Bolt,
             type = ZenithButtonType.Filled,
             size = ZenithButtonSize.Medium,
@@ -1505,7 +1508,7 @@ fun DelayInProgressSection(
                 derivedStateOf { kotlin.math.ceil((1f - delayProgressAnimatable.value) * delayDurationSeconds).toInt() }
             }
             Text(
-                text = "${secondsLeft}s",
+                text = stringResource(R.string.alarm_overlay_seconds_short, secondsLeft),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.tertiary
@@ -1521,7 +1524,7 @@ fun DurationSelectionSection(remainingMinutes: Int?, isEmergencyUnlocked: Boolea
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = if (isEmergencyUnlocked) "Emergency Use: Select Duration" else "How long do you want to use it?",
+            text = if (isEmergencyUnlocked) stringResource(R.string.alarm_overlay_emergency_select_duration) else stringResource(R.string.alarm_overlay_how_long_to_use),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold
         )

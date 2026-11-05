@@ -20,12 +20,14 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.data.website.WebsiteRepository
@@ -75,7 +77,7 @@ fun BedtimeOverlayContent(
     }
 
     val bedtimeUiState by produceState(
-        initialValue = Triple(0f, "0m", ""),
+        initialValue = Triple(0f, context.getString(R.string.misc_bedtime_remaining_m, 0), ""),
         key1 = userPreferences
     ) {
         val cal = Calendar.getInstance()
@@ -109,7 +111,11 @@ fun BedtimeOverlayContent(
             val h = remaining / 60
             val m = remaining % 60
             
-            val formattedTime = if (h > 0) "${h}h ${m}m" else "${m}m"
+            val formattedTime = if (h > 0) {
+                context.getString(R.string.misc_bedtime_remaining_hm, h, m)
+            } else {
+                context.getString(R.string.misc_bedtime_remaining_m, m)
+            }
             
             value = Triple(progress, formattedTime, userPreferences.bedtimeEndTime)
             delay(60_000L)
@@ -322,7 +328,7 @@ private fun BedtimeHeader(appName: String, appIcon: androidx.compose.ui.graphics
         }
 
         Text(
-            text = "Bedtime Mode",
+            text = stringResource(R.string.misc_bedtime_mode),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold
@@ -368,7 +374,7 @@ private fun BedtimeProgress(bedtimeUiState: Triple<Float, String, String>, isSma
                 color = MaterialTheme.colorScheme.tertiary
             )
             Text(
-                text = "Until ${bedtimeUiState.third}",
+                text = stringResource(R.string.misc_bedtime_until, bedtimeUiState.third),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -380,7 +386,7 @@ private fun BedtimeProgress(bedtimeUiState: Triple<Float, String, String>, isSma
 @Composable
 private fun BedtimeDescription() {
     Text(
-        text = "Rest is productive too. This app is restricted until your bedtime ends.",
+        text = stringResource(R.string.misc_bedtime_description),
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center,

@@ -30,12 +30,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.toPath
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.data.local.entity.LimitPeriod
 import com.etrisad.zenith.data.local.entity.ShieldEntity
@@ -263,7 +265,7 @@ private fun PuzzleContent(
             ZenithButton(
                 onClick = onCloseApp,
                 modifier = Modifier.fillMaxWidth(),
-                text = "Nevermind",
+                text = stringResource(R.string.pomodoro_block_nevermind),
                 type = ZenithButtonType.Text,
                 contentColor = MaterialTheme.colorScheme.outline
             )
@@ -329,7 +331,7 @@ private fun ShieldAfterContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Mindful Pause",
+            text = stringResource(R.string.pomodoro_block_mindful_pause),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold
@@ -356,7 +358,7 @@ private fun ShieldAfterContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "How long do you want to use it?",
+            text = stringResource(R.string.pomodoro_block_how_long_use),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center
@@ -423,7 +425,7 @@ private fun GoalAfterContent(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Goal Pursuit",
+            text = stringResource(R.string.pomodoro_block_goal_pursuit),
             style = MaterialTheme.typography.labelLarge,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold
@@ -451,7 +453,7 @@ private fun GoalAfterContent(
 
         ZenithButton(
             onClick = onGoalDismiss,
-            text = "Got it, let's continue",
+            text = stringResource(R.string.pomodoro_block_got_it_continue),
             icon = Icons.Outlined.Check,
             fillMaxWidth = true
         )
@@ -475,13 +477,13 @@ private fun BreakStartedContent(onComplete: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            "Break Started",
+            stringResource(R.string.pomodoro_block_break_started),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "Your allowed apps are now accessible.",
+            stringResource(R.string.pomodoro_block_break_started_desc),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -529,13 +531,13 @@ private fun BlockedAfterContent(appName: String, onCloseApp: () -> Unit) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            "Stay Focused",
+            stringResource(R.string.pomodoro_block_stay_focused),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "$appName is blocked during your Pomodoro session.",
+            stringResource(R.string.pomodoro_block_app_blocked_pomodoro, appName),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 16.dp)
@@ -564,9 +566,9 @@ private fun PgPhaseOne(leverCount: Int, onComplete: () -> Unit, onFailure: () ->
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Phase 1: Security Puzzle", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.pomodoro_block_phase1_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Match the sequence", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(stringResource(R.string.pomodoro_block_match_sequence), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(
@@ -582,7 +584,7 @@ private fun PgPhaseOne(leverCount: Int, onComplete: () -> Unit, onFailure: () ->
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
-                            if (isOn) "ON" else "OFF",
+                            if (isOn) stringResource(R.string.pomodoro_block_on) else stringResource(R.string.pomodoro_block_off),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = if (isOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
@@ -695,9 +697,9 @@ private fun PgPhaseTwoHold(durationMillis: Long, onComplete: () -> Unit) {
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Phase 2: Verification", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.pomodoro_block_phase2_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Hold the circle for ${durationMillis / 1000} seconds", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.pomodoro_block_hold_circle_seconds, durationMillis / 1000), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(48.dp))
         Box(
             contentAlignment = Alignment.Center,
@@ -735,9 +737,9 @@ private fun PgPhaseTwoHold(durationMillis: Long, onComplete: () -> Unit) {
 private fun PgPhaseThreeLoading(durationMillis: Long, onComplete: () -> Unit) {
     LaunchedEffect(Unit) { delay(durationMillis); onComplete() }
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Phase 3: Processing", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.pomodoro_block_phase3_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Finalizing permission...", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.pomodoro_block_finalizing_permission), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(48.dp))
         CircularWavyProgressIndicator(modifier = Modifier.size(120.dp), color = MaterialTheme.colorScheme.tertiary, wavelength = 32.dp)
     }

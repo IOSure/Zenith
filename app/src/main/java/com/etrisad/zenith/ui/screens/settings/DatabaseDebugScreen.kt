@@ -28,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ConfirmBottomSheet
 import com.etrisad.zenith.ui.components.UsageHistoryList
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
@@ -88,7 +90,7 @@ fun DatabaseDebugScreen(
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
-                        "Analysing database history...",
+                        stringResource(R.string.usage_history_analysing_database),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -107,13 +109,13 @@ fun DatabaseDebugScreen(
                     modifier = Modifier.padding(24.dp)
                 ) {
                     Text(
-                        "No history data in the database.",
+                        stringResource(R.string.usage_history_no_history_data),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "Usage syncs here once tracking runs.",
+                        stringResource(R.string.usage_history_usage_syncs_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -140,7 +142,7 @@ fun DatabaseDebugScreen(
                     end = 24.dp
                 ),
             icon = { Icon(Icons.Outlined.CleaningServices, contentDescription = null) },
-            text = { Text("Manage Carryover") },
+            text = { Text(stringResource(R.string.usage_history_manage_carryover)) },
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         )
@@ -160,12 +162,12 @@ fun DatabaseDebugScreen(
                         .navigationBarsPadding()
                 ) {
                     Text(
-                        "Hourly Carryover",
+                        stringResource(R.string.usage_history_hourly_carryover),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.ExtraBold
                     )
                     Text(
-                        "These records exist in the hourly breakdown for today. Delete entries that look incorrect.",
+                        stringResource(R.string.usage_history_hourly_carryover_desc),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -177,7 +179,7 @@ fun DatabaseDebugScreen(
                             modifier = Modifier.fillMaxWidth().height(200.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("No hourly records found for today.")
+                            Text(stringResource(R.string.usage_history_no_hourly_records))
                         }
                     } else {
                         LazyColumn(
@@ -227,7 +229,7 @@ fun DatabaseDebugScreen(
                     ) {
                         Icon(Icons.Outlined.Delete, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Reset All Hourly Data")
+                        Text(stringResource(R.string.usage_history_reset_all_hourly))
                     }
                 }
             }
@@ -333,7 +335,11 @@ fun CarryOverItem(
                     contentColor = MaterialTheme.colorScheme.error
                 )
             ) {
-                Icon(Icons.Outlined.Delete, contentDescription = "Delete", modifier = Modifier.size(16.dp))
+                Icon(
+                    Icons.Outlined.Delete,
+                    contentDescription = stringResource(R.string.usage_history_delete),
+                    modifier = Modifier.size(16.dp)
+                )
             }
         }
     }

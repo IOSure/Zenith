@@ -25,8 +25,10 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ConfirmBottomSheet
 import com.etrisad.zenith.ui.screens.bedtime.DaysSelectionCard
 import com.etrisad.zenith.ui.screens.bedtime.TimePickerDialog
@@ -174,13 +176,16 @@ fun GracePeriodScreen(
                             Spacer(modifier = Modifier.width(8.dp))
                             Column {
                                 Text(
-                                    text = "Grace Period settings are locked (one change per week)",
+                                    text = stringResource(R.string.grace_settings_locked_title),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
                                 Text(
-                                    text = "Next change available in ${cooldownText.removeSuffix(" remaining")}. Only editing these settings is paused; all app blocking keeps running exactly as configured.",
+                                    text = stringResource(
+                                        R.string.grace_next_change_available_desc,
+                                        cooldownText.removeSuffix(" remaining")
+                                    ),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSecondaryContainer
                                 )
@@ -209,9 +214,9 @@ fun GracePeriodScreen(
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = if (preferences.gracePeriodEditLockEnabled) {
-                                "While the window is active, shields, schedules, and bedtime will not block any apps (up to 2 hours). With Weekly Edit Lock on, changing the window or days is limited to one change per week. Applying a change starts a 7-day edit lock. The lock only pauses editing of these settings; your app blocking outside the window is never affected."
+                                stringResource(R.string.grace_info_lock_enabled)
                             } else {
-                                "While the window is active, shields, schedules, and bedtime will not block any apps (up to 2 hours). Weekly Edit Lock is off, so these settings can be edited at any time. Turning it on restricts changes to one per week, with a confirmation before each one."
+                                stringResource(R.string.grace_info_lock_disabled)
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -289,10 +294,10 @@ fun GracePeriodScreen(
                 pendingStartTime = null
                 pendingEndTime = null
             },
-            title = { Text("One change per week") },
+            title = { Text(stringResource(R.string.grace_one_change_per_week_title)) },
             text = {
                 Text(
-                    "Grace Period settings can only be edited once per week. Applying this change now locks all Grace Period settings (window and days) for 7 days, so make sure it is exactly what you want."
+                    stringResource(R.string.grace_one_change_per_week_message)
                 )
             },
             confirmButton = {
@@ -305,7 +310,7 @@ fun GracePeriodScreen(
                         pendingStartTime = null
                         pendingEndTime = null
                     }
-                ) { Text("Apply now") }
+                ) { Text(stringResource(R.string.grace_apply_now)) }
             },
             dismissButton = {
                 TextButton(
@@ -314,7 +319,7 @@ fun GracePeriodScreen(
                         pendingStartTime = null
                         pendingEndTime = null
                     }
-                ) { Text("Cancel") }
+                ) { Text(stringResource(R.string.grace_cancel)) }
             }
         )
     }
@@ -359,12 +364,12 @@ fun GracePeriodToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit) {
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Grace Period",
+                    text = stringResource(R.string.grace_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = if (enabled) "All apps are temporarily unblocked" else "Currently disabled",
+                    text = if (enabled) stringResource(R.string.grace_status_active) else stringResource(R.string.grace_status_disabled),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -453,15 +458,15 @@ fun EditLockCard(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Weekly Edit Lock",
+                    text = stringResource(R.string.grace_weekly_edit_lock),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = if (lockEnabled) {
-                        "On: every change freezes these settings for 7 days"
+                        stringResource(R.string.grace_edit_lock_on_desc)
                     } else {
-                        "Off: settings can be edited at any time"
+                        stringResource(R.string.grace_edit_lock_off_desc)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -488,7 +493,11 @@ fun GracePeriodStatusProgress(
         currentTime.isAfter(startTime) || currentTime.isBefore(endTime)
     }
 
-    val (label, remainingText, progressValue) = remember(currentTime, startTime, endTime, isGracePeriod) {
+    val endsInLabel = stringResource(R.string.grace_ends_in)
+    val startsInLabel = stringResource(R.string.grace_starts_in)
+    val label = if (isGracePeriod) endsInLabel else startsInLabel
+
+    val (hours, minutes, progressValue) = remember(currentTime, startTime, endTime, isGracePeriod) {
         if (isGracePeriod) {
             val totalDuration = if (endTime.isAfter(startTime)) {
                 Duration.between(startTime, endTime)
@@ -501,11 +510,9 @@ fun GracePeriodStatusProgress(
                 Duration.between(startTime, LocalTime.MAX).plus(Duration.between(LocalTime.MIDNIGHT, currentTime))
             }
             val remaining = totalDuration.minus(elapsed)
-            val hours = remaining.toHours()
-            val minutes = remaining.toMinutes() % 60
             Triple(
-                "Grace period ends in",
-                if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m",
+                remaining.toHours(),
+                remaining.toMinutes() % 60,
                 (elapsed.toMinutes().toFloat() / totalDuration.toMinutes().toFloat()).coerceIn(0f, 1f)
             )
         } else {
@@ -514,14 +521,18 @@ fun GracePeriodStatusProgress(
             } else {
                 Duration.between(currentTime, LocalTime.MAX).plus(Duration.between(LocalTime.MIDNIGHT, startTime))
             }
-            val hours = timeToStart.toHours()
-            val minutes = timeToStart.toMinutes() % 60
             Triple(
-                "Starts in",
-                if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m",
+                timeToStart.toHours(),
+                timeToStart.toMinutes() % 60,
                 1f - (timeToStart.toMinutes().toFloat() / (24 * 60).toFloat()).coerceIn(0f, 1f)
             )
         }
+    }
+
+    val remainingText = if (hours > 0) {
+        stringResource(R.string.grace_duration_hours_minutes, hours, minutes)
+    } else {
+        stringResource(R.string.grace_duration_minutes, minutes)
     }
 
     val animatedProgress by animateFloatAsState(

@@ -24,6 +24,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -103,6 +104,7 @@ class TotalScreenTimeWidget : GlanceAppWidget() {
         backgroundBitmap: Bitmap
     ) {
         val size = LocalSize.current
+        val context = LocalContext.current
         val squareSize = minOf(size.width, size.height)
         val scaleFactor = squareSize.value / 100f
 
@@ -112,7 +114,11 @@ class TotalScreenTimeWidget : GlanceAppWidget() {
 
         val hours = totalMillis / 3600000
         val minutes = (totalMillis % 3600000) / 60000
-        val timeText = if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+        val timeText = if (hours > 0) {
+            context.getString(R.string.small_duration_hours_minutes, hours, minutes)
+        } else {
+            context.getString(R.string.small_duration_minutes, minutes)
+        }
 
         val mainFontSize = when {
             timeText.length >= 7 -> (16 * scaleFactor).sp
@@ -172,7 +178,7 @@ class TotalScreenTimeWidget : GlanceAppWidget() {
                             )
                         )
                         Text(
-                            text = "TODAY",
+                            text = context.getString(R.string.small_widget_today),
                             style = TextStyle(
                                 fontSize = labelFontSize,
                                 fontWeight = FontWeight.Medium,

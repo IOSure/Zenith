@@ -18,10 +18,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.GSFlexPreset
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.ZenithToggleButtonGroup
@@ -76,14 +78,17 @@ fun GSFlexCustomizerScreen(
                         ), 
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Text("Headline Treatment", style = previewTypography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
-                    Text("Standard body text for optimized reading experience in the Zenith app.", style = previewTypography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 16.dp), textAlign = TextAlign.Center)
+                    Text(stringResource(R.string.focus_headline_treatment), style = previewTypography.headlineMedium, color = MaterialTheme.colorScheme.onSurface)
+                    Text(stringResource(R.string.focus_body_preview_text), style = previewTypography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(horizontal = 16.dp), textAlign = TextAlign.Center)
                 }
             }
 
             Column(modifier = Modifier.padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text("Design System Presets", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                val presetOptions = listOf(GSFlexPreset.ZENITH to "Zenith", GSFlexPreset.NEO to "Neo", GSFlexPreset.COMPACT to "Impact", GSFlexPreset.AIRY to "Airy")
+                Text(stringResource(R.string.focus_design_system_presets), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                val neoPresetLabel = stringResource(R.string.focus_preset_neo)
+                val impactPresetLabel = stringResource(R.string.focus_preset_impact)
+                val airyPresetLabel = stringResource(R.string.focus_preset_airy)
+                val presetOptions = listOf(GSFlexPreset.ZENITH to "Zenith", GSFlexPreset.NEO to neoPresetLabel, GSFlexPreset.COMPACT to impactPresetLabel, GSFlexPreset.AIRY to airyPresetLabel)
                 ZenithToggleButtonGroup(
                     options = presetOptions.map { ZenithToggleOption(text = it.second) },
                     selectedIndices = setOf(presetOptions.indexOfFirst { it.first == lastNonCustomPreset }),
@@ -99,7 +104,7 @@ fun GSFlexCustomizerScreen(
             }
 
             Column(modifier = Modifier.padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text("Customize", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text(stringResource(R.string.focus_customize), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
 
                 Row(
                     modifier = Modifier
@@ -111,8 +116,8 @@ fun GSFlexCustomizerScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Use Custom Variable", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
-                        Text("Override preset with your own fine-tuned axes", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.focus_use_custom_variable), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.focus_use_custom_variable_desc), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Switch(
                         checked = tempSettings.preset == GSFlexPreset.CUSTOM,
@@ -186,19 +191,19 @@ fun GSFlexCustomizerScreen(
                     ) {
                         Icon(Icons.Outlined.ContentCopy, null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("Copy from Current Preset")
+                        Text(stringResource(R.string.focus_copy_current_preset))
                     }
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Outlined.SettingsSuggest, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("Fine-tune Axes per Level", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.focus_fine_tune_axes), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                     }
 
                     PrimaryTabRow(selectedTabIndex = selectedLevelTab, containerColor = MaterialTheme.colorScheme.surfaceContainerLow, modifier = Modifier.clip(RoundedCornerShape(16.dp))) {
-                        Tab(selected = selectedLevelTab == 0, onClick = { selectedLevelTab = 0 }, text = { Text("Display") })
-                        Tab(selected = selectedLevelTab == 1, onClick = { selectedLevelTab = 1 }, text = { Text("Headline") })
-                        Tab(selected = selectedLevelTab == 2, onClick = { selectedLevelTab = 2 }, text = { Text("Body") })
+                        Tab(selected = selectedLevelTab == 0, onClick = { selectedLevelTab = 0 }, text = { Text(stringResource(R.string.focus_level_display)) })
+                        Tab(selected = selectedLevelTab == 1, onClick = { selectedLevelTab = 1 }, text = { Text(stringResource(R.string.focus_level_headline)) })
+                        Tab(selected = selectedLevelTab == 2, onClick = { selectedLevelTab = 2 }, text = { Text(stringResource(R.string.focus_level_body)) })
                     }
                     
                     val currentAxes = when(selectedLevelTab) { 0 -> tempSettings.display; 1 -> tempSettings.headline; else -> tempSettings.body }
@@ -212,12 +217,12 @@ fun GSFlexCustomizerScreen(
                     }
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        VariableSlider("Weight", currentAxes.weight, 100f..1000f) { updateAxes(currentAxes.copy(weight = it)) }
-                        VariableSlider("Width", currentAxes.width, 25f..150f) { updateAxes(currentAxes.copy(width = it)) }
-                        VariableSlider("Optical Size", currentAxes.opsz, 6f..72f) { updateAxes(currentAxes.copy(opsz = it)) }
-                        VariableSlider("Grade", currentAxes.grade, -200f..200f) { updateAxes(currentAxes.copy(grade = it)) }
-                        VariableSlider("Slant", currentAxes.slant, -10f..0f) { updateAxes(currentAxes.copy(slant = it)) }
-                        VariableSlider("Roundness", currentAxes.roundness, 0f..100f) { updateAxes(currentAxes.copy(roundness = it)) }
+                        VariableSlider(stringResource(R.string.focus_axis_weight), currentAxes.weight, 100f..1000f) { updateAxes(currentAxes.copy(weight = it)) }
+                        VariableSlider(stringResource(R.string.focus_axis_width), currentAxes.width, 25f..150f) { updateAxes(currentAxes.copy(width = it)) }
+                        VariableSlider(stringResource(R.string.focus_axis_optical_size), currentAxes.opsz, 6f..72f) { updateAxes(currentAxes.copy(opsz = it)) }
+                        VariableSlider(stringResource(R.string.focus_axis_grade), currentAxes.grade, -200f..200f) { updateAxes(currentAxes.copy(grade = it)) }
+                        VariableSlider(stringResource(R.string.focus_axis_slant), currentAxes.slant, -10f..0f) { updateAxes(currentAxes.copy(slant = it)) }
+                        VariableSlider(stringResource(R.string.focus_axis_roundness), currentAxes.roundness, 0f..100f) { updateAxes(currentAxes.copy(roundness = it)) }
                     }
                 }
             }
@@ -233,7 +238,7 @@ fun GSFlexCustomizerScreen(
                     end = 24.dp
                 ),
             icon = { Icon(Icons.Outlined.Check, null) },
-            text = { Text("Apply Settings") },
+            text = { Text(stringResource(R.string.focus_apply_settings)) },
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
         )

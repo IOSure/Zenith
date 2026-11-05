@@ -23,8 +23,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
 import com.etrisad.zenith.ui.screens.settings.WhitelistAppInfo
 import kotlinx.coroutines.Dispatchers
@@ -128,13 +130,13 @@ fun AllowedBedAppsBottomSheet(
                         .padding(top = 24.dp)
                 ) {
                     Text(
-                        text = "Allowed Bedtime Apps",
+                        text = stringResource(R.string.notifications_allowed_bedtime_apps),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
                     Text(
-                        text = "Select apps that stay accessible during bedtime. Apps that already bypass restrictions are excluded.",
+                        text = stringResource(R.string.notifications_allowed_bedtime_apps_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 12.dp)
@@ -148,12 +150,12 @@ fun AllowedBedAppsBottomSheet(
                                 onSearch = { },
                                 expanded = false,
                                 onExpandedChange = {},
-                                placeholder = { Text("Search apps...") },
+                                placeholder = { Text(stringResource(R.string.notifications_search_apps_placeholder)) },
                                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                                 trailingIcon = {
                                     if (searchQuery.isNotEmpty()) {
                                         IconButton(onClick = { searchQuery = "" }) {
-                                            Icon(Icons.Outlined.Close, contentDescription = "Clear search")
+                                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.notifications_clear_search))
                                         }
                                     }
                                 }
@@ -243,7 +245,7 @@ fun AllowedBedAppsBottomSheet(
                     .padding(24.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = "Save selection")
+                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = stringResource(R.string.notifications_save_selection))
             }
         }
     }
@@ -289,7 +291,7 @@ fun AllowedAppItem(
                     Text(app.packageName, style = MaterialTheme.typography.bodySmall)
                     if (app.isPreinstalledApp) {
                         Text(
-                            text = "Preinstalled",
+                            text = stringResource(R.string.notifications_preinstalled_badge),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.secondary
                         )

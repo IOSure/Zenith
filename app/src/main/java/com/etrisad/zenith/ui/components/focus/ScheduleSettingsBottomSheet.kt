@@ -23,11 +23,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.ScheduleEntity
 import com.etrisad.zenith.data.local.entity.ScheduleMode
 import com.etrisad.zenith.ui.components.ZenithButton
@@ -50,6 +52,7 @@ fun ScheduleSettingsBottomSheet(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val context = LocalContext.current
+    val defaultScheduleName = stringResource(R.string.focus_default_schedule_name)
 
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -60,7 +63,7 @@ fun ScheduleSettingsBottomSheet(
         label = "containerColor"
     )
 
-    var name by remember { mutableStateOf(editingSchedule?.name ?: "My Schedule") }
+    var name by remember { mutableStateOf(editingSchedule?.name ?: defaultScheduleName) }
     var mode by remember { mutableStateOf(editingSchedule?.mode ?: ScheduleMode.BLOCK) }
     var maxEmergencyUses by remember { mutableStateOf(editingSchedule?.maxEmergencyUses?.toString() ?: "3") }
     var interceptNotifications by remember { mutableStateOf(editingSchedule?.interceptNotifications ?: false) }
@@ -164,7 +167,7 @@ fun ScheduleSettingsBottomSheet(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Schedule Settings",
+                            text = stringResource(R.string.focus_schedule_settings),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.fillMaxWidth(),
@@ -190,7 +193,7 @@ fun ScheduleSettingsBottomSheet(
                             val isBlock = mode == ScheduleMode.BLOCK
                             ZenithButtonWeighted(
                                 onClick = { mode = ScheduleMode.BLOCK },
-                                text = "Block",
+                                text = stringResource(R.string.focus_mode_block),
                                 type = if (isBlock) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                                 selected = isBlock,
                                 size = ZenithButtonSize.Medium,
@@ -202,7 +205,7 @@ fun ScheduleSettingsBottomSheet(
                             )
                             ZenithButtonWeighted(
                                 onClick = { mode = ScheduleMode.ALLOW },
-                                text = "Allow",
+                                text = stringResource(R.string.focus_mode_allow),
                                 type = if (!isBlock) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                                 selected = !isBlock,
                                 size = ZenithButtonSize.Medium,
@@ -231,7 +234,7 @@ fun ScheduleSettingsBottomSheet(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Start Time",
+                                        text = stringResource(R.string.focus_start_time),
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -263,7 +266,7 @@ fun ScheduleSettingsBottomSheet(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "End Time",
+                                        text = stringResource(R.string.focus_end_time),
                                         style = MaterialTheme.typography.labelLarge,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -287,7 +290,7 @@ fun ScheduleSettingsBottomSheet(
 
                         Spacer(modifier = Modifier.height(4.dp))
 
-                        val dayNames = listOf("S", "M", "T", "W", "T", "F", "S")
+                        val dayNames = stringResource(R.string.focus_day_letters).split(",")
                         ZenithGroupedButton(size = ZenithButtonSize.Small) {
                             dayNames.forEachIndexed { index, dayLabel ->
                                 val dayNum = index + 1
@@ -319,7 +322,7 @@ fun ScheduleSettingsBottomSheet(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        PreferenceCategory(title = "Limits")
+                        PreferenceCategory(title = stringResource(R.string.focus_limits))
 
                         CardGroup(shape = RoundedCornerShape(28.dp), containerColor = containerColor) {
                             Row(
@@ -344,12 +347,15 @@ fun ScheduleSettingsBottomSheet(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Emergency Uses",
+                                        text = stringResource(R.string.focus_emergency_uses),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = if (mode == ScheduleMode.ALLOW) "Uses for restricted apps" else "Uses for blocked apps",
+                                        text = stringResource(
+                                            if (mode == ScheduleMode.ALLOW) R.string.focus_uses_restricted_apps
+                                            else R.string.focus_uses_blocked_apps
+                                        ),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -378,19 +384,19 @@ fun ScheduleSettingsBottomSheet(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        PreferenceCategory(title = "Settings")
+                        PreferenceCategory(title = stringResource(R.string.focus_settings_section))
 
                         CardGroup(
                             shape = topShape,
                             containerColor = containerColor
                         ) {
                             SettingsToggle(
-                                title = "Intercept Notifications",
-                                description = "Hold notifications until schedule ends",
+                                title = stringResource(R.string.focus_intercept_notifications),
+                                description = stringResource(R.string.focus_intercept_notifications_desc),
                                 checked = if (mode == ScheduleMode.BLOCK) interceptNotifications else false,
                                 onCheckedChange = { 
                                     if (it && !com.etrisad.zenith.util.isNotificationListenerEnabled(context)) {
-                                        android.widget.Toast.makeText(context, "Please grant Notification Access in settings", android.widget.Toast.LENGTH_LONG).show()
+                                        android.widget.Toast.makeText(context, context.getString(R.string.focus_grant_notification_access), android.widget.Toast.LENGTH_LONG).show()
                                         context.startActivity(android.content.Intent(android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).apply {
                                             addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
                                         })
@@ -406,7 +412,7 @@ fun ScheduleSettingsBottomSheet(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        PreferenceCategory(title = "Goal Unlock")
+                        PreferenceCategory(title = stringResource(R.string.focus_goal_unlock))
 
                         CardGroup(shape = RoundedCornerShape(28.dp), containerColor = containerColor) {
                             Row(
@@ -431,12 +437,12 @@ fun ScheduleSettingsBottomSheet(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Link a Goal",
+                                        text = stringResource(R.string.focus_link_goal),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Apps stay blocked until the goal is completed, even after the window ends",
+                                        text = stringResource(R.string.focus_link_goal_desc),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -444,13 +450,16 @@ fun ScheduleSettingsBottomSheet(
                                 val goals = uiState.activeGoals
                                 if (goals.isEmpty()) {
                                     Text(
-                                        text = "No goals",
+                                        text = stringResource(R.string.focus_no_goals),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 } else {
-                                    val goalOptions = listOf("None" to "") +
-                                            goals.map { "${it.appName} (${it.timeLimitMinutes}min)" to it.packageName }
+                                    val noneLabel = stringResource(R.string.focus_none)
+                                    val goalOptions = listOf(noneLabel to "") +
+                                            goals.map {
+                                                context.getString(R.string.focus_goal_option_minutes, it.appName, it.timeLimitMinutes) to it.packageName
+                                            }
                                     ZenithDropdown(
                                         options = goalOptions,
                                         selectedOption = linkedGoalPackageName,
@@ -510,7 +519,9 @@ fun ScheduleSettingsBottomSheet(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    text = if (editingSchedule != null) "Update Schedule" else "Save Schedule",
+                    text = stringResource(
+                        if (editingSchedule != null) R.string.focus_update_schedule else R.string.focus_save_schedule
+                    ),
                     enabled = uiState.selectedAppsForSchedule.isNotEmpty()
                 )
             }

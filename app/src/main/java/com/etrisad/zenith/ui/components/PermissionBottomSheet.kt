@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import com.etrisad.zenith.ui.screens.settings.PrivacyInfoBottomSheet
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.nfc.isNfcEnabled
@@ -270,12 +272,12 @@ fun PermissionBottomSheet(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Permissions Required",
+                text = stringResource(R.string.permission_permissions_required),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Zenith needs these permissions to function properly and help you stay focused.",
+                text = stringResource(R.string.permission_permissions_required_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -291,15 +293,15 @@ fun PermissionBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "Privacy & Data Guarantees",
+                    text = stringResource(R.string.permission_privacy_data_guarantees),
                     style = MaterialTheme.typography.labelLarge
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
 
             PermissionItemRow(
-                title = "Notifications",
-                description = "For Goal Reminders and status",
+                title = stringResource(R.string.permission_notifications_title),
+                description = stringResource(R.string.permission_notifications_description),
                 isGranted = hasNotifications,
                 onClick = {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -319,8 +321,8 @@ fun PermissionBottomSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             PermissionItemRow(
-                title = "Usage Stats",
-                description = "To track app usage time",
+                title = stringResource(R.string.permission_usage_stats_title),
+                description = stringResource(R.string.permission_usage_stats_description),
                 isGranted = hasUsageStats,
                 onClick = {
                     val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
@@ -335,8 +337,8 @@ fun PermissionBottomSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             PermissionItemRow(
-                title = "Notification Policy",
-                description = "Required for Bedtime DND",
+                title = stringResource(R.string.permission_notification_policy_title),
+                description = stringResource(R.string.permission_notification_policy_description),
                 isGranted = hasNotificationPolicy,
                 onClick = {
                     val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
@@ -351,8 +353,8 @@ fun PermissionBottomSheet(
             Spacer(modifier = Modifier.height(4.dp))
 
             PermissionItemRow(
-                title = "System Overlay",
-                description = if (isAndroidGo(context)) "Required to show shields. May require ADB on some Go devices." else "To show the shield over apps",
+                title = stringResource(R.string.permission_system_overlay_title),
+                description = if (isAndroidGo(context)) stringResource(R.string.permission_system_overlay_go_description) else stringResource(R.string.permission_system_overlay_description),
                 isGranted = hasOverlay,
                 onClick = {
                     val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
@@ -368,8 +370,8 @@ fun PermissionBottomSheet(
             if (preferences.accessibilityRequired) {
                 Spacer(modifier = Modifier.height(4.dp))
                 PermissionItemRow(
-                    title = "Accessibility Service",
-                    description = "To detect app launches instantly",
+                    title = stringResource(R.string.permission_accessibility_title),
+                    description = stringResource(R.string.permission_accessibility_description),
                     isGranted = hasAccessibility,
                     onClick = {
                         if (!preferences.bankingWarningDismissed) {
@@ -387,7 +389,7 @@ fun PermissionBottomSheet(
             Spacer(modifier = Modifier.height(16.dp))
 
             CollapsibleSection(
-                title = "Optional Service",
+                title = stringResource(R.string.permission_optional_service_title),
                 icon = Icons.Outlined.AccessibilityNew,
                 expanded = optionalExpanded,
                 onToggle = { optionalExpanded = !optionalExpanded },
@@ -396,8 +398,8 @@ fun PermissionBottomSheet(
                 Column {
                     if (!preferences.accessibilityRequired) {
                         PermissionItemRow(
-                            title = "Accessibility Service",
-                            description = "To detect app launches instantly",
+                            title = stringResource(R.string.permission_accessibility_title),
+                            description = stringResource(R.string.permission_accessibility_description),
                             isGranted = hasAccessibility,
                             onClick = {
                                 if (!preferences.bankingWarningDismissed) {
@@ -414,8 +416,8 @@ fun PermissionBottomSheet(
                         Spacer(modifier = Modifier.height(4.dp))
                     }
                     PermissionItemRow(
-                        title = "Intercept Service",
-                        description = "Optional: pause notifications during focus or schedules",
+                        title = stringResource(R.string.permission_intercept_title),
+                        description = stringResource(R.string.permission_intercept_description),
                         isGranted = hasNotificationListener,
                         onClick = {
                             if (!preferences.interceptWarningDismissed) {
@@ -434,8 +436,8 @@ fun PermissionBottomSheet(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     PermissionItemRow(
-                        title = "Calendar Access",
-                        description = "Show current calendar event during app delay",
+                        title = stringResource(R.string.permission_calendar_title),
+                        description = stringResource(R.string.permission_calendar_description),
                         isGranted = hasCalendar,
                         onClick = { openCalendarPermission() },
                         icon = Icons.Outlined.CalendarMonth,
@@ -444,11 +446,11 @@ fun PermissionBottomSheet(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     PermissionItemRow(
-                        title = "Camera",
+                        title = stringResource(R.string.permission_camera_title),
                         description = if (cameraPermanentlyDenied)
-                            "Denied. Open Settings to enable for QR scan tasks"
+                            stringResource(R.string.permission_camera_denied_description)
                         else
-                            "Only needed for QR scan tasks",
+                            stringResource(R.string.permission_camera_description),
                         isGranted = hasCamera,
                         onClick = { openCameraPermission() },
                         icon = Icons.Outlined.QrCodeScanner,
@@ -457,11 +459,11 @@ fun PermissionBottomSheet(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     PermissionItemRow(
-                        title = "NFC",
+                        title = stringResource(R.string.permission_nfc_title),
                         description = when {
-                            !hasNfcSupport -> "Not supported on this device"
-                            hasNfcEnabled -> "Ready for NFC tag scan tasks"
-                            else -> "Turn on NFC for tag scan tasks"
+                            !hasNfcSupport -> stringResource(R.string.permission_nfc_not_supported)
+                            hasNfcEnabled -> stringResource(R.string.permission_nfc_ready)
+                            else -> stringResource(R.string.permission_nfc_disabled)
                         },
                         isGranted = !hasNfcSupport || hasNfcEnabled,
                         onClick = { if (hasNfcSupport) openNfcSettings(context) },
@@ -474,7 +476,7 @@ fun PermissionBottomSheet(
             Spacer(modifier = Modifier.height(16.dp))
 
             CollapsibleSection(
-                title = "App Stability",
+                title = stringResource(R.string.permission_app_stability_title),
                 icon = Icons.Outlined.AutoGraph,
                 expanded = stabilityExpanded,
                 onToggle = { stabilityExpanded = !stabilityExpanded },
@@ -482,8 +484,8 @@ fun PermissionBottomSheet(
             ) {
                 Column {
                     PermissionItemRow(
-                        title = "Battery Optimization",
-                        description = "Prevent system from killing Zenith",
+                        title = stringResource(R.string.permission_battery_optimization_title),
+                        description = stringResource(R.string.permission_battery_optimization_description),
                         isGranted = !isBatteryOptimized,
                         icon = Icons.Outlined.BatteryStd,
                         onClick = {
@@ -505,8 +507,8 @@ fun PermissionBottomSheet(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     PermissionItemRow(
-                        title = "Exact Alarms",
-                        description = "Required for precise reset tasks",
+                        title = stringResource(R.string.permission_exact_alarms_title),
+                        description = stringResource(R.string.permission_exact_alarms_description),
                         isGranted = canExactAlarm,
                         icon = Icons.Outlined.Alarm,
                         onClick = {
@@ -555,7 +557,11 @@ fun PermissionBottomSheet(
             ) {
                 if (!allGranted) {
                     Text(
-                        text = "$missingRequiredCount required permission${if (missingRequiredCount == 1) "" else "s"} still missing.",
+                        text = if (missingRequiredCount == 1) {
+                            stringResource(R.string.permission_missing_required_singular, missingRequiredCount)
+                        } else {
+                            stringResource(R.string.permission_missing_required_plural, missingRequiredCount)
+                        },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -576,7 +582,7 @@ fun PermissionBottomSheet(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    text = if (allGranted) "Everything is Ready!" else "Close for now",
+                    text = if (allGranted) stringResource(R.string.permission_all_ready) else stringResource(R.string.permission_close_for_now),
                     type = if (allGranted) ZenithButtonType.Filled else ZenithButtonType.Outlined,
                     fillMaxWidth = true
                 )
@@ -807,7 +813,7 @@ private fun PermissionItemRow(
                 if (isGranted) {
                     Icon(
                         Icons.Outlined.CheckCircle,
-                        "Granted",
+                        stringResource(R.string.permission_granted),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
@@ -819,7 +825,7 @@ private fun PermissionItemRow(
                         ) {
                             Icon(
                                 Icons.Outlined.Info,
-                                contentDescription = "Info",
+                                contentDescription = stringResource(R.string.permission_info),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -831,7 +837,7 @@ private fun PermissionItemRow(
                         shape = CircleShape
                     ) {
                         Text(
-                            text = "Grant",
+                            text = stringResource(R.string.permission_grant),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold,

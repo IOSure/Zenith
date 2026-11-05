@@ -47,6 +47,8 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.res.stringResource
+import com.etrisad.zenith.R
 
 
 
@@ -113,11 +115,11 @@ fun GoalSettingsBottomSheet(
     }
 
     val goalReminderOptions = listOf(
-        "Every 1 Hour" to 60,
-        "Every 2 Hours" to 120,
-        "Every 4 Hours" to 240,
-        "Every 8 Hours" to 480,
-        "Once a Day" to 1440
+        stringResource(R.string.usage_stats2_every_1_hour) to 60,
+        stringResource(R.string.usage_stats2_every_2_hours) to 120,
+        stringResource(R.string.usage_stats2_every_4_hours) to 240,
+        stringResource(R.string.usage_stats2_every_8_hours) to 480,
+        stringResource(R.string.usage_stats2_once_a_day) to 1440
     )
 
     ModalBottomSheet(
@@ -181,12 +183,15 @@ fun GoalSettingsBottomSheet(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Goal Settings",
+                            text = stringResource(R.string.usage_stats2_goal_settings),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Today: ${formatRemainingTime(usageToday)}",
+                            text = stringResource(
+                                R.string.usage_stats2_today_remaining,
+                                formatRemainingTime(usageToday)
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
@@ -211,7 +216,7 @@ fun GoalSettingsBottomSheet(
                             val isDaily = selectedPeriod == LimitPeriod.DAILY
                             ZenithButtonWeighted(
                                 onClick = { selectedPeriod = LimitPeriod.DAILY },
-                                text = "Daily",
+                                text = stringResource(R.string.usage_stats2_daily),
                                 type = if (isDaily) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                                 selected = isDaily,
                                 size = ZenithButtonSize.Medium,
@@ -223,7 +228,7 @@ fun GoalSettingsBottomSheet(
                             )
                             ZenithButtonWeighted(
                                 onClick = { selectedPeriod = LimitPeriod.WEEKLY },
-                                text = "Weekly",
+                                text = stringResource(R.string.usage_stats2_weekly),
                                 type = if (!isDaily) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                                 selected = !isDaily,
                                 size = ZenithButtonSize.Medium,
@@ -251,7 +256,7 @@ fun GoalSettingsBottomSheet(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Hours",
+                                        text = stringResource(R.string.usage_stats2_hours),
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -287,7 +292,7 @@ fun GoalSettingsBottomSheet(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Minutes",
+                                        text = stringResource(R.string.usage_stats2_minutes),
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -335,7 +340,11 @@ fun GoalSettingsBottomSheet(
                                         hourText = (preset / 60).toString()
                                         minuteText = (preset % 60).toString()
                                     },
-                                    text = if (preset >= 60) "${preset / 60}h" else "${preset}m",
+                                    text = if (preset >= 60) {
+                                        stringResource(R.string.usage_stats2_preset_hours, preset / 60)
+                                    } else {
+                                        stringResource(R.string.usage_stats2_preset_minutes, preset)
+                                    },
                                     type = if (isPresetSelected) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                                     size = ZenithButtonSize.Small,
                                     selected = isPresetSelected,
@@ -349,7 +358,7 @@ fun GoalSettingsBottomSheet(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                PreferenceCategory(title = "Nudges")
+                PreferenceCategory(title = stringResource(R.string.usage_stats2_nudges))
 
                 CardGroup(shape = RoundedCornerShape(28.dp), containerColor = containerColor) {
                     Row(
@@ -374,12 +383,12 @@ fun GoalSettingsBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Remind of Goal",
+                                text = stringResource(R.string.usage_stats2_remind_of_goal),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Daily target nudges",
+                                text = stringResource(R.string.usage_stats2_daily_target_nudges),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -395,12 +404,12 @@ fun GoalSettingsBottomSheet(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                PreferenceCategory(title = "Settings")
+                PreferenceCategory(title = stringResource(R.string.usage_stats2_settings))
 
                 CardGroup(shape = topShape, containerColor = containerColor) {
                     SettingsToggle(
-                        title = "Goal Reminders",
-                        description = "Receive notifications to reach your daily target",
+                        title = stringResource(R.string.usage_stats2_goal_reminders),
+                        description = stringResource(R.string.usage_stats2_goal_reminders_desc),
                         checked = remindersEnabled,
                         onCheckedChange = { remindersEnabled = it },
                         icon = Icons.Outlined.NotificationsActive,
@@ -412,8 +421,8 @@ fun GoalSettingsBottomSheet(
 
                 CardGroup(shape = middleShape, containerColor = containerColor) {
                     SettingsToggle(
-                        title = "Floating HUD",
-                        description = "Show remaining time pill when app is open",
+                        title = stringResource(R.string.usage_stats2_floating_hud),
+                        description = stringResource(R.string.usage_stats2_floating_hud_desc),
                         checked = isHUDEnabled,
                         onCheckedChange = { isHUDEnabled = it },
                         icon = Icons.Outlined.Timer,
@@ -428,8 +437,8 @@ fun GoalSettingsBottomSheet(
                     containerColor = containerColor
                 ) {
                     SettingsToggle(
-                        title = "Goal Caller Overlay",
-                        description = "Wake device with a dialer-like UI for this app",
+                        title = stringResource(R.string.usage_stats2_goal_caller_overlay),
+                        description = stringResource(R.string.usage_stats2_goal_caller_overlay_desc),
                         checked = isGoalCallerEnabled,
                         onCheckedChange = { isGoalCallerEnabled = it },
                         icon = Icons.Outlined.PhoneInTalk,
@@ -455,7 +464,7 @@ fun GoalSettingsBottomSheet(
                                     .padding(16.dp)
                             ) {
                                 Text(
-                                    text = "Caller Configuration",
+                                    text = stringResource(R.string.usage_stats2_caller_configuration),
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
@@ -473,7 +482,7 @@ fun GoalSettingsBottomSheet(
                                     )
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Text(
-                                        text = "Enable Sound",
+                                        text = stringResource(R.string.usage_stats2_enable_sound),
                                         style = MaterialTheme.typography.bodyLarge,
                                         modifier = Modifier.weight(1f)
                                     )
@@ -537,12 +546,13 @@ fun GoalSettingsBottomSheet(
                                         Spacer(modifier = Modifier.height(16.dp))
                                         
                                         Text(
-                                            text = "Sound Source",
+                                            text = stringResource(R.string.usage_stats2_sound_source),
                                             style = MaterialTheme.typography.bodyLarge,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Spacer(modifier = Modifier.height(12.dp))
                                         
+                                        val selectSystemSoundTitle = stringResource(R.string.usage_stats2_select_system_sound)
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -553,19 +563,19 @@ fun GoalSettingsBottomSheet(
                                             val isFile = goalCallerSoundUri != null && goalCallerSoundUri?.startsWith("content://media") == false
 
                                             GroupedOptionButton(
-                                                label = "Default",
+                                                label = stringResource(R.string.usage_stats2_sound_default),
                                                 selected = isDefault,
                                                 onClick = { goalCallerSoundUri = null },
                                                 isFirst = true,
                                                 isLast = false
                                             )
                                             GroupedOptionButton(
-                                                label = "System",
+                                                label = stringResource(R.string.usage_stats2_sound_system),
                                                 selected = isSystem,
                                                 onClick = {
                                                     val intent = android.content.Intent(android.media.RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                                                         putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TYPE, android.media.RingtoneManager.TYPE_ALL)
-                                                        putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TITLE, "Select System Sound")
+                                                        putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TITLE, selectSystemSoundTitle)
                                                         putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, goalCallerSoundUri?.toUri())
                                                         putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
                                                         putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
@@ -576,7 +586,7 @@ fun GoalSettingsBottomSheet(
                                                 isLast = false
                                             )
                                             GroupedOptionButton(
-                                                label = "File",
+                                                label = stringResource(R.string.usage_stats2_sound_file),
                                                 selected = isFile,
                                                 onClick = { filePickerLauncher.launch(arrayOf("audio/*")) },
                                                 isFirst = false,
@@ -587,7 +597,7 @@ fun GoalSettingsBottomSheet(
                                         if (goalCallerSoundUri != null) {
                                             Spacer(modifier = Modifier.height(8.dp))
                                             Text(
-                                                text = "Custom sound selected",
+                                                text = stringResource(R.string.usage_stats2_custom_sound_selected),
                                                 style = MaterialTheme.typography.labelSmall,
                                                 color = MaterialTheme.colorScheme.primary
                                             )
@@ -645,7 +655,7 @@ fun GoalSettingsBottomSheet(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Set Goal"
+                    text = stringResource(R.string.usage_stats2_set_goal)
                 )
             }
         }

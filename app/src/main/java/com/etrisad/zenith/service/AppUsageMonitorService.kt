@@ -258,7 +258,7 @@ class AppUsageMonitorService : Service() {
                         System.currentTimeMillis() + 10 * 60 * 1000L,
                         pendingIntent
                     )
-                    Toast.makeText(this, "Test goal caller in 10 min", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.debug_aums_test_goal_caller_scheduled), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                 }
             }
@@ -665,8 +665,8 @@ class AppUsageMonitorService : Service() {
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Time for ${goal.appName}?")
-            .setContentText("Your goal setting suggests it's time to open ${goal.appName} and make some progress!")
+            .setContentTitle(getString(R.string.debug_aums_goal_time_title, goal.appName))
+            .setContentText(getString(R.string.debug_aums_goal_time_text, goal.appName))
             .setSmallIcon(R.drawable.ic_flag)
             .setLargeIcon(iconBitmap)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -689,9 +689,9 @@ class AppUsageMonitorService : Service() {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 if (manager.getNotificationChannel(channelId) == null) {
                     val channel = NotificationChannel(
-                        channelId, "Goal Caller", NotificationManager.IMPORTANCE_HIGH
+                        channelId, getString(R.string.debug_aums_goal_caller_channel), NotificationManager.IMPORTANCE_HIGH
                     ).apply {
-                        description = "Full-screen goal caller alerts"
+                        description = getString(R.string.debug_aums_goal_caller_channel_desc)
                     }
                     manager.createNotificationChannel(channel)
                 }
@@ -711,8 +711,8 @@ class AppUsageMonitorService : Service() {
             )
 
             val builder = NotificationCompat.Builder(this, channelId)
-                .setContentTitle("Time for ${firstGoal.appName}?")
-                .setContentText("Your goal setting suggests it's time to open ${firstGoal.appName} and make some progress!")
+                .setContentTitle(getString(R.string.debug_aums_goal_time_title, firstGoal.appName))
+                .setContentText(getString(R.string.debug_aums_goal_time_text, firstGoal.appName))
                 .setSmallIcon(R.drawable.ic_flag)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_CALL)
@@ -772,9 +772,9 @@ class AppUsageMonitorService : Service() {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 if (manager.getNotificationChannel(channelId) == null) {
                     val channel = NotificationChannel(
-                        channelId, "Goal Caller", NotificationManager.IMPORTANCE_HIGH
+                        channelId, getString(R.string.debug_aums_goal_caller_channel), NotificationManager.IMPORTANCE_HIGH
                     ).apply {
-                        description = "Full-screen goal caller alerts"
+                        description = getString(R.string.debug_aums_goal_caller_channel_desc)
                     }
                     manager.createNotificationChannel(channel)
                 }
@@ -798,8 +798,8 @@ class AppUsageMonitorService : Service() {
         )
 
         val builder = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Test: Time for $testAppName?")
-            .setContentText("[TEST] Your goal setting suggests it's time to open $testAppName and make some progress!")
+            .setContentTitle(getString(R.string.debug_aums_test_goal_caller_title, testAppName))
+            .setContentText(getString(R.string.debug_aums_test_goal_caller_text, testAppName))
             .setSmallIcon(R.drawable.ic_flag)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_CALL)
@@ -857,9 +857,9 @@ class AppUsageMonitorService : Service() {
             val manager = getSystemService(NotificationManager::class.java)
             if (manager.getNotificationChannel(channelId) == null) {
                 val channel = NotificationChannel(
-                    channelId, "Goal Reminders", NotificationManager.IMPORTANCE_DEFAULT
+                    channelId, getString(R.string.debug_aums_goal_channel), NotificationManager.IMPORTANCE_DEFAULT
                 ).apply {
-                    description = "Notifies you when you reach your app usage goals"
+                    description = getString(R.string.debug_aums_goal_channel_desc)
                 }
                 manager.createNotificationChannel(channel)
             }
@@ -1437,7 +1437,7 @@ class AppUsageMonitorService : Service() {
             allowedApps.remove(target)
             withContext(Dispatchers.Main) {
                 sessionUsageOverlayManager.hideHUD(target)
-                Toast.makeText(this@AppUsageMonitorService, "Early Kick: 5 minutes remaining", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@AppUsageMonitorService, getString(R.string.debug_aums_early_kick_toast), Toast.LENGTH_LONG).show()
             }
             goToHomeScreen()
             lastForegroundApp = currentApp
@@ -1885,8 +1885,8 @@ class AppUsageMonitorService : Service() {
         val manager = getSystemService(NotificationManager::class.java)
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Goal Achieved!")
-            .setContentText("You've reached your target usage for $appName. Keep it up!")
+            .setContentTitle(getString(R.string.debug_aums_goal_achieved_title))
+            .setContentText(getString(R.string.debug_aums_goal_achieved_text, appName))
             .setSmallIcon(R.drawable.ic_flag)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
@@ -1900,9 +1900,9 @@ class AppUsageMonitorService : Service() {
             val manager = getSystemService(NotificationManager::class.java)
             if (manager.getNotificationChannel(BEDTIME_CHANNEL_ID) == null) {
                 val channel = NotificationChannel(
-                    BEDTIME_CHANNEL_ID, "Bedtime & Wind Down", NotificationManager.IMPORTANCE_DEFAULT
+                    BEDTIME_CHANNEL_ID, getString(R.string.debug_aums_bedtime_channel), NotificationManager.IMPORTANCE_DEFAULT
                 ).apply {
-                    description = "Notifications for bedtime and wind down mode"
+                    description = getString(R.string.debug_aums_bedtime_channel_desc)
                 }
                 manager.createNotificationChannel(channel)
             }
@@ -1918,8 +1918,8 @@ class AppUsageMonitorService : Service() {
         )
 
         val notification = NotificationCompat.Builder(this, BEDTIME_CHANNEL_ID)
-            .setContentTitle("Time for Wind Down")
-            .setContentText("Bedtime is in 30 minutes. Prepare and get ready for bed.")
+            .setContentTitle(getString(R.string.debug_aums_wind_down_title))
+            .setContentText(getString(R.string.debug_aums_wind_down_text))
             .setSmallIcon(R.drawable.ic_fire_department_outlined)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
@@ -1935,8 +1935,8 @@ class AppUsageMonitorService : Service() {
         val manager = getSystemService(NotificationManager::class.java)
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Test Notification âœ…")
-            .setContentText("Notifications are working correctly!")
+            .setContentTitle(getString(R.string.debug_aums_test_notification_title))
+            .setContentText(getString(R.string.debug_aums_test_notification_text))
             .setSmallIcon(R.drawable.ic_check)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
@@ -2547,7 +2547,7 @@ class AppUsageMonitorService : Service() {
     private fun createMonitorNotificationChannel() {
         val channelId = "zenith_monitor_channel"
         val channel = NotificationChannel(
-            channelId, "Zenith Monitor Service", NotificationManager.IMPORTANCE_LOW
+            channelId, getString(R.string.debug_aums_monitor_channel), NotificationManager.IMPORTANCE_LOW
         ).apply { setShowBadge(false) }
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
@@ -2556,7 +2556,7 @@ class AppUsageMonitorService : Service() {
     private fun createNotification(statusText: String? = null): Notification {
         val channelId = "zenith_monitor_channel"
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Zenith is active")
+            .setContentTitle(getString(R.string.debug_aums_monitor_notification_title))
             .setContentText(statusText ?: createNotificationStatusText())
             .setSmallIcon(R.drawable.ic_zenith)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -2595,7 +2595,7 @@ class AppUsageMonitorService : Service() {
         false
     }
     private fun startForegroundSafely(): Boolean {
-        val notification = createNotification("Protecting your focus...")
+        val notification = createNotification(getString(R.string.debug_aums_monitor_status_starting))
         val prefs = SharedMonitoringState.currentPreferences
         val wantCamera = cameraTypeActive || (prefs != null && canAddCameraType(prefs))
         if (tryStartForeground(notification, wantCamera)) {

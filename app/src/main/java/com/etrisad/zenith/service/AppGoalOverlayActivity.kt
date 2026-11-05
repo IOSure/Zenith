@@ -28,6 +28,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AppGoalOverlayActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(com.etrisad.zenith.util.AppLanguage.wrap(newBase))
+    }
 
     private val activePackageNames = mutableStateListOf<String>()
     private var mediaPlayer: MediaPlayer? = null

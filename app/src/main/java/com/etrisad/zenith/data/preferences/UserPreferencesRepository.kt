@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import androidx.annotation.StringRes
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
@@ -17,6 +18,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.data.local.entity.LimitPeriod
 import com.etrisad.zenith.data.model.AlarmItem
@@ -102,13 +104,13 @@ enum class GSFlexPreset {
     ZENITH, NEO, COMPACT, AIRY, CUSTOM
 }
 
-enum class PerformanceLevel(val labelRes: String, val descriptionRes: String) {
-    MAX_RESPONSIVENESS("Max Responsiveness", "Maximum speed for gaming and time-sensitive moments."),
-    RESPONSIVE("Responsive", "A snappier experience than the default profile."),
-    BALANCED("Balanced", "Tuned for everyday use."),
-    BATTERY_SAVER("Battery Saver", "Gentler on battery with reduced background checks."),
-    MAX_BATTERY("Max Battery", "Maximum battery savings with minimal background activity."),
-    CUSTOM("Custom", "Your personalized configuration.")
+enum class PerformanceLevel(@StringRes val labelRes: Int, @StringRes val descriptionRes: Int) {
+    MAX_RESPONSIVENESS(R.string.perf_profile_max_responsiveness, R.string.perf_profile_max_responsiveness_desc),
+    RESPONSIVE(R.string.perf_profile_responsive, R.string.perf_profile_responsive_desc),
+    BALANCED(R.string.perf_profile_balanced, R.string.perf_profile_balanced_desc),
+    BATTERY_SAVER(R.string.perf_profile_battery_saver, R.string.perf_profile_battery_saver_desc),
+    MAX_BATTERY(R.string.perf_profile_max_battery, R.string.perf_profile_max_battery_desc),
+    CUSTOM(R.string.perf_profile_custom, R.string.perf_profile_custom_desc)
 }
 
 fun PerformanceLevel.isPreset() = this != PerformanceLevel.CUSTOM

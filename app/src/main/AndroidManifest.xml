@@ -33,6 +33,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Zenith"
@@ -205,7 +206,7 @@
 
         <receiver
             android:name=".ui.widget.GlobalStreakWidgetReceiver"
-            android:label="Global Streak"
+            android:label="@string/widget_global_streak_label"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -218,7 +219,7 @@
 
         <receiver
             android:name=".ui.widget.AppStreakWidgetReceiver"
-            android:label="App Streak"
+            android:label="@string/widget_app_streak_label"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -231,7 +232,7 @@
 
         <receiver
             android:name=".ui.widget.TotalScreenTimeWidgetReceiver"
-            android:label="Total Screen Time"
+            android:label="@string/widget_total_screen_time_label"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -244,7 +245,7 @@
 
         <receiver
             android:name=".ui.widget.RemainingTargetWidgetReceiver"
-            android:label="Remaining Target"
+            android:label="@string/widget_remaining_target_label"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -257,7 +258,7 @@
 
         <receiver
             android:name=".ui.widget.PhoneFreeTimeWidgetReceiver"
-            android:label="Phone Free Time"
+            android:label="@string/widget_phone_free_time_label"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

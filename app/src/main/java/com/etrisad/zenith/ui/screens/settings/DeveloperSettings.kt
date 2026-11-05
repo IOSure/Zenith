@@ -21,12 +21,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.data.local.entity.ShieldEntity
 import com.etrisad.zenith.data.preferences.UserPreferences
@@ -85,16 +87,16 @@ fun DeveloperSettings(
     var showTtsTestSheet by remember { mutableStateOf(false) }
     var triggerComposeCrash by remember { mutableStateOf(false) }
     if (triggerComposeCrash) {
-        throw IllegalStateException("Zenith test crash (composition)")
+        throw IllegalStateException(stringResource(R.string.tail_test_crash_composition))
     }
 
     if (preferences.developerModeEnabled) {
         Column {
-            PreferenceCategory(title = "Database Editor")
+            PreferenceCategory(title = stringResource(R.string.developer_category_database_editor))
 
             SettingsActionItem(
-                title = "Edit App Streak",
-                summary = "Manually override current streak for any shielded app",
+                title = stringResource(R.string.developer_edit_app_streak_title),
+                summary = stringResource(R.string.developer_edit_app_streak_summary),
                 onClick = { showAppPickerForStreak = true },
                 icon = Icons.AutoMirrored.Outlined.TrendingUp,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
@@ -102,8 +104,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Edit Global Screen Time",
-                summary = "Override total screen time for today",
+                title = stringResource(R.string.developer_edit_global_screen_time_title),
+                summary = stringResource(R.string.developer_edit_global_screen_time_summary),
                 onClick = { showGlobalUsageDialog = true },
                 icon = Icons.Outlined.Public,
                 shape = RoundedCornerShape(8.dp)
@@ -111,8 +113,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Edit App Screen Time",
-                summary = "Override today's usage for a specific app",
+                title = stringResource(R.string.developer_edit_app_screen_time_title),
+                summary = stringResource(R.string.developer_edit_app_screen_time_summary),
                 onClick = { showAppPickerForUsage = true },
                 icon = Icons.Outlined.Smartphone,
                 shape = RoundedCornerShape(8.dp)
@@ -120,8 +122,12 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Edit Profile Level",
-                summary = "Level ${levelForXp(preferences.userXpTotal)} (${preferences.userXpTotal} XP) - jump to any level; XP achievements stay frozen at pre-debug value",
+                title = stringResource(R.string.developer_edit_profile_level_title),
+                summary = stringResource(
+                    R.string.developer_edit_profile_level_summary,
+                    levelForXp(preferences.userXpTotal),
+                    preferences.userXpTotal
+                ),
                 onClick = { showProfileLevelDialog = true },
                 icon = Icons.Outlined.EmojiEvents,
                 shape = if (preferences.userXpDebugBase >= 0L) RoundedCornerShape(8.dp)
@@ -130,8 +136,8 @@ fun DeveloperSettings(
             if (preferences.userXpDebugBase >= 0L) {
                 Spacer(modifier = Modifier.height(4.dp))
                 SettingsActionItem(
-                    title = "Reset XP Debug Override",
-                    summary = "Restore pre-debug XP (${preferences.userXpDebugBase} XP) and drop the override",
+                    title = stringResource(R.string.developer_reset_xp_debug_title),
+                    summary = stringResource(R.string.developer_reset_xp_debug_summary, preferences.userXpDebugBase),
                     onClick = onResetXpDebug,
                     icon = Icons.Outlined.RestartAlt,
                     shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
@@ -139,11 +145,11 @@ fun DeveloperSettings(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-            PreferenceCategory(title = "Database & Data")
+            PreferenceCategory(title = stringResource(R.string.developer_category_database_data))
 
             SettingsToggle(
-                title = "Database Source Indicator",
-                description = "Show indicator for database records in usage graphs",
+                title = stringResource(R.string.developer_database_source_indicator_title),
+                description = stringResource(R.string.developer_database_source_indicator_summary),
                 checked = preferences.showDatabaseIndicator,
                 onCheckedChange = onShowDatabaseIndicatorChange,
                 icon = Icons.Outlined.Storage,
@@ -152,8 +158,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsToggle(
-                title = "Smart Repair on Refresh",
-                description = "Enable resetCarryover() when pulling to refresh on dashboard",
+                title = stringResource(R.string.developer_smart_repair_on_refresh_title),
+                description = stringResource(R.string.developer_smart_repair_on_refresh_summary),
                 checked = preferences.smartRepairOnRefresh,
                 onCheckedChange = onSmartRepairOnRefreshChange,
                 icon = Icons.Outlined.AutoFixHigh,
@@ -162,8 +168,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Database Records",
-                summary = "View and manage all recorded usage data",
+                title = stringResource(R.string.developer_database_records_title),
+                summary = stringResource(R.string.developer_database_records_summary),
                 onClick = onNavigateToDatabaseDebug,
                 icon = Icons.Outlined.SdStorage,
                 shape = RoundedCornerShape(8.dp)
@@ -171,8 +177,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "View System Usage Fetch",
-                summary = "View 1:1 usage history duplication from system only",
+                title = stringResource(R.string.developer_view_system_usage_fetch_title),
+                summary = stringResource(R.string.developer_view_system_usage_fetch_summary),
                 onClick = onNavigateToSystemUsageDebug,
                 icon = Icons.Outlined.Analytics,
                 shape = RoundedCornerShape(8.dp)
@@ -180,19 +186,19 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Data Repairment",
-                summary = "Fix missing or incorrect usage history",
+                title = stringResource(R.string.developer_data_repairment_title),
+                summary = stringResource(R.string.developer_data_repairment_summary),
                 onClick = onNavigateToDataRepairment,
                 icon = Icons.Outlined.Build,
                 shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            PreferenceCategory(title = "Logs")
+            PreferenceCategory(title = stringResource(R.string.developer_category_logs))
 
             SettingsActionItem(
-                title = "DB Log Viewer",
-                summary = "View database and goal/shield operation logs in real-time",
+                title = stringResource(R.string.developer_db_log_viewer_title),
+                summary = stringResource(R.string.developer_db_log_viewer_summary),
                 onClick = onShowDbLogViewer,
                 icon = Icons.Outlined.BugReport,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
@@ -200,19 +206,19 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Overlay Log Viewer",
-                summary = "View overlay show/hide lifecycle and detection logs in real-time",
+                title = stringResource(R.string.developer_overlay_log_viewer_title),
+                summary = stringResource(R.string.developer_overlay_log_viewer_summary),
                 onClick = onShowOverlayLogViewer,
                 icon = Icons.Outlined.Visibility,
                 shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            PreferenceCategory(title = "Onboarding Triggers")
+            PreferenceCategory(title = stringResource(R.string.developer_category_onboarding_triggers))
 
             SettingsActionItem(
-                title = "Trigger Permission Sheet",
-                summary = "Open the initial permission onboarding sheet",
+                title = stringResource(R.string.developer_trigger_permission_sheet_title),
+                summary = stringResource(R.string.developer_trigger_permission_sheet_summary),
                 onClick = onTriggerOnboardingPermissions,
                 icon = Icons.Outlined.AdminPanelSettings,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
@@ -220,8 +226,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Reset & Trigger Stats Onboarding",
-                summary = "Reset flag and show statistic experience choice",
+                title = stringResource(R.string.developer_trigger_stats_onboarding_title),
+                summary = stringResource(R.string.developer_trigger_stats_onboarding_summary),
                 onClick = onTriggerOnboardingStats,
                 icon = Icons.Outlined.BarChart,
                 shape = RoundedCornerShape(8.dp)
@@ -230,8 +236,8 @@ fun DeveloperSettings(
             if (com.etrisad.zenith.BuildConfig.SHOW_UPDATES) {
                 Spacer(modifier = Modifier.height(4.dp))
                 SettingsActionItem(
-                    title = "Reset & Trigger Update Onboarding",
-                    summary = "Reset flag and show update preference choice",
+                    title = stringResource(R.string.developer_trigger_update_onboarding_title),
+                    summary = stringResource(R.string.developer_trigger_update_onboarding_summary),
                     onClick = onTriggerOnboardingUpdate,
                     icon = Icons.Outlined.Update,
                     shape = RoundedCornerShape(8.dp)
@@ -240,8 +246,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Reset Guided Path",
-                summary = "Clear chapter progress, badges and the guide version",
+                title = stringResource(R.string.developer_reset_guided_path_title),
+                summary = stringResource(R.string.developer_reset_guided_path_summary),
                 onClick = onResetOnboardingGuide,
                 icon = Icons.Outlined.Explore,
                 shape = RoundedCornerShape(8.dp)
@@ -249,8 +255,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Reset Bedtime Streak",
-                summary = "Reset current and best bedtime streaks to 0",
+                title = stringResource(R.string.developer_reset_bedtime_streak_title),
+                summary = stringResource(R.string.developer_reset_bedtime_streak_summary),
                 onClick = onResetBedtimeStreak,
                 icon = Icons.Outlined.Bedtime,
                 shape = RoundedCornerShape(8.dp)
@@ -258,19 +264,19 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Run Streak Recovery",
-                summary = "Manually verify and restore streaks from system history",
+                title = stringResource(R.string.developer_run_streak_recovery_title),
+                summary = stringResource(R.string.developer_run_streak_recovery_summary),
                 onClick = onResetStreakRecovery,
                 icon = Icons.Outlined.RestartAlt,
                 shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            PreferenceCategory(title = "UI & Functional Testing")
+            PreferenceCategory(title = stringResource(R.string.developer_category_ui_testing))
 
             SettingsActionItem(
-                title = "Test Goal Overlay",
-                summary = "Immediately trigger the full screen caller overlay",
+                title = stringResource(R.string.developer_test_goal_overlay_title),
+                summary = stringResource(R.string.developer_test_goal_overlay_summary),
                 onClick = onTestGoalOverlay,
                 icon = Icons.Outlined.BugReport,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
@@ -278,8 +284,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test Goal Caller (10 min)",
-                summary = "Schedule a test goal caller alarm to fire after 10 minutes (tests screen-off behavior)",
+                title = stringResource(R.string.developer_test_goal_caller_title),
+                summary = stringResource(R.string.developer_test_goal_caller_summary),
                 onClick = onTestGoalCallerDelayed,
                 icon = Icons.Outlined.Alarm,
                 shape = RoundedCornerShape(8.dp)
@@ -287,8 +293,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test Usage Glimpse",
-                summary = "Show the 5-minute usage glimpse HUD immediately",
+                title = stringResource(R.string.developer_test_usage_glimpse_title),
+                summary = stringResource(R.string.developer_test_usage_glimpse_summary),
                 onClick = onTestUsageGlimpse,
                 icon = Icons.Outlined.Visibility,
                 shape = RoundedCornerShape(8.dp)
@@ -296,8 +302,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test Achievement Banner",
-                summary = "Queue a fake unlock and open Profile to see the in-app notification",
+                title = stringResource(R.string.developer_test_achievement_banner_title),
+                summary = stringResource(R.string.developer_test_achievement_banner_summary),
                 onClick = onTestAchievementBanner,
                 icon = Icons.Outlined.EmojiEvents,
                 shape = RoundedCornerShape(8.dp)
@@ -306,8 +312,8 @@ fun DeveloperSettings(
             if (com.etrisad.zenith.BuildConfig.SHOW_UPDATES) {
                 Spacer(modifier = Modifier.height(4.dp))
                 SettingsActionItem(
-                    title = "Test Update Sheet",
-                    summary = "Immediately trigger the new update bottom sheet",
+                    title = stringResource(R.string.developer_test_update_sheet_title),
+                    summary = stringResource(R.string.developer_test_update_sheet_summary),
                     onClick = onTestUpdateSheet,
                     icon = Icons.Outlined.NewReleases,
                     shape = RoundedCornerShape(8.dp)
@@ -316,8 +322,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test Variable Font",
-                summary = "Demo variable axes with Google Sans Flex",
+                title = stringResource(R.string.developer_test_variable_font_title),
+                summary = stringResource(R.string.developer_test_variable_font_summary),
                 onClick = onNavigateToFontTest,
                 icon = Icons.Outlined.FontDownload,
                 shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
@@ -325,8 +331,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test Bottom Sheet Expand",
-                summary = "Interactive test for InterceptBottomSheet expand behavior",
+                title = stringResource(R.string.developer_test_bottom_sheet_expand_title),
+                summary = stringResource(R.string.developer_test_bottom_sheet_expand_summary),
                 onClick = { showBottomSheetTest = true },
                 icon = Icons.Outlined.OpenInFull,
                 shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
@@ -334,8 +340,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test TTS",
-                summary = "Test Text-to-Speech engine with custom text",
+                title = stringResource(R.string.developer_test_tts_title),
+                summary = stringResource(R.string.developer_test_tts_summary),
                 onClick = { showTtsTestSheet = true },
                 icon = Icons.AutoMirrored.Outlined.VolumeUp,
                 shape = RoundedCornerShape(8.dp)
@@ -345,8 +351,8 @@ fun DeveloperSettings(
             var showTestAlarmDialog by remember { mutableStateOf(false) }
 
             SettingsActionItem(
-                title = "Test Alarm Overlay",
-                summary = "Immediately trigger the alarm full screen overlay",
+                title = stringResource(R.string.developer_test_alarm_overlay_title),
+                summary = stringResource(R.string.developer_test_alarm_overlay_summary),
                 onClick = { showTestAlarmDialog = true },
                 icon = Icons.Outlined.Alarm,
                 shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
@@ -366,23 +372,23 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            PreferenceCategory(title = "Crash & Safety")
+            PreferenceCategory(title = stringResource(R.string.developer_category_crash_safety))
 
             val crashContext = LocalContext.current
             SettingsActionItem(
-                title = "Test Crash (Main Thread)",
-                summary = "Throw an uncaught exception on the UI thread and open the crash screen",
-                onClick = { throw RuntimeException("Zenith test crash (main thread)") },
+                title = stringResource(R.string.developer_test_crash_main_thread_title),
+                summary = stringResource(R.string.developer_test_crash_main_thread_summary),
+                onClick = { throw RuntimeException(crashContext.getString(R.string.tail_test_crash_main_thread)) },
                 icon = Icons.Outlined.BugReport,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
             )
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test Crash (Background Thread)",
-                summary = "Throw an uncaught exception on a worker thread and open the crash screen",
+                title = stringResource(R.string.developer_test_crash_background_thread_title),
+                summary = stringResource(R.string.developer_test_crash_background_thread_summary),
                 onClick = {
-                    Thread { throw RuntimeException("Zenith test crash (background thread)") }.start()
+                    Thread { throw RuntimeException(crashContext.getString(R.string.tail_test_crash_background_thread)) }.start()
                 },
                 icon = Icons.Outlined.BugReport,
                 shape = RoundedCornerShape(8.dp)
@@ -390,15 +396,15 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test Crash (Background, 5s)",
-                summary = "Crashes 5 seconds after you leave the app; verifies the background notification fallback",
+                title = stringResource(R.string.developer_test_crash_delayed_title),
+                summary = stringResource(R.string.developer_test_crash_delayed_summary),
                 onClick = {
                     Thread {
                         try {
                             Thread.sleep(5000)
                         } catch (_: InterruptedException) {
                         }
-                        throw RuntimeException("Zenith test crash (delayed background)")
+                        throw RuntimeException(crashContext.getString(R.string.tail_test_crash_delayed_background))
                     }.start()
                 },
                 icon = Icons.Outlined.BugReport,
@@ -407,8 +413,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Test Crash (Composition)",
-                summary = "Throw while this screen recomposes and open the crash screen",
+                title = stringResource(R.string.developer_test_crash_composition_title),
+                summary = stringResource(R.string.developer_test_crash_composition_summary),
                 onClick = { triggerComposeCrash = true },
                 icon = Icons.Outlined.Warning,
                 shape = RoundedCornerShape(8.dp)
@@ -416,11 +422,11 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Open Last Crash Report",
+                title = stringResource(R.string.developer_open_last_crash_report_title),
                 summary = if (com.etrisad.zenith.crash.CrashStore.hasAnyCrash(crashContext)) {
-                    "View the most recent crash caught by Zenith"
+                    stringResource(R.string.developer_open_last_crash_report_summary_found)
                 } else {
-                    "No crash has been caught yet"
+                    stringResource(R.string.developer_open_last_crash_report_summary_empty)
                 },
                 onClick = {
                     crashContext.startActivity(
@@ -436,8 +442,8 @@ fun DeveloperSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsActionItem(
-                title = "Restart in Safe Mode",
-                summary = "Bootstrap without loading user data; useful when the app keeps crashing",
+                title = stringResource(R.string.developer_restart_safe_mode_title),
+                summary = stringResource(R.string.developer_restart_safe_mode_summary),
                 onClick = {
                     com.etrisad.zenith.crash.SafeMode.setEnabled(crashContext, true)
                     com.etrisad.zenith.crash.SafeMode.restartApp(crashContext)
@@ -491,13 +497,13 @@ fun DeveloperSettings(
                             )
 
                             Text(
-                                text = "Content B, Shield",
+                                text = stringResource(R.string.developer_test_content_b_title),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
 
                             Text(
-                                text = "This demonstrates content transition.\nTap the button below to toggle.",
+                                text = stringResource(R.string.developer_test_content_b_description),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -510,13 +516,13 @@ fun DeveloperSettings(
                             )
 
                             Text(
-                                text = "Content A, Pause Point",
+                                text = stringResource(R.string.developer_test_content_a_title),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
 
                             Text(
-                                text = "Slide to adjust height.\nBottom stays fixed, top expands.",
+                                text = stringResource(R.string.developer_test_content_a_description),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -525,7 +531,7 @@ fun DeveloperSettings(
                         Spacer(modifier = Modifier.weight(1f))
 
                         Text(
-                            text = "Height: ${(30 + bottomSheetExpandValue * 60).toInt()}% of screen",
+                            text = stringResource(R.string.developer_test_height_label, (30 + bottomSheetExpandValue * 60).toInt()),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -549,7 +555,8 @@ fun DeveloperSettings(
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             Text(
-                                text = if (key == true) "Show Content A" else "Show Content B",
+                                text = if (key == true) stringResource(R.string.developer_show_content_a)
+                                else stringResource(R.string.developer_show_content_b),
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -561,7 +568,7 @@ fun DeveloperSettings(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp)
                         ) {
-                            Text("Close", fontWeight = FontWeight.Medium)
+                            Text(stringResource(R.string.developer_close_button), fontWeight = FontWeight.Medium)
                         }
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -574,7 +581,7 @@ fun DeveloperSettings(
     if (showAppPickerForStreak) {
         AppPickerBottomSheet(
             uiState = focusUiState.copy(selectedFocusType = FocusType.SHIELD),
-            title = "Select App for Streak Edit",
+            title = stringResource(R.string.developer_select_app_streak_title),
             onDismiss = { showAppPickerForStreak = false },
             onAppSelected = {
                 selectedAppInfo = it
@@ -588,7 +595,7 @@ fun DeveloperSettings(
     if (showAppPickerForUsage) {
         AppPickerBottomSheet(
             uiState = focusUiState.copy(selectedFocusType = FocusType.SHIELD),
-            title = "Select App for Usage Edit",
+            title = stringResource(R.string.developer_select_app_usage_title),
             onDismiss = { showAppPickerForUsage = false },
             onAppSelected = {
                 selectedAppInfo = it
@@ -604,10 +611,10 @@ fun DeveloperSettings(
             ?: focusUiState.activeGoals.find { it.packageName == selectedAppInfo!!.packageName }
 
         EditValueBottomSheet(
-            title = "Edit Streak: ${selectedAppInfo!!.appName}",
-            currentValueLabel = "Current Streak",
-            currentValue = "${shield?.currentStreak ?: 0} days",
-            inputValueLabel = "New Streak (days)",
+            title = stringResource(R.string.developer_edit_streak_title, selectedAppInfo!!.appName),
+            currentValueLabel = stringResource(R.string.developer_current_streak_label),
+            currentValue = stringResource(R.string.developer_days_value, shield?.currentStreak ?: 0),
+            inputValueLabel = stringResource(R.string.developer_new_streak_label),
             initialValue = shield?.currentStreak?.toString() ?: "0",
             onDismiss = { showStreakEditSheet = false },
             onConfirm = { newValue ->
@@ -621,10 +628,10 @@ fun DeveloperSettings(
         val currentGlobalUsage = preferences.lastKnownDailyUsage
 
         EditValueBottomSheet(
-            title = "Edit Global Screen Time",
-            currentValueLabel = "Recorded Today",
+            title = stringResource(R.string.developer_edit_global_screen_time_title),
+            currentValueLabel = stringResource(R.string.developer_recorded_today_label),
             currentValue = formatMillis(currentGlobalUsage),
-            inputValueLabel = "New Usage (minutes)",
+            inputValueLabel = stringResource(R.string.developer_new_usage_minutes_label),
             initialValue = (currentGlobalUsage / 60000).toString(),
             onDismiss = { showGlobalUsageDialog = false },
             onConfirm = { newValue ->
@@ -638,10 +645,10 @@ fun DeveloperSettings(
     if (showProfileLevelDialog) {
         val currentLevel = levelForXp(preferences.userXpTotal)
         EditValueBottomSheet(
-            title = "Edit Profile Level",
-            currentValueLabel = "Current",
-            currentValue = "Level $currentLevel (${preferences.userXpTotal} XP)",
-            inputValueLabel = "New Level",
+            title = stringResource(R.string.developer_edit_profile_level_title),
+            currentValueLabel = stringResource(R.string.developer_current_label),
+            currentValue = stringResource(R.string.developer_current_level_value, currentLevel, preferences.userXpTotal),
+            inputValueLabel = stringResource(R.string.developer_new_level_label),
             initialValue = currentLevel.toString(),
             onDismiss = { showProfileLevelDialog = false },
             onConfirm = { newValue ->
@@ -659,10 +666,10 @@ fun DeveloperSettings(
         }
 
         EditValueBottomSheet(
-            title = "Edit Usage: ${selectedAppInfo!!.appName}",
-            currentValueLabel = "System Recorded",
+            title = stringResource(R.string.developer_edit_usage_title, selectedAppInfo!!.appName),
+            currentValueLabel = stringResource(R.string.developer_system_recorded_label),
             currentValue = formatMillis(todayUsage),
-            inputValueLabel = "New Usage (minutes)",
+            inputValueLabel = stringResource(R.string.developer_new_usage_minutes_label),
             initialValue = (todayUsage / 60000).toString(),
             onDismiss = { showAppUsageEditSheet = false },
             onConfirm = { newValue ->
@@ -753,7 +760,7 @@ fun EditValueBottomSheet(
                 shape = RoundedCornerShape(16.dp),
                 contentPadding = PaddingValues(16.dp)
             ) {
-                Text("Update Data", fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.developer_update_data_button), fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -789,12 +796,12 @@ private fun TestAlarmBottomSheet(
                 .navigationBarsPadding()
         ) {
             Text(
-                text = "Debug Alarm Overlay",
+                text = stringResource(R.string.developer_test_alarm_sheet_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold
             )
             Text(
-                text = "Configure and trigger a test alarm overlay.",
+                text = stringResource(R.string.developer_test_alarm_sheet_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -820,12 +827,12 @@ private fun TestAlarmBottomSheet(
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Math Challenge",
+                            text = stringResource(R.string.developer_math_challenge_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Solve a math problem to dismiss",
+                            text = stringResource(R.string.developer_math_challenge_summary),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -858,12 +865,12 @@ private fun TestAlarmBottomSheet(
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Gradual Volume",
+                            text = stringResource(R.string.developer_gradual_volume_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Ramp up volume over 30 seconds",
+                            text = stringResource(R.string.developer_gradual_volume_summary),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -896,7 +903,7 @@ private fun TestAlarmBottomSheet(
                     onDismiss()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                text = "Test Alarm",
+                text = stringResource(R.string.developer_test_alarm_button),
                 type = ZenithButtonType.Filled,
                 size = ZenithButtonSize.ExtraLarge,
                 fillMaxWidth = true
@@ -907,7 +914,7 @@ private fun TestAlarmBottomSheet(
             ZenithButton(
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
-                text = "Cancel",
+                text = stringResource(R.string.developer_cancel),
                 type = ZenithButtonType.Outlined,
                 size = ZenithButtonSize.ExtraLarge,
                 fillMaxWidth = true
@@ -922,9 +929,13 @@ private fun TtsTestBottomSheet(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-    var textInput by remember { mutableStateOf("Welcome to Zenith. This is a Text-to-Speech test.") }
+    val defaultTtsText = stringResource(R.string.developer_tts_default_text)
+    var textInput by remember { mutableStateOf(defaultTtsText) }
     var tts by remember { mutableStateOf<android.speech.tts.TextToSpeech?>(null) }
-    var ttsStatus by remember { mutableStateOf("Initializing...") }
+    var ttsStatus by remember {
+        mutableStateOf(context.getString(R.string.developer_tts_status_initializing))
+    }
+    var ttsReady by remember { mutableStateOf(false) }
     var availableLocales by remember { mutableStateOf<List<java.util.Locale>>(emptyList()) }
     var selectedLocale by remember { mutableStateOf(java.util.Locale.getDefault()) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -938,21 +949,32 @@ private fun TtsTestBottomSheet(
                         availableLocales = e.availableLanguages?.toList() ?: emptyList()
                         selectedLocale = java.util.Locale.getDefault()
                         val result = e.setLanguage(selectedLocale)
+                        ttsReady = result != android.speech.tts.TextToSpeech.LANG_MISSING_DATA &&
+                            result != android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED
                         ttsStatus = when (result) {
-                            android.speech.tts.TextToSpeech.LANG_COUNTRY_AVAILABLE -> "Ready (${selectedLocale.displayName})"
-                            android.speech.tts.TextToSpeech.LANG_AVAILABLE -> "Ready (${selectedLocale.displayName})"
-                            android.speech.tts.TextToSpeech.LANG_MISSING_DATA -> "Missing language data"
-                            android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED -> "Language not supported"
-                            else -> "Ready"
+                            android.speech.tts.TextToSpeech.LANG_COUNTRY_AVAILABLE -> context.getString(
+                                R.string.developer_tts_status_ready_language,
+                                selectedLocale.displayName
+                            )
+                            android.speech.tts.TextToSpeech.LANG_AVAILABLE -> context.getString(
+                                R.string.developer_tts_status_ready_language,
+                                selectedLocale.displayName
+                            )
+                            android.speech.tts.TextToSpeech.LANG_MISSING_DATA ->
+                                context.getString(R.string.developer_tts_status_missing_data)
+                            android.speech.tts.TextToSpeech.LANG_NOT_SUPPORTED ->
+                                context.getString(R.string.developer_tts_status_not_supported)
+                            else -> context.getString(R.string.developer_tts_status_ready)
                         }
                     }
                 } else {
-                    ttsStatus = "TTS init failed (status: $status)"
+                    ttsStatus = context.getString(R.string.developer_tts_status_init_failed, status)
+                    ttsReady = false
                 }
             }
             tts = engine
         } catch (e: Exception) {
-            ttsStatus = "TTS error: ${e.message}"
+            ttsStatus = context.getString(R.string.developer_tts_status_error, e.message ?: "")
         }
     }
 
@@ -981,12 +1003,12 @@ private fun TtsTestBottomSheet(
                 .navigationBarsPadding()
         ) {
             Text(
-                text = "TTS Test",
+                text = stringResource(R.string.developer_tts_sheet_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold
             )
             Text(
-                text = "Test Android Text-to-Speech engine compatibility",
+                text = stringResource(R.string.developer_tts_sheet_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -1012,7 +1034,7 @@ private fun TtsTestBottomSheet(
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                imageVector = if (ttsStatus.startsWith("Ready")) Icons.Outlined.CheckCircle else Icons.Outlined.Warning,
+                                imageVector = if (ttsReady) Icons.Outlined.CheckCircle else Icons.Outlined.Warning,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                 modifier = Modifier.size(20.dp)
@@ -1021,7 +1043,7 @@ private fun TtsTestBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "TTS Engine",
+                                text = stringResource(R.string.developer_tts_engine_label),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
@@ -1032,11 +1054,11 @@ private fun TtsTestBottomSheet(
                             )
                         }
                     }
-                    if (!ttsStatus.startsWith("Ready")) {
+                    if (!ttsReady) {
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             modifier = Modifier.padding(horizontal = 16.dp),
-                            text = "Zenith uses your device's built-in Text-to-Speech engine. If a language is missing, consider installing Google Speech Services from the Play Store.",
+                            text = stringResource(R.string.developer_tts_engine_hint),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1063,7 +1085,7 @@ private fun TtsTestBottomSheet(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Open TTS Settings",
+                                    text = stringResource(R.string.developer_open_tts_settings),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
@@ -1080,7 +1102,7 @@ private fun TtsTestBottomSheet(
             OutlinedTextField(
                 value = textInput,
                 onValueChange = { textInput = it },
-                label = { Text("Text to speak") },
+                label = { Text(stringResource(R.string.developer_tts_text_to_speak_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 minLines = 3,
@@ -1103,7 +1125,7 @@ private fun TtsTestBottomSheet(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(16.dp),
                     contentPadding = PaddingValues(16.dp),
-                    enabled = ttsStatus.startsWith("Ready") && textInput.isNotBlank()
+                    enabled = ttsReady && textInput.isNotBlank()
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.VolumeUp,
@@ -1111,7 +1133,7 @@ private fun TtsTestBottomSheet(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Speak", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.developer_tts_speak_button), fontWeight = FontWeight.Bold)
                 }
 
                 OutlinedButton(
@@ -1121,7 +1143,7 @@ private fun TtsTestBottomSheet(
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(16.dp),
                     contentPadding = PaddingValues(16.dp),
-                    enabled = ttsStatus.startsWith("Ready")
+                    enabled = ttsReady
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Stop,
@@ -1129,7 +1151,7 @@ private fun TtsTestBottomSheet(
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Stop", fontWeight = FontWeight.Medium)
+                    Text(stringResource(R.string.developer_tts_stop_button), fontWeight = FontWeight.Medium)
                 }
             }
 
@@ -1169,12 +1191,12 @@ private fun TtsTestBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Voice Language",
+                                text = stringResource(R.string.developer_voice_language_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Language for spoken alarm alerts",
+                                text = stringResource(R.string.developer_voice_language_summary),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -1187,7 +1209,11 @@ private fun TtsTestBottomSheet(
                                 val locale = java.util.Locale.forLanguageTag(tag)
                                 selectedLocale = locale
                                 tts?.setLanguage(locale)
-                                ttsStatus = "Ready (${locale.displayName})"
+                                ttsStatus = context.getString(
+                                    R.string.developer_tts_status_ready_language,
+                                    locale.displayName
+                                )
+                                ttsReady = true
                             },
                             width = 200.dp
                         )
@@ -1204,7 +1230,7 @@ private fun TtsTestBottomSheet(
                     onDismiss()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                text = "Close",
+                text = stringResource(R.string.developer_close_button),
                 type = ZenithButtonType.Outlined,
                 size = ZenithButtonSize.ExtraLarge,
                 fillMaxWidth = true
@@ -1213,9 +1239,14 @@ private fun TtsTestBottomSheet(
     }
 }
 
+@Composable
 private fun formatMillis(millis: Long): String {
     val totalSeconds = millis / 1000
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
-    return if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+    return if (hours > 0) stringResource(
+        R.string.developer_duration_hours_minutes, hours, minutes
+    ) else stringResource(
+        R.string.developer_duration_minutes, minutes
+    )
 }

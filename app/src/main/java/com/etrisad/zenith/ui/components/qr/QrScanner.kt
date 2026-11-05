@@ -22,10 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.etrisad.zenith.R
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
@@ -161,14 +163,14 @@ fun QrScanner(
             )
             if (bindError != null) {
                 Text(
-                    text = "Camera unavailable right now, please try again",
+                    text = stringResource(R.string.small_camera_unavailable),
                     color = MaterialTheme.colorScheme.error,
                     style = androidx.compose.ui.text.TextStyle(color = MaterialTheme.colorScheme.error)
                 )
             }
         } else {
             Text(
-                text = permissionMessage ?: "Camera permission is required to scan QR codes",
+                text = permissionMessage ?: stringResource(R.string.small_camera_permission_required),
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

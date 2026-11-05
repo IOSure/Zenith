@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -29,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.etrisad.zenith.R
 import com.etrisad.zenith.admin.TamperPin
 import com.etrisad.zenith.admin.ZenithDeviceAdminReceiver
 import com.etrisad.zenith.data.preferences.UserPreferences
@@ -71,7 +73,7 @@ fun TamperProtectionSettings(
             putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
             putExtra(
                 DevicePolicyManager.EXTRA_ADD_EXPLANATION,
-                "Zenith needs device administrator status so it cannot be uninstalled or silenced without your PIN."
+                context.getString(R.string.goal_overlay_admin_explanation)
             )
         }
         adminLauncher.launch(intent)
@@ -86,7 +88,7 @@ fun TamperProtectionSettings(
         }
         runCatching { context.startActivity(intent) }
             .onFailure {
-                Toast.makeText(context, "Could not open Android settings", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.goal_overlay_toast_could_not_open_settings), Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -119,7 +121,7 @@ fun TamperProtectionSettings(
         if (preferences.tamperLockToLockdown && preferences.isInLockdown()) {
             Toast.makeText(
                 context,
-                "Protection can only be turned off outside Lockdown hours",
+                context.getString(R.string.goal_overlay_toast_lockdown_only),
                 Toast.LENGTH_SHORT
             ).show()
         } else {
@@ -173,24 +175,20 @@ fun TamperProtectionSettings(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "How it works",
+                            text = stringResource(R.string.goal_overlay_how_it_works),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Unlike Lockdown, this works at the Android level: Android asks you " +
-                            "to deactivate Zenith before it can be uninstalled, and Zenith warns " +
-                            "you here if those rights are removed. Your PIN is required to turn " +
-                            "protection off.",
+                        text = stringResource(R.string.goal_overlay_how_it_works_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Zenith cannot block a factory reset or a change made in Android " +
-                            "settings, it can only warn you afterwards.",
+                        text = stringResource(R.string.goal_overlay_factory_reset_note),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -215,16 +213,14 @@ fun TamperProtectionSettings(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "If something goes wrong",
+                            text = stringResource(R.string.goal_overlay_if_something_went_wrong),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Forgotten PIN or a stuck screen? Open Zenith in Android settings " +
-                            "and switch off the device administrator there. Zenith will notice, " +
-                            "and you can turn protection off and pick a new PIN.",
+                        text = stringResource(R.string.goal_overlay_forgotten_pin_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -239,8 +235,8 @@ fun TamperProtectionSettings(
                 Column {
                     Spacer(modifier = Modifier.height(16.dp))
                     SettingsToggle(
-                        title = "Only outside Lockdown hours",
-                        description = "Optional. When on, protection can only be turned off outside your Lockdown window",
+                        title = stringResource(R.string.goal_overlay_only_outside_lockdown),
+                        description = stringResource(R.string.goal_overlay_only_outside_lockdown_desc),
                         checked = preferences.tamperLockToLockdown,
                         onCheckedChange = { enabled ->
                             coroutineScope.launch {
@@ -258,7 +254,7 @@ fun TamperProtectionSettings(
                 adminRevoked -> Column(modifier = Modifier.fillMaxWidth()) {
                     ZenithButton(
                         onClick = { requestAdminActivation() },
-                        text = "Re-activate Device Administrator",
+                        text = stringResource(R.string.goal_overlay_reactivate_admin),
                         icon = Icons.Outlined.AdminPanelSettings,
                         type = ZenithButtonType.Filled,
                         size = ZenithButtonSize.Large,
@@ -270,9 +266,9 @@ fun TamperProtectionSettings(
                             coroutineScope.launch {
                                 preferencesRepository.setTamperProtectionEnabled(false)
                             }
-                            Toast.makeText(context, "Protection turned off", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.goal_overlay_toast_protection_off), Toast.LENGTH_SHORT).show()
                         },
-                        text = "Turn Off Protection",
+                        text = stringResource(R.string.goal_overlay_turn_off_protection),
                         type = ZenithButtonType.Text,
                         size = ZenithButtonSize.Large,
                         contentColor = MaterialTheme.colorScheme.error,
@@ -282,7 +278,7 @@ fun TamperProtectionSettings(
 
                 !protectionActive -> ZenithButton(
                     onClick = { onEnableClick() },
-                    text = "Enable Tamper Protection",
+                    text = stringResource(R.string.goal_overlay_enable_tamper_protection),
                     icon = Icons.Outlined.AdminPanelSettings,
                     type = ZenithButtonType.Filled,
                     size = ZenithButtonSize.Large,
@@ -291,7 +287,7 @@ fun TamperProtectionSettings(
 
                 else -> ZenithButton(
                     onClick = { onTurnOffClick() },
-                    text = "Turn Off Protection",
+                    text = stringResource(R.string.goal_overlay_turn_off_protection),
                     icon = Icons.Outlined.Lock,
                     type = ZenithButtonType.Filled,
                     size = ZenithButtonSize.Large,
@@ -305,7 +301,7 @@ fun TamperProtectionSettings(
                 Spacer(modifier = Modifier.height(12.dp))
                 ZenithButton(
                     onClick = { onChangePinClick() },
-                    text = "Change PIN",
+                    text = stringResource(R.string.goal_overlay_change_pin),
                     type = ZenithButtonType.Text,
                     size = ZenithButtonSize.Large,
                     fillMaxWidth = true
@@ -315,7 +311,7 @@ fun TamperProtectionSettings(
             Spacer(modifier = Modifier.height(12.dp))
             ZenithButton(
                 onClick = { openSystemAppSettings() },
-                text = "Open Zenith in Android Settings",
+                text = stringResource(R.string.goal_overlay_open_android_settings),
                 type = ZenithButtonType.Text,
                 size = ZenithButtonSize.Large,
                 fillMaxWidth = true
@@ -344,7 +340,7 @@ fun TamperProtectionSettings(
 
                     TamperPinMode.VERIFY -> {
                         if (!preferencesRepository.verifyTamperPin(pin)) {
-                            "Incorrect PIN"
+                            context.getString(R.string.goal_overlay_error_incorrect_pin)
                         } else when (pendingAction) {
                             TamperAction.DISABLE -> {
                                 if (adminActive) dpm.removeActiveAdmin(adminComponent)
@@ -388,16 +384,16 @@ private fun TamperStatusCard(active: Boolean, revoked: Boolean) {
         else -> MaterialTheme.colorScheme.surfaceContainerHigh
     }
     val title = when {
-        active -> "Protection active"
-        revoked -> "Administrator rights were revoked"
-        else -> "Protection is off"
+        active -> stringResource(R.string.goal_overlay_status_active)
+        revoked -> stringResource(R.string.goal_overlay_status_revoked)
+        else -> stringResource(R.string.goal_overlay_status_off)
     }
     val description = when {
-        active -> "Android asks you to deactivate Zenith before it can be uninstalled."
+        active -> stringResource(R.string.goal_overlay_status_active_desc)
 
-        revoked -> "Zenith was deactivated outside the app. Re-activate to restore protection."
+        revoked -> stringResource(R.string.goal_overlay_status_revoked_desc)
 
-        else -> "Zenith can be uninstalled like any other app."
+        else -> stringResource(R.string.goal_overlay_status_off_desc)
     }
 
     Card(
@@ -450,6 +446,8 @@ private fun TamperPinSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
+    val pinInvalidMessage = stringResource(R.string.goal_overlay_error_pin_invalid)
+    val pinsMismatchMessage = stringResource(R.string.goal_overlay_error_pins_mismatch)
     var pin by remember { mutableStateOf("") }
     var confirm by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
@@ -477,16 +475,16 @@ private fun TamperPinSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = if (mode == TamperPinMode.SETUP) "Set your protection PIN" else "Enter your PIN",
+                text = if (mode == TamperPinMode.SETUP) stringResource(R.string.goal_overlay_pin_setup_title) else stringResource(R.string.goal_overlay_pin_enter_title),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = if (mode == TamperPinMode.SETUP) {
-                    "You will need this PIN to turn protection off."
+                    stringResource(R.string.goal_overlay_pin_setup_desc)
                 } else {
-                    "Enter your PIN to continue."
+                    stringResource(R.string.goal_overlay_pin_enter_desc)
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -500,8 +498,8 @@ private fun TamperPinSheet(
                     pin = value.filter { it.isDigit() }.take(8)
                     error = null
                 },
-                label = { Text("PIN") },
-                placeholder = { Text("4-8 digits") },
+                label = { Text(stringResource(R.string.goal_overlay_pin_label)) },
+                placeholder = { Text(stringResource(R.string.goal_overlay_pin_placeholder)) },
                 singleLine = true,
                 isError = error != null,
                 visualTransformation = PasswordVisualTransformation(),
@@ -524,7 +522,7 @@ private fun TamperPinSheet(
                         confirm = value.filter { it.isDigit() }.take(8)
                         error = null
                     },
-                    label = { Text("Confirm PIN") },
+                    label = { Text(stringResource(R.string.goal_overlay_pin_confirm_label)) },
                     singleLine = true,
                     isError = error != null,
                     visualTransformation = PasswordVisualTransformation(),
@@ -556,8 +554,8 @@ private fun TamperPinSheet(
                     scope.launch {
                         busy = true
                         val localError = when {
-                            !TamperPin.isValid(pin) -> "PIN must be 4-8 digits"
-                            mode == TamperPinMode.SETUP && pin != confirm -> "PINs do not match"
+                            !TamperPin.isValid(pin) -> pinInvalidMessage
+                            mode == TamperPinMode.SETUP && pin != confirm -> pinsMismatchMessage
                             else -> null
                         }
                         val submitError = localError ?: onSubmit(pin)
@@ -565,7 +563,7 @@ private fun TamperPinSheet(
                         busy = false
                     }
                 },
-                text = if (mode == TamperPinMode.SETUP) "Save PIN" else "Confirm",
+                text = if (mode == TamperPinMode.SETUP) stringResource(R.string.goal_overlay_pin_save) else stringResource(R.string.goal_overlay_confirm),
                 type = ZenithButtonType.Filled,
                 size = ZenithButtonSize.Large,
                 fillMaxWidth = true,

@@ -24,10 +24,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.data.local.entity.ScheduleEntity
 import com.etrisad.zenith.data.local.entity.ShieldEntity
@@ -88,6 +90,8 @@ fun InterceptOverlayContent(
         }
     }
 
+    val goalAppFallbackName = stringResource(R.string.intercept_goal_app_fallback)
+
     if (shield?.type == FocusType.GOAL) {
         ShieldOverlay(
             packageName = packageName,
@@ -134,7 +138,7 @@ fun InterceptOverlayContent(
                 )
                 PausePointTaskType.CHOOSE_APP ->
                     if (goals.isEmpty()) {
-                        PausePointTask.ChooseApp(suggestedPackage = "", suggestedAppName = "a goal app")
+                        PausePointTask.ChooseApp(suggestedPackage = "", suggestedAppName = goalAppFallbackName)
                     } else {
                         val goal = goals.random()
                         PausePointTask.ChooseApp(
@@ -634,9 +638,9 @@ private fun SwitchPauseTaskButton(
     ZenithButton(
         onClick = {},
         text = when {
-            switching -> "Switching…"
-            isPressed -> "Hold ${holdSeconds}s to switch"
-            else -> "I cannot do this now"
+            switching -> stringResource(R.string.intercept_switching)
+            isPressed -> stringResource(R.string.intercept_hold_to_switch, holdSeconds)
+            else -> stringResource(R.string.intercept_cannot_do_this_now)
         },
         icon = Icons.Outlined.SwapHoriz,
         type = ZenithButtonType.Tonal,
@@ -746,7 +750,7 @@ private fun PausePointContent(
                     ) {
                         Icon(
                             imageVector = currentTask.type.icon,
-                            contentDescription = currentTask.type.displayName,
+                            contentDescription = stringResource(currentTask.type.displayNameRes),
                             modifier = Modifier.size(48.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -757,21 +761,21 @@ private fun PausePointContent(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "Pause Point",
+                            text = stringResource(R.string.intercept_pause_point),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
 
                         Text(
-                            text = currentTask.type.displayName,
+                            text = stringResource(currentTask.type.displayNameRes),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Text(
-                            text = currentTask.type.description,
+                            text = stringResource(currentTask.type.descriptionRes),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center
@@ -903,7 +907,7 @@ private fun PausePointLandscapeContent(
                     ) {
                         Icon(
                             imageVector = currentType.icon,
-                            contentDescription = currentType.displayName,
+                            contentDescription = stringResource(currentType.displayNameRes),
                             modifier = Modifier.size(40.dp),
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -912,7 +916,7 @@ private fun PausePointLandscapeContent(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Text(
-                        text = currentType.displayName,
+                        text = stringResource(currentType.displayNameRes),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
@@ -922,7 +926,7 @@ private fun PausePointLandscapeContent(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "Pause Point",
+                        text = stringResource(R.string.intercept_pause_point),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -931,7 +935,7 @@ private fun PausePointLandscapeContent(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = currentType.description,
+                        text = stringResource(currentType.descriptionRes),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -992,6 +996,7 @@ private fun PausePointTestResultContent(
     isEnabled: Boolean,
     onEnable: () -> Unit
 ) {
+    val typeName = stringResource(taskType.displayNameRes)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1014,7 +1019,7 @@ private fun PausePointTestResultContent(
             ) {
                 Icon(
                     imageVector = taskType.icon,
-                    contentDescription = taskType.displayName,
+                    contentDescription = typeName,
                     modifier = Modifier.size(48.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -1025,14 +1030,14 @@ private fun PausePointTestResultContent(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "Pause Point",
+                    text = stringResource(R.string.intercept_pause_point),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = "${taskType.displayName} Passed!",
+                    text = stringResource(R.string.intercept_pause_point_passed, typeName),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -1040,7 +1045,7 @@ private fun PausePointTestResultContent(
                 )
 
                 Text(
-                    text = "You successfully completed this pause point.",
+                    text = stringResource(R.string.intercept_pause_point_completed_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -1053,7 +1058,7 @@ private fun PausePointTestResultContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Enable this pause point?",
+                text = stringResource(R.string.intercept_enable_pause_point_question),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
@@ -1062,7 +1067,7 @@ private fun PausePointTestResultContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "It will appear before you open blocked apps during focus, giving you a moment to pause before continuing.",
+                text = stringResource(R.string.intercept_enable_pause_point_explanation),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -1073,7 +1078,11 @@ private fun PausePointTestResultContent(
             ZenithButton(
                 onClick = onEnable,
                 modifier = Modifier.fillMaxWidth(),
-                text = if (isEnabled) "${taskType.displayName} Enabled" else "Enable ${taskType.displayName}",
+                text = if (isEnabled) {
+                    stringResource(R.string.intercept_pause_point_enabled_state, typeName)
+                } else {
+                    stringResource(R.string.intercept_enable_pause_point_action, typeName)
+                },
                 icon = Icons.Filled.Check,
                 size = ZenithButtonSize.ExtraLarge,
                 enabled = !isEnabled

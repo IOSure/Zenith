@@ -28,9 +28,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
 import com.etrisad.zenith.ui.viewmodel.RepairMode
 import com.etrisad.zenith.ui.viewmodel.HomeViewModel
@@ -77,12 +79,12 @@ fun DataRepairmentScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "Advanced Repair Mode",
+                            stringResource(R.string.data_repair_advanced_mode_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "Show all dates including today and those with existing records",
+                            stringResource(R.string.data_repair_advanced_mode_summary),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -147,7 +149,7 @@ fun DataRepairmentScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "All data looks good!",
+                            stringResource(R.string.data_repair_all_good),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -214,12 +216,12 @@ fun DataRepairmentScreen(
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
-                            "Repairing Data...",
+                            stringResource(R.string.data_repair_repairing_title),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "Re-indexing history records",
+                            stringResource(R.string.data_repair_repairing_summary),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -322,9 +324,9 @@ fun RepairableGroupCard(
                     )
                     Text(
                         text = when {
-                            group.isMissing -> "No existing record"
-                            !group.hasDatabaseRecord -> "System data only"
-                            else -> "Incomplete database record"
+                            group.isMissing -> stringResource(R.string.data_repair_no_existing_record)
+                            !group.hasDatabaseRecord -> stringResource(R.string.data_repair_system_data_only)
+                            else -> stringResource(R.string.data_repair_incomplete_db_record)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = if (group.isMissing) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
@@ -333,7 +335,7 @@ fun RepairableGroupCard(
 
                 Icon(
                     imageVector = Icons.Outlined.ExpandMore,
-                    contentDescription = "Expand",
+                    contentDescription = stringResource(R.string.data_repair_expand),
                     modifier = Modifier.rotate(rotation),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -376,12 +378,12 @@ fun RepairableGroupCard(
                             Spacer(modifier = Modifier.width(16.dp))
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    "Current Database Value",
+                                    stringResource(R.string.data_repair_current_db_value),
                                     style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                                 Text(
-                                    text = if (group.hasDatabaseRecord) formatDuration(group.totalTimeMillis) else "No data stored",
+                                    text = if (group.hasDatabaseRecord) formatDuration(group.totalTimeMillis) else stringResource(R.string.data_repair_no_data_stored),
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Black,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -392,14 +394,14 @@ fun RepairableGroupCard(
                                     containerColor = MaterialTheme.colorScheme.errorContainer,
                                     contentColor = MaterialTheme.colorScheme.onErrorContainer
                                 ) {
-                                    Text("MISSING", modifier = Modifier.padding(horizontal = 4.dp))
+                                    Text(stringResource(R.string.data_repair_missing_badge), modifier = Modifier.padding(horizontal = 4.dp))
                                 }
                             }
                         }
                     }
 
                     Text(
-                        text = "Repair Source (New Value)",
+                        text = stringResource(R.string.data_repair_source_new_value),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -411,8 +413,8 @@ fun RepairableGroupCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         RepairComparisonCard(
-                            title = "Database",
-                            subtitle = "Recalculate apps",
+                            title = stringResource(R.string.data_repair_source_database),
+                            subtitle = stringResource(R.string.data_repair_source_database_subtitle),
                             duration = formatDuration(group.databaseAppSumMillis),
                             icon = Icons.Outlined.SdStorage,
                             modifier = Modifier.weight(1f).clickable(enabled = group.hasDatabaseRecord) { 
@@ -423,8 +425,8 @@ fun RepairableGroupCard(
                         )
                         
                         RepairComparisonCard(
-                            title = "System",
-                            subtitle = "Sync with OS",
+                            title = stringResource(R.string.data_repair_source_system),
+                            subtitle = stringResource(R.string.data_repair_source_system_subtitle),
                             duration = formatDuration(group.systemTotalMillis),
                             icon = Icons.Outlined.Calculate,
                             modifier = Modifier.weight(1f).clickable(enabled = group.hasSystemData) { 
@@ -438,7 +440,7 @@ fun RepairableGroupCard(
                     Spacer(modifier = Modifier.height(16.dp))
                     
                     Text(
-                        text = if (repairMode == RepairMode.SYSTEM) "System Stats Breakdown" else "Existing App Breakdown",
+                        text = if (repairMode == RepairMode.SYSTEM) stringResource(R.string.data_repair_system_breakdown) else stringResource(R.string.data_repair_existing_app_breakdown),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary,
@@ -457,7 +459,7 @@ fun RepairableGroupCard(
                         
                         if (displayRecords.isEmpty()) {
                             Text(
-                                "No individual app data available for this mode",
+                                stringResource(R.string.data_repair_no_app_data),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(vertical = 8.dp)
@@ -483,7 +485,7 @@ fun RepairableGroupCard(
                         onAccept = { onRepair(group.date, repairMode) },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = enabled,
-                        text = if (repairMode == RepairMode.SYSTEM) "Repair from System Stats" else "Re-index from App Records"
+                        text = if (repairMode == RepairMode.SYSTEM) stringResource(R.string.data_repair_action_repair_from_system) else stringResource(R.string.data_repair_action_reindex_from_apps)
                     )
                 }
             }
@@ -647,8 +649,9 @@ fun HoldToAcceptButton(
     onAccept: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    text: String = "Hold to repair records"
+    text: String = ""
 ) {
+    val holdToRepairLabel = if (text.isNotEmpty()) text else stringResource(R.string.data_repair_hold_to_repair_records)
     var isHolding by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     
@@ -726,7 +729,7 @@ fun HoldToAcceptButton(
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = if (isHolding) "Hold steady..." else text,
+                text = if (isHolding) stringResource(R.string.data_repair_hold_steady) else holdToRepairLabel,
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.primary,

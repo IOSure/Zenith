@@ -25,11 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.database.DbLogBuffer
 import com.etrisad.zenith.data.local.database.DbLogEntry
 
@@ -84,12 +86,21 @@ fun DbLogBottomSheet(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "DB Log Viewer",
+                        text = stringResource(R.string.debug_db_log_title),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.ExtraBold
                     )
+                    val activeFilter = selectedFilter
                     Text(
-                        text = "${entries.size} entries${if (selectedFilter != null) " (filtered: $selectedFilter)" else ""}",
+                        text = if (activeFilter != null) {
+                            stringResource(
+                                R.string.debug_log_entries_count_filtered,
+                                entries.size,
+                                activeFilter
+                            )
+                        } else {
+                            stringResource(R.string.debug_log_entries_count, entries.size)
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -98,7 +109,7 @@ fun DbLogBottomSheet(
                 FilterChip(
                     selected = autoRefresh,
                     onClick = { autoRefresh = !autoRefresh },
-                    label = { Text("Live", fontSize = 11.sp) },
+                    label = { Text(stringResource(R.string.debug_log_live), fontSize = 11.sp) },
                     leadingIcon = {
                         Box(
                             modifier = Modifier
@@ -119,13 +130,13 @@ fun DbLogBottomSheet(
             ) {
                 ActionButton(
                     icon = Icons.Outlined.ContentCopy,
-                    label = "All",
+                    label = stringResource(R.string.debug_log_copy_all),
                     onClick = { copyToClipboard(context, DbLogBuffer.copyAll()) },
                     modifier = Modifier.weight(1f)
                 )
                 ActionButton(
                     icon = Icons.Outlined.Refresh,
-                    label = "Refresh",
+                    label = stringResource(R.string.debug_log_refresh),
                     onClick = {
                         entries = if (selectedFilter != null) {
                             DbLogBuffer.getFiltered(tag = selectedFilter)
@@ -137,7 +148,7 @@ fun DbLogBottomSheet(
                 )
                 ActionButton(
                     icon = Icons.Outlined.Delete,
-                    label = "Clear",
+                    label = stringResource(R.string.debug_log_clear),
                     onClick = {
                         DbLogBuffer.clear()
                         entries = emptyList()
@@ -161,7 +172,7 @@ fun DbLogBottomSheet(
                             selectedFilter = null
                             entries = DbLogBuffer.getAll()
                         },
-                        label = { Text("All tags", fontSize = 11.sp) },
+                        label = { Text(stringResource(R.string.debug_log_all_tags), fontSize = 11.sp) },
                         shape = RoundedCornerShape(12.dp)
                     )
                     tags.forEach { tag ->
@@ -200,7 +211,7 @@ fun DbLogBottomSheet(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            "No log entries yet",
+                            stringResource(R.string.debug_log_empty),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -283,7 +294,7 @@ private fun LogEntryRow(
         onClick = {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             clipboard.setPrimaryClip(ClipData.newPlainText("log", entry.format()))
-            Toast.makeText(context, "Copied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.debug_log_copied), Toast.LENGTH_SHORT).show()
         },
         shape = shape,
         color = bgColor
@@ -345,5 +356,5 @@ private fun ActionButton(
 private fun copyToClipboard(context: Context, text: String) {
     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     clipboard.setPrimaryClip(ClipData.newPlainText("zenith_db_logs", text))
-    Toast.makeText(context, "Logs copied to clipboard", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, context.getString(R.string.debug_log_logs_copied), Toast.LENGTH_SHORT).show()
 }

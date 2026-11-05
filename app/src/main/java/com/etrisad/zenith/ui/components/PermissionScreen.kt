@@ -18,12 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.etrisad.zenith.R
 import com.etrisad.zenith.util.hasAllPermissions
 import com.etrisad.zenith.util.hasUsageStatsPermission
 import com.etrisad.zenith.util.isAccessibilityServiceEnabled
@@ -80,7 +82,7 @@ fun PermissionScreen(
             Spacer(modifier = Modifier.height(24.dp))
             
             Text(
-                text = "Setup Required",
+                text = stringResource(R.string.intercept_setup_required),
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -88,7 +90,7 @@ fun PermissionScreen(
             Spacer(modifier = Modifier.height(12.dp))
             
             Text(
-                text = "To help you stay focused, Zenith needs a few permissions to monitor and shield your apps.",
+                text = stringResource(R.string.intercept_setup_required_body),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -98,8 +100,8 @@ fun PermissionScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             PermissionItemCard(
-                title = "Usage Stats",
-                description = "Required to see which apps are being used and track your focus time.",
+                title = stringResource(R.string.intercept_usage_stats),
+                description = stringResource(R.string.intercept_usage_stats_description),
                 isGranted = hasUsageStats,
                 onClick = {
                     context.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
@@ -110,8 +112,8 @@ fun PermissionScreen(
             )
 
             PermissionItemCard(
-                title = "System Overlay",
-                description = "Required to show the focus shield over distracting apps.",
+                title = stringResource(R.string.intercept_system_overlay),
+                description = stringResource(R.string.intercept_system_overlay_description),
                 isGranted = hasOverlay,
                 onClick = {
                     val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
@@ -124,8 +126,8 @@ fun PermissionScreen(
             )
 
             PermissionItemCard(
-                title = "Accessibility Service",
-                description = "Required for instant detection and blocking of shielded apps.",
+                title = stringResource(R.string.intercept_accessibility_service),
+                description = stringResource(R.string.intercept_accessibility_service_description),
                 isGranted = hasAccessibility,
                 onClick = {
                     showBankingWarning = true
@@ -141,11 +143,11 @@ fun PermissionScreen(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Text("Continue to App", modifier = Modifier.padding(vertical = 8.dp))
+                    Text(stringResource(R.string.intercept_continue_to_app), modifier = Modifier.padding(vertical = 8.dp))
                 }
             } else {
                 Text(
-                    text = "Please grant all permissions to continue",
+                    text = stringResource(R.string.intercept_grant_all_permissions),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -205,7 +207,7 @@ private fun PermissionItemCard(
                 if (isGranted) {
                     Icon(
                         Icons.Outlined.CheckCircle,
-                        contentDescription = "Granted",
+                        contentDescription = stringResource(R.string.intercept_granted),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 } else {
@@ -214,7 +216,7 @@ private fun PermissionItemCard(
                         shape = RoundedCornerShape(12.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp)
                     ) {
-                        Text("Grant", style = MaterialTheme.typography.labelLarge)
+                        Text(stringResource(R.string.intercept_grant), style = MaterialTheme.typography.labelLarge)
                     }
                 }
             },

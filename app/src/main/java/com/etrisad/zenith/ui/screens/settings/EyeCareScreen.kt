@@ -18,8 +18,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import kotlinx.coroutines.launch
@@ -94,12 +96,12 @@ fun EyeCareScreen(
                             Spacer(modifier = Modifier.width(16.dp))
                             Column {
                                 Text(
-                                    "Work Time",
+                                    stringResource(R.string.about_eye_care_work_time),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    "How long until a break reminder",
+                                    stringResource(R.string.about_eye_care_work_time_summary),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -119,7 +121,7 @@ fun EyeCareScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                         Text(
-                            "${localWorkMinutes.toInt()} min",
+                            stringResource(R.string.about_eye_care_minutes, localWorkMinutes.toInt()),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
@@ -154,12 +156,12 @@ fun EyeCareScreen(
                             Spacer(modifier = Modifier.width(16.dp))
                             Column {
                                 Text(
-                                    "Rest Time",
+                                    stringResource(R.string.about_eye_care_rest_time),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    "How long the break overlay stays",
+                                    stringResource(R.string.about_eye_care_rest_time_summary),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -179,7 +181,7 @@ fun EyeCareScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
                         Text(
-                            "${localRestSeconds.toInt()} sec",
+                            stringResource(R.string.about_eye_care_seconds, localRestSeconds.toInt()),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
@@ -208,7 +210,11 @@ fun EyeCareScreen(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "The 20-20-20 rule: every ${preferences.eyeCareWorkMinutes} minutes of screen time, look away for ${preferences.eyeCareRestSeconds} seconds to reduce eye strain. The break overlay is unskippable for your eye health.",
+                            text = stringResource(
+                                R.string.about_eye_care_rule_description,
+                                preferences.eyeCareWorkMinutes,
+                                preferences.eyeCareRestSeconds
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -259,12 +265,16 @@ fun EyeCareToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit) {
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Eye Care (20-20-20)",
+                    text = stringResource(R.string.about_eye_care_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = if (enabled) "Break reminders are active" else "Currently disabled",
+                    text = if (enabled) {
+                        stringResource(R.string.about_eye_care_active_summary)
+                    } else {
+                        stringResource(R.string.about_currently_disabled)
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
 import com.etrisad.zenith.ZenithApplication
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.ThemeConfig
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.receiver.AlarmBroadcastReceiver
@@ -42,6 +43,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class AlarmOverlayActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(com.etrisad.zenith.util.AppLanguage.wrap(newBase))
+    }
 
     private var playbackService: AlarmPlaybackService? = null
     private var bound = false
@@ -556,10 +560,10 @@ class AlarmOverlayActivity : ComponentActivity() {
             try {
                 startActivity(intent)
             } catch (_: Exception) {
-                android.widget.Toast.makeText(this, "Couldn't open app", android.widget.Toast.LENGTH_SHORT).show()
+                android.widget.Toast.makeText(this, getString(R.string.alarm_overlay_open_failed), android.widget.Toast.LENGTH_SHORT).show()
             }
         } else {
-            android.widget.Toast.makeText(this, "App couldn't be opened", android.widget.Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(this, getString(R.string.alarm_overlay_app_not_openable), android.widget.Toast.LENGTH_SHORT).show()
             requestUnlockForExternalLaunch()
             try {
                 startActivity(Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

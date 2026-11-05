@@ -1,5 +1,6 @@
 package com.etrisad.zenith.ui.components
 
+import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -22,8 +23,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.website.WebsiteRepository
 import com.etrisad.zenith.ui.viewmodel.AppUsageInfo
@@ -44,6 +47,7 @@ fun RestoreConfirmationBottomSheet(
     onConfirm: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -92,7 +96,7 @@ fun RestoreConfirmationBottomSheet(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Restore Data?",
+                    text = stringResource(R.string.restore_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -100,7 +104,7 @@ fun RestoreConfirmationBottomSheet(
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = "Restoring will permanently overwrite your current settings and data with the selected backup.",
+                    text = stringResource(R.string.restore_warning_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
@@ -117,7 +121,7 @@ fun RestoreConfirmationBottomSheet(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Backup Contents",
+                            text = stringResource(R.string.restore_section_contents),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
@@ -126,8 +130,8 @@ fun RestoreConfirmationBottomSheet(
                         
                         BackupDetailItem(
                             icon = Icons.Outlined.Storage,
-                            label = "Database",
-                            status = if (metadata.hasDatabase) "Available" else "Not found",
+                            label = stringResource(R.string.restore_item_database),
+                            status = if (metadata.hasDatabase) stringResource(R.string.restore_status_available) else stringResource(R.string.restore_status_not_found),
                             isAvailable = metadata.hasDatabase
                         )
                         
@@ -135,8 +139,8 @@ fun RestoreConfirmationBottomSheet(
                         
                         BackupDetailItem(
                             icon = Icons.Outlined.Settings,
-                            label = "User Preferences",
-                            status = if (metadata.hasPreferences) "Available" else "Not found",
+                            label = stringResource(R.string.restore_item_preferences),
+                            status = if (metadata.hasPreferences) stringResource(R.string.restore_status_available) else stringResource(R.string.restore_status_not_found),
                             isAvailable = metadata.hasPreferences
                         )
 
@@ -144,8 +148,8 @@ fun RestoreConfirmationBottomSheet(
                             Spacer(modifier = Modifier.height(8.dp))
                             BackupDetailItem(
                                 icon = Icons.Outlined.History,
-                                label = "Latest Record",
-                                status = "${metadata.latestUsageDate} - ${formatDuration(metadata.latestUsageMillis)}",
+                                label = stringResource(R.string.restore_item_latest_record),
+                                status = "${metadata.latestUsageDate} - ${formatDuration(context, metadata.latestUsageMillis)}",
                                 isAvailable = true
                             )
                         }
@@ -156,20 +160,20 @@ fun RestoreConfirmationBottomSheet(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            BackupBadge(label = "History", isAvailable = metadata.historySnapshot.isNotEmpty())
-                            BackupBadge(label = "Snapshot", isAvailable = metadata.topAppsHistory.isNotEmpty())
-                            BackupBadge(label = "Hourly", isAvailable = metadata.hasHourly)
-                            BackupBadge(label = "Piechart", isAvailable = metadata.hasPiechart)
+                            BackupBadge(label = stringResource(R.string.restore_category_history), isAvailable = metadata.historySnapshot.isNotEmpty())
+                            BackupBadge(label = stringResource(R.string.restore_category_snapshot), isAvailable = metadata.topAppsHistory.isNotEmpty())
+                            BackupBadge(label = stringResource(R.string.restore_category_hourly), isAvailable = metadata.hasHourly)
+                            BackupBadge(label = stringResource(R.string.restore_category_piechart), isAvailable = metadata.hasPiechart)
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         ZenithToggleButtonGroup(
                             options = listOf(
-                                ZenithToggleOption(text = "History"),
-                                ZenithToggleOption(text = "Snapshot"),
-                                ZenithToggleOption(text = "Hourly"),
-                                ZenithToggleOption(text = "Piechart")
+                                ZenithToggleOption(text = stringResource(R.string.restore_category_history)),
+                                ZenithToggleOption(text = stringResource(R.string.restore_category_snapshot)),
+                                ZenithToggleOption(text = stringResource(R.string.restore_category_hourly)),
+                                ZenithToggleOption(text = stringResource(R.string.restore_category_piechart))
                             ),
                             selectedIndices = setOf(selectedTab),
                             onToggle = { selectedTab = it },
@@ -206,7 +210,7 @@ fun RestoreConfirmationBottomSheet(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = "Total Size",
+                                text = stringResource(R.string.restore_total_size),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -236,7 +240,7 @@ fun RestoreConfirmationBottomSheet(
                                 onDismiss()
                             }
                         },
-                        text = "Cancel",
+                        text = stringResource(R.string.restore_action_cancel),
                         type = ZenithButtonType.Outlined,
                         isLast = false,
                         size = ZenithButtonSize.ExtraLarge
@@ -249,7 +253,7 @@ fun RestoreConfirmationBottomSheet(
                                 onConfirm()
                             }
                         },
-                        text = "Restore",
+                        text = stringResource(R.string.restore_action_restore),
                         type = ZenithButtonType.Filled,
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -299,6 +303,7 @@ private fun HistoryDetail(
     preferences: UserPreferences,
     metadata: BackupUtils.BackupMetadata
 ) {
+    val context = LocalContext.current
     val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
     val history = remember(metadata.historySnapshot, metadata.latestUsageDate) {
         val calendar = Calendar.getInstance()
@@ -328,12 +333,12 @@ private fun HistoryDetail(
     UsageHistoryCard(
         history = history,
         targetMillis = preferences.screenTimeTargetMinutes * 60 * 1000L,
-        formatDuration = { formatDuration(it) },
+        formatDuration = { formatDuration(context, it) },
         showDatabaseIndicator = preferences.showDatabaseIndicator,
         selectedDateMillis = history.lastOrNull()?.date,
         containerColor = Color.Transparent,
         shape = RoundedCornerShape(0.dp),
-        title = "Last 21 Days (Global)"
+        title = stringResource(R.string.restore_history_title)
     )
 }
 
@@ -399,7 +404,7 @@ private fun SnapshotDetail(
         selectedDateMillis = latestDateMillis,
         getAppType = { _ -> null },
         onDaySelected = { _ -> },
-        formatDuration = { formatDuration(it) },
+        formatDuration = { formatDuration(context, it) },
         showDatabaseIndicator = preferences.showDatabaseIndicator,
         pagerState = pagerState,
         isBackupPreview = true,
@@ -411,12 +416,13 @@ private fun SnapshotDetail(
 
 @Composable
 private fun HourlyDetail(preferences: UserPreferences, metadata: BackupUtils.BackupMetadata) {
+    val context = LocalContext.current
     if (metadata.latestHourlyData.isEmpty()) {
         Box(
             modifier = Modifier.fillMaxWidth().padding(32.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("No hourly data available", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.restore_hourly_empty), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     } else {
         val dateFormat = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
@@ -428,9 +434,11 @@ private fun HourlyDetail(preferences: UserPreferences, metadata: BackupUtils.Bac
             } ?: System.currentTimeMillis()
         }
 
+        val latestDayLabel = stringResource(R.string.restore_latest_day)
+
         Column {
             Text(
-                text = "Usage on ${metadata.latestUsageDate ?: "Latest Day"}",
+                text = stringResource(R.string.restore_usage_on, metadata.latestUsageDate ?: latestDayLabel),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
@@ -448,7 +456,7 @@ private fun HourlyDetail(preferences: UserPreferences, metadata: BackupUtils.Bac
                 hourlyUsage = hourlyUsage,
                 selectedHour = null,
                 onHourClick = {},
-                formatDuration = { formatDuration(it) },
+                formatDuration = { formatDuration(context, it) },
                 bedtimeEnabled = false,
                 bedtimeStartTime = "22:00",
                 bedtimeEndTime = "07:00",
@@ -467,7 +475,7 @@ private fun PiechartDetail(preferences: UserPreferences, metadata: BackupUtils.B
             modifier = Modifier.fillMaxWidth().padding(32.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("No app breakdown available", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(stringResource(R.string.restore_piechart_empty), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     } else {
         val context = LocalContext.current
@@ -486,9 +494,11 @@ private fun PiechartDetail(preferences: UserPreferences, metadata: BackupUtils.B
             }
         }
         
+        val latestDayLabel = stringResource(R.string.restore_latest_day)
+
         Column {
             Text(
-                text = "Breakdown on ${metadata.latestUsageDate ?: "Latest Day"}",
+                text = stringResource(R.string.restore_breakdown_on, metadata.latestUsageDate ?: latestDayLabel),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
@@ -504,7 +514,7 @@ private fun PiechartDetail(preferences: UserPreferences, metadata: BackupUtils.B
                 topApp = null,
                 activeGoalsCount = 0,
                 activeShieldsCount = 0,
-                formatDuration = { formatDuration(it) },
+                formatDuration = { formatDuration(context, it) },
                 highlightedCategory = null,
                 onCategoryClick = {}
             )
@@ -512,7 +522,7 @@ private fun PiechartDetail(preferences: UserPreferences, metadata: BackupUtils.B
             if (metadata.latestPiechartData.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Top Apps in Backup",
+                    text = stringResource(R.string.restore_top_apps),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold,
@@ -549,7 +559,7 @@ private fun PiechartDetail(preferences: UserPreferences, metadata: BackupUtils.B
                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
                         Text(
-                            text = formatDuration(duration),
+                            text = formatDuration(context, duration),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -591,7 +601,7 @@ fun HourlyStatsContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Hourly Usage",
+                    text = stringResource(R.string.restore_hourly_usage),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -780,11 +790,11 @@ fun ZenithDashboard(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.Center
         ) {
-            CategorySmallPreview(icon = Icons.Outlined.Shield, label = "Shield", value = formatDuration(shieldUsage), color = MaterialTheme.colorScheme.primary)
+            CategorySmallPreview(icon = Icons.Outlined.Shield, label = stringResource(R.string.restore_dashboard_shield), value = formatDuration(shieldUsage), color = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.height(8.dp))
-            CategorySmallPreview(icon = Icons.Outlined.TrackChanges, label = "Goal", value = formatDuration(goalUsage), color = MaterialTheme.colorScheme.tertiary)
+            CategorySmallPreview(icon = Icons.Outlined.TrackChanges, label = stringResource(R.string.restore_dashboard_goal), value = formatDuration(goalUsage), color = MaterialTheme.colorScheme.tertiary)
             Spacer(modifier = Modifier.height(8.dp))
-            CategorySmallPreview(icon = Icons.Outlined.Android, label = "Other", value = formatDuration(otherUsage), color = MaterialTheme.colorScheme.secondary)
+            CategorySmallPreview(icon = Icons.Outlined.Android, label = stringResource(R.string.restore_dashboard_other), value = formatDuration(otherUsage), color = MaterialTheme.colorScheme.secondary)
         }
     }
 }
@@ -829,11 +839,15 @@ private fun BackupDetailItem(
     }
 }
 
-private fun formatDuration(millis: Long): String {
+private fun formatDuration(context: Context, millis: Long): String {
     val totalMinutes = millis / (1000 * 60)
     val hours = totalMinutes / 60
     val minutes = totalMinutes % 60
-    return if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+    return if (hours > 0) {
+        context.getString(R.string.general_duration_hours_minutes_short, hours, minutes)
+    } else {
+        context.getString(R.string.general_duration_minutes_short, minutes)
+    }
 }
 
 private fun formatFileSize(size: Long): String {

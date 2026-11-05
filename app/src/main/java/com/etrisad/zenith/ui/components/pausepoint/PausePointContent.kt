@@ -39,6 +39,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.Lever
 import com.etrisad.zenith.ui.components.ZenithButton
 import com.etrisad.zenith.ui.components.ZenithButtonSize
@@ -80,7 +82,7 @@ fun PausePointTaskContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = task.instruction,
+            text = task.localizedInstruction(),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
@@ -141,7 +143,7 @@ private fun WaitingTask(
             trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
         Text(
-            text = "${secondsLeft.value}s",
+            text = stringResource(R.string.restore_seconds_short, secondsLeft.value),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Black,
             color = MaterialTheme.colorScheme.primary
@@ -175,12 +177,18 @@ private fun BreathingTask(
 
     val scale by remember { derivedStateOf { animatable.value } }
 
+    val phaseLabel = when (phase) {
+        "Inhale" -> stringResource(R.string.restore_breathing_inhale)
+        "Hold" -> stringResource(R.string.restore_breathing_hold)
+        else -> stringResource(R.string.restore_breathing_exhale)
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = phase,
+            text = phaseLabel,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = when (phase) {
@@ -208,7 +216,7 @@ private fun BreathingTask(
         }
 
         Text(
-            text = "Round ${currentRound + 1}/${task.rounds}",
+            text = stringResource(R.string.restore_round, currentRound + 1, task.rounds),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -323,8 +331,8 @@ private fun WalkTask(
         )
 
         Text(
-            text = if (sensorAvailable) "Walk naturally, your steps are counted by the accelerometer"
-            else "Your device has no accelerometer. Tap to count instead.",
+            text = if (sensorAvailable) stringResource(R.string.restore_walk_hint_sensor)
+            else stringResource(R.string.restore_walk_hint_no_sensor),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -337,7 +345,7 @@ private fun WalkTask(
                     currentOnUserActivity()
                     if (stepsDone >= task.steps) currentOnCompleted()
                 },
-                text = if (stepsDone < task.steps) "Step ($stepsDone)" else "Done!",
+                text = if (stepsDone < task.steps) stringResource(R.string.restore_step_count, stepsDone) else stringResource(R.string.restore_done),
                 type = if (stepsDone < task.steps) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                 size = ZenithButtonSize.Large,
                 modifier = Modifier.fillMaxWidth()
@@ -378,7 +386,7 @@ private fun QrScanTask(
                 QrScanner(
                     active = true,
                     permissionGranted = cameraGranted,
-                    permissionMessage = "Camera permission is required to scan a saved QR code",
+                    permissionMessage = stringResource(R.string.restore_qr_permission),
                     onQrDetected = { scanned ->
                         onUserActivity()
                         if (task.acceptAny || scanned.trim() in task.validCodes) {
@@ -399,14 +407,14 @@ private fun QrScanTask(
             )
 
             Text(
-                text = "QR Code: ${task.code}",
+                text = stringResource(R.string.restore_qr_code, task.code),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
             Text(
-                text = "Show this code to your camera\nto simulate scanning",
+                text = stringResource(R.string.restore_qr_simulate),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -415,7 +423,7 @@ private fun QrScanTask(
 
         if (showError) {
             Text(
-                text = "Wrong code, scan one of your saved QR codes",
+                text = stringResource(R.string.restore_qr_wrong),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center
@@ -424,8 +432,8 @@ private fun QrScanTask(
 
         if (showScanner) {
             Text(
-                text = if (task.acceptAny) "Align any QR code within the frame"
-                else "Align a saved QR code within the frame",
+                text = if (task.acceptAny) stringResource(R.string.restore_qr_align_any)
+                else stringResource(R.string.restore_qr_align_saved),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -504,14 +512,14 @@ private fun NfcScanTask(
         when {
             !supported -> {
                 Text(
-                    text = "NFC is not supported on this device",
+                    text = stringResource(R.string.restore_nfc_unsupported),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "Enable another Pause Point type to continue, or register tags on an NFC-capable device.",
+                    text = stringResource(R.string.restore_nfc_unsupported_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -519,7 +527,7 @@ private fun NfcScanTask(
             }
             !nfcEnabled -> {
                 Text(
-                    text = "NFC is turned off",
+                    text = stringResource(R.string.restore_nfc_off),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -527,7 +535,7 @@ private fun NfcScanTask(
                 )
                 ZenithButton(
                     onClick = { openNfcSettings(context) },
-                    text = "Turn On NFC",
+                    text = stringResource(R.string.restore_nfc_turn_on),
                     icon = Icons.Outlined.Nfc,
                     type = ZenithButtonType.Filled,
                     size = ZenithButtonSize.Large,
@@ -537,7 +545,8 @@ private fun NfcScanTask(
             else -> {
                 if (normalizedValid.isNotEmpty() && !task.acceptAny) {
                     Text(
-                        text = "${normalizedValid.size} registered tag${if (normalizedValid.size == 1) "" else "s"}, any of them passes",
+                        text = if (normalizedValid.size == 1) stringResource(R.string.restore_nfc_tag_count_one, normalizedValid.size)
+                        else stringResource(R.string.restore_nfc_tag_count_other, normalizedValid.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center
@@ -561,14 +570,14 @@ private fun NfcScanTask(
                             } catch (_: Exception) {}
                         }
                     },
-                    text = "Scan NFC Tag",
+                    text = stringResource(R.string.restore_nfc_scan),
                     icon = Icons.Outlined.Nfc,
                     type = ZenithButtonType.Filled,
                     size = ZenithButtonSize.Large,
                     modifier = Modifier.fillMaxWidth()
                 )
                 Text(
-                    text = "Tap to open the scanner, then hold a registered tag near your phone",
+                    text = stringResource(R.string.restore_nfc_scan_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -578,8 +587,8 @@ private fun NfcScanTask(
 
         if (showError) {
             Text(
-                text = if (wrongTagId != null) "Wrong tag ($wrongTagId), use one of your registered tags"
-                else "Wrong tag, use one of your registered tags",
+                text = if (wrongTagId != null) stringResource(R.string.restore_nfc_wrong_tag_with_id, wrongTagId.orEmpty())
+                else stringResource(R.string.restore_nfc_wrong_tag),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center
@@ -635,7 +644,7 @@ private fun NumberSlideTask(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Moves: $moves",
+            text = stringResource(R.string.restore_slide_moves, moves),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -682,7 +691,7 @@ private fun NumberSlideTask(
 
         if (solved.value && moves > 0) {
             Text(
-                text = "Puzzle solved in $moves moves!",
+                text = stringResource(R.string.restore_slide_solved, moves),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -761,7 +770,7 @@ private fun SwitchTask(
     ) {
         if (timeoutSeconds != null) {
             Text(
-                text = if (timedOut) "Time's up, sequence resets, try again!" else "Time remaining: ${timeLeft}s",
+                text = if (timedOut) stringResource(R.string.restore_switch_time_up) else stringResource(R.string.restore_switch_time_left, timeLeft),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Black,
                 color = if (timedOut || timeLeft <= 5) MaterialTheme.colorScheme.error
@@ -785,7 +794,7 @@ private fun SwitchTask(
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
-                            if (isOn) "ON" else "OFF",
+                            if (isOn) stringResource(R.string.restore_switch_on) else stringResource(R.string.restore_switch_off),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = if (isOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
@@ -814,7 +823,7 @@ private fun SwitchTask(
 
         if (solved.value) {
             Text(
-                text = "Sequence matched!",
+                text = stringResource(R.string.restore_switch_matched),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -899,14 +908,14 @@ private fun CountingTask(
             ) {
                 if (cooling) {
                     Text(
-                        text = "${(cooldownRemainingMs / 1000L) + 1}s",
+                        text = stringResource(R.string.restore_seconds_short, (cooldownRemainingMs / 1000L) + 1),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 } else {
                     Text(
-                        text = "Tap",
+                        text = stringResource(R.string.restore_tap),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -916,7 +925,7 @@ private fun CountingTask(
 
             if (cooling) {
                 Text(
-                    text = "Too fast, wait out the penalty",
+                    text = stringResource(R.string.restore_tap_too_fast),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center
@@ -934,7 +943,8 @@ private fun TypingTask(
     onKeyboardFocusChange: (Boolean) -> Unit
 ) {
     var typedText by remember { mutableStateOf("") }
-    val isCorrect = typedText == task.sentence
+    val sentence = task.localizedSentence()
+    val isCorrect = typedText == sentence
     val focusRequester = remember { FocusRequester() }
     var fieldFocused by remember { mutableStateOf(false) }
     val windowFocused = LocalWindowInfo.current.isWindowFocused
@@ -966,7 +976,7 @@ private fun TypingTask(
             )
         ) {
             Text(
-                text = task.sentence,
+                text = sentence,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(16.dp),
@@ -990,7 +1000,7 @@ private fun TypingTask(
                         onKeyboardFocusChange(focused)
                     }
                 },
-            placeholder = { Text("Type the sentence above") },
+            placeholder = { Text(stringResource(R.string.restore_typing_placeholder)) },
             singleLine = false,
             maxLines = 3,
             shape = RoundedCornerShape(20.dp),
@@ -1017,7 +1027,7 @@ private fun TypingTask(
 
         if (typedText.isNotEmpty() && !isCorrect) {
             Text(
-                text = "Keep typing...",
+                text = stringResource(R.string.restore_typing_keep_going),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )
@@ -1025,14 +1035,14 @@ private fun TypingTask(
 
         if (isCorrect) {
             Text(
-                text = "Correct!",
+                text = stringResource(R.string.restore_correct),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
             ZenithButton(
                 onClick = onCompleted,
-                text = "Continue",
+                text = stringResource(R.string.restore_continue),
                 type = ZenithButtonType.Filled,
                 size = ZenithButtonSize.Large,
                 modifier = Modifier.fillMaxWidth()
@@ -1131,7 +1141,7 @@ private fun MathTask(
 
         if (answer.isNotEmpty() && !isCorrect) {
             Text(
-                text = "Try again",
+                text = stringResource(R.string.restore_math_try_again),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )
@@ -1139,14 +1149,14 @@ private fun MathTask(
 
         if (isCorrect) {
             Text(
-                text = "Correct!",
+                text = stringResource(R.string.restore_correct),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
             ZenithButton(
                 onClick = { fireOnce() },
-                text = "Continue",
+                text = stringResource(R.string.restore_continue),
                 type = ZenithButtonType.Filled,
                 size = ZenithButtonSize.Large,
                 modifier = Modifier.fillMaxWidth()
@@ -1271,6 +1281,7 @@ private fun ChooseAppTask(
     val isPressed by interactionSource.collectIsPressedAsState()
     val holdProgress = remember { Animatable(0f) }
     val currentOnOpenApp by rememberUpdatedState(onOpenApp)
+    val appName = task.localizedAppName()
 
     LaunchedEffect(isPressed) {
         if (isPressed) {
@@ -1298,7 +1309,7 @@ private fun ChooseAppTask(
                     .data("app-icon://${task.suggestedPackage}")
                     .crossfade(500)
                     .build(),
-                contentDescription = task.suggestedAppName,
+                contentDescription = appName,
                 modifier = Modifier
                     .size(72.dp)
                     .clip(CircleShape),
@@ -1322,13 +1333,13 @@ private fun ChooseAppTask(
         }
 
         Text(
-            text = "How about using",
+            text = stringResource(R.string.restore_choose_app_intro),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Text(
-            text = task.suggestedAppName,
+            text = appName,
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.tertiary,
@@ -1336,7 +1347,7 @@ private fun ChooseAppTask(
         )
 
         Text(
-            text = "instead?",
+            text = stringResource(R.string.restore_choose_app_instead),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -1345,7 +1356,7 @@ private fun ChooseAppTask(
             ZenithButton(
                 onClick = { currentOnOpenApp?.invoke(task.suggestedPackage) },
                 icon = Icons.AutoMirrored.Outlined.OpenInNew,
-                text = "Open ${task.suggestedAppName}",
+                text = stringResource(R.string.restore_choose_app_open, appName),
                 type = ZenithButtonType.Filled,
                 size = ZenithButtonSize.ExtraLarge,
                 fillMaxWidth = true,
@@ -1360,9 +1371,9 @@ private fun ChooseAppTask(
                 onClick = {},
                 text = if (isPressed) {
                     val seconds = ceil(5 * (1f - holdProgress.value)).toInt()
-                    "Hold ${seconds}s to dismiss"
+                    stringResource(R.string.restore_choose_app_hold_dismiss, seconds)
                 } else {
-                    "I'll do it later (hold 5s)"
+                    stringResource(R.string.restore_choose_app_later)
                 },
                 type = ZenithButtonType.Tonal,
                 size = ZenithButtonSize.ExtraLarge,

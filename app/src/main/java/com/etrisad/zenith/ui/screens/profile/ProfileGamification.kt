@@ -1,5 +1,6 @@
 package com.etrisad.zenith.ui.screens.profile
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -90,16 +91,23 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import com.etrisad.zenith.R
 const val PROFILE_XP_BASE = 500
 const val PROFILE_XP_CURVE = 1.35
-enum class ProfileTier(val value: Int, val icon: ImageVector, val title: String) {
-    I(1, Icons.Outlined.StarOutline, "Spark"),
-    V(5, Icons.Outlined.Hive, "Nest"),
-    X(10, Icons.Outlined.Token, "Mint"),
-    L(50, Icons.Outlined.Cyclone, "Vortex"),
-    C(100, Icons.Outlined.FilterVintage, "Bloom"),
-    D(500, Icons.Outlined.MilitaryTech, "Valor"),
-    M(1000, Icons.Outlined.EmojiEvents, "Legend");
+enum class ProfileTier(
+    val value: Int,
+    val icon: ImageVector,
+    val title: String,
+    @StringRes val titleRes: Int
+) {
+    I(1, Icons.Outlined.StarOutline, "Spark", R.string.profile_tier_spark),
+    V(5, Icons.Outlined.Hive, "Nest", R.string.profile_tier_nest),
+    X(10, Icons.Outlined.Token, "Mint", R.string.profile_tier_mint),
+    L(50, Icons.Outlined.Cyclone, "Vortex", R.string.profile_tier_vortex),
+    C(100, Icons.Outlined.FilterVintage, "Bloom", R.string.profile_tier_bloom),
+    D(500, Icons.Outlined.MilitaryTech, "Valor", R.string.profile_tier_valor),
+    M(1000, Icons.Outlined.EmojiEvents, "Legend", R.string.profile_tier_legend);
 
     companion object {
         fun highestAtOrBelow(value: Long): ProfileTier? =
@@ -166,93 +174,117 @@ fun levelProgressForXp(xp: Long): Float {
 }
 fun xpToNextLevel(xpTotal: Long): Long =
     (xpForLevel(levelForXp(xpTotal) + 1) - xpTotal).coerceAtLeast(0L)
-data class LevelTitle(val id: String, val name: String, val requiredLevel: Int)
+data class LevelTitle(
+    val id: String,
+    val name: String,
+    @StringRes val nameRes: Int,
+    val requiredLevel: Int
+)
 enum class BorderEffect { NONE, SPIN, SHINE }
 
 data class AvatarBorder(
     val id: String,
     val name: String,
+    @StringRes val nameRes: Int,
     val requiredLevel: Int,
     val colors: List<Color>,
     val effect: BorderEffect = BorderEffect.NONE
 )
 
 val LEVEL_TITLES = listOf(
-    LevelTitle("initiate", "Initiate", 2),
-    LevelTitle("keeper", "Keeper", 5),
-    LevelTitle("warden", "Warden", 10),
-    LevelTitle("sentinel", "Sentinel", 15),
-    LevelTitle("paragon", "Paragon", 20),
-    LevelTitle("luminary", "Luminary", 25),
-    LevelTitle("zenith", "Zenith", 30),
-    LevelTitle("celestial", "Celestial", 35),
-    LevelTitle("eternal", "Eternal", 40),
-    LevelTitle("mythic", "Mythic", 45),
-    LevelTitle("transcendent", "Transcendent", 50),
-    LevelTitle("infinite", "Infinite", 55)
+    LevelTitle("initiate", "Initiate", R.string.profile_level_title_initiate, 2),
+    LevelTitle("keeper", "Keeper", R.string.profile_level_title_keeper, 5),
+    LevelTitle("warden", "Warden", R.string.profile_level_title_warden, 10),
+    LevelTitle("sentinel", "Sentinel", R.string.profile_level_title_sentinel, 15),
+    LevelTitle("paragon", "Paragon", R.string.profile_level_title_paragon, 20),
+    LevelTitle("luminary", "Luminary", R.string.profile_level_title_luminary, 25),
+    LevelTitle("zenith", "Zenith", R.string.profile_level_title_zenith, 30),
+    LevelTitle("celestial", "Celestial", R.string.profile_level_title_celestial, 35),
+    LevelTitle("eternal", "Eternal", R.string.profile_level_title_eternal, 40),
+    LevelTitle("mythic", "Mythic", R.string.profile_level_title_mythic, 45),
+    LevelTitle("transcendent", "Transcendent", R.string.profile_level_title_transcendent, 50),
+    LevelTitle("infinite", "Infinite", R.string.profile_level_title_infinite, 55)
 )
 val AVATAR_BORDERS = listOf(
-    AvatarBorder("ember", "Ember", 3, listOf(Color(0xFFFF7043))),
-    AvatarBorder("tide", "Tide", 5, listOf(Color(0xFF29B6F6))),
-    AvatarBorder("leaf", "Leaf", 7, listOf(Color(0xFF66BB6A))),
-    AvatarBorder("violet", "Violet", 9, listOf(Color(0xFF7E57C2))),
-    AvatarBorder("rose", "Rose", 11, listOf(Color(0xFFEC407A)), BorderEffect.SHINE),
-    AvatarBorder("moss", "Moss", 14, listOf(Color(0xFF9CCC65), Color(0xFF2E7D32))),
-    AvatarBorder("gold", "Gold", 17, listOf(Color(0xFFFFE082), Color(0xFFFF8F00))),
-    AvatarBorder("frost", "Frost", 20, listOf(Color(0xFF80DEEA), Color(0xFF00838F))),
-    AvatarBorder("magma", "Magma", 23, listOf(Color(0xFFFF8A65), Color(0xFFBF360C))),
-    AvatarBorder("lagoon", "Lagoon", 26, listOf(Color(0xFF4DD0E1), Color(0xFF0D47A1)), BorderEffect.SPIN),
+    AvatarBorder("ember", "Ember", R.string.profile_border_ember, 3, listOf(Color(0xFFFF7043))),
+    AvatarBorder("tide", "Tide", R.string.profile_border_tide, 5, listOf(Color(0xFF29B6F6))),
+    AvatarBorder("leaf", "Leaf", R.string.profile_border_leaf, 7, listOf(Color(0xFF66BB6A))),
+    AvatarBorder("violet", "Violet", R.string.profile_border_violet, 9, listOf(Color(0xFF7E57C2))),
     AvatarBorder(
-        "dusk", "Dusk", 29,
+        "rose", "Rose", R.string.profile_border_rose, 11,
+        listOf(Color(0xFFEC407A)), BorderEffect.SHINE
+    ),
+    AvatarBorder(
+        "moss", "Moss", R.string.profile_border_moss, 14,
+        listOf(Color(0xFF9CCC65), Color(0xFF2E7D32))
+    ),
+    AvatarBorder(
+        "gold", "Gold", R.string.profile_border_gold, 17,
+        listOf(Color(0xFFFFE082), Color(0xFFFF8F00))
+    ),
+    AvatarBorder(
+        "frost", "Frost", R.string.profile_border_frost, 20,
+        listOf(Color(0xFF80DEEA), Color(0xFF00838F))
+    ),
+    AvatarBorder(
+        "magma", "Magma", R.string.profile_border_magma, 23,
+        listOf(Color(0xFFFF8A65), Color(0xFFBF360C))
+    ),
+    AvatarBorder(
+        "lagoon", "Lagoon", R.string.profile_border_lagoon, 26,
+        listOf(Color(0xFF4DD0E1), Color(0xFF0D47A1)), BorderEffect.SPIN
+    ),
+    AvatarBorder(
+        "dusk", "Dusk", R.string.profile_border_dusk, 29,
         listOf(Color(0xFFCE93D8), Color(0xFF7B1FA2), Color(0xFF311B92))
     ),
     AvatarBorder(
-        "sunset", "Sunset", 32,
+        "sunset", "Sunset", R.string.profile_border_sunset, 32,
         listOf(Color(0xFFFFD54F), Color(0xFFFF7043), Color(0xFFAD1457))
     ),
     AvatarBorder(
-        "ocean", "Ocean", 35,
+        "ocean", "Ocean", R.string.profile_border_ocean, 35,
         listOf(Color(0xFF80DEEA), Color(0xFF1E88E5), Color(0xFF0D47A1))
     ),
     AvatarBorder(
-        "forest", "Forest", 38,
+        "forest", "Forest", R.string.profile_border_forest, 38,
         listOf(Color(0xFFAED581), Color(0xFF43A047), Color(0xFF1B5E20))
     ),
     AvatarBorder(
-        "candy", "Candy", 41,
+        "candy", "Candy", R.string.profile_border_candy, 41,
         listOf(Color(0xFFF48FB1), Color(0xFFEC407A), Color(0xFF880E4F)),
         BorderEffect.SPIN
     ),
     AvatarBorder(
-        "treasure", "Treasure", 44,
+        "treasure", "Treasure", R.string.profile_border_treasure, 44,
         listOf(
             Color(0xFFFFF176), Color(0xFFFFC107),
             Color(0xFFFF8F00), Color(0xFFE65100)
         )
     ),
     AvatarBorder(
-        "aurora", "Aurora", 47,
+        "aurora", "Aurora", R.string.profile_border_aurora, 47,
         listOf(
             Color(0xFFA7FFEB), Color(0xFF4DD0E1),
             Color(0xFF7B1FA2), Color(0xFF311B92)
         )
     ),
     AvatarBorder(
-        "inferno", "Inferno", 50,
+        "inferno", "Inferno", R.string.profile_border_inferno, 50,
         listOf(
             Color(0xFFFFD180), Color(0xFFFF7043),
             Color(0xFFD84315), Color(0xFF3E2723)
         )
     ),
     AvatarBorder(
-        "glacier", "Glacier", 53,
+        "glacier", "Glacier", R.string.profile_border_glacier, 53,
         listOf(
             Color(0xFFE1F5FE), Color(0xFF80DEEA),
             Color(0xFF00838F), Color(0xFF004D40)
         )
     ),
     AvatarBorder(
-        "spring", "Spring", 56,
+        "spring", "Spring", R.string.profile_border_spring, 56,
         listOf(
             Color(0xFFF0F4C3), Color(0xFFAED581),
             Color(0xFF689F38), Color(0xFF33691E)
@@ -260,35 +292,35 @@ val AVATAR_BORDERS = listOf(
         BorderEffect.SPIN
     ),
     AvatarBorder(
-        "prism", "Prism", 59,
+        "prism", "Prism", R.string.profile_border_prism, 59,
         listOf(
             Color(0xFFFF8A80), Color(0xFFFFD180), Color(0xFFA7FFEB),
             Color(0xFF82B1FF), Color(0xFFEA80FC)
         )
     ),
     AvatarBorder(
-        "spectrum", "Spectrum", 62,
+        "spectrum", "Spectrum", R.string.profile_border_spectrum, 62,
         listOf(
             Color(0xFFFF5252), Color(0xFFFFD740), Color(0xFF69F0AE),
             Color(0xFF40C4FF), Color(0xFFE040FB)
         )
     ),
     AvatarBorder(
-        "nebula", "Nebula", 65,
+        "nebula", "Nebula", R.string.profile_border_nebula, 65,
         listOf(
             Color(0xFFEA80FC), Color(0xFF7B1FA2), Color(0xFF29B6F6),
             Color(0xFFA7FFEB), Color(0xFFFFF176)
         )
     ),
     AvatarBorder(
-        "carnival", "Carnival", 68,
+        "carnival", "Carnival", R.string.profile_border_carnival, 68,
         listOf(
             Color(0xFFFF8A80), Color(0xFFFFAB40), Color(0xFFB9F6CA),
             Color(0xFF84FFFF), Color(0xFFB388FF)
         )
     ),
     AvatarBorder(
-        "eternity", "Eternity", 71,
+        "eternity", "Eternity", R.string.profile_border_eternity, 71,
         listOf(
             Color(0xFFD1C4E9), Color(0xFFB39DDB), Color(0xFF90CAF9),
             Color(0xFF80DEEA), Color(0xFFA5D6A7)
@@ -301,43 +333,86 @@ val AVATAR_BORDERS = listOf(
 data class ProfileShapeDef(
     val id: String,
     val name: String,
+    @StringRes val nameRes: Int,
     val requiredLevel: Int,
     val shapeResolver: @Composable () -> Shape
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 val PROFILE_SHAPES = listOf(
-    ProfileShapeDef("circle", "Circle", 1) { CircleShape },
-    ProfileShapeDef("square", "Square", 4) { MaterialShapes.Square.toShape() },
-    ProfileShapeDef("pill", "Pill", 8) { MaterialShapes.Pill.toShape() },
-    ProfileShapeDef("pentagon", "Pentagon", 12) { MaterialShapes.Pentagon.toShape() },
-    ProfileShapeDef("gem", "Gem", 16) { MaterialShapes.Gem.toShape() },
-    ProfileShapeDef("cookie7", "Cookie 7", 20) { MaterialShapes.Cookie7Sided.toShape() },
-    ProfileShapeDef("sunny", "Sunny", 24) { MaterialShapes.Sunny.toShape() },
-    ProfileShapeDef("slanted", "Slanted", 28) { MaterialShapes.Slanted.toShape() },
-    ProfileShapeDef("arch", "Arch", 32) { MaterialShapes.Arch.toShape() },
-    ProfileShapeDef("burst", "Burst", 36) { MaterialShapes.Burst.toShape() },
-    ProfileShapeDef("puffy", "Puffy", 40) { MaterialShapes.Puffy.toShape() },
-    ProfileShapeDef("bun", "Bun", 44) { MaterialShapes.Bun.toShape() },
-    ProfileShapeDef("pixel", "Pixel Circle", 48) { MaterialShapes.PixelCircle.toShape() },
-    ProfileShapeDef("flower", "Flower", 52) { MaterialShapes.Flower.toShape() },
-    ProfileShapeDef("cookie12", "Cookie 12", 58) { MaterialShapes.Cookie12Sided.toShape() },
-    ProfileShapeDef("clover", "Clover 4", 64) { MaterialShapes.Clover4Leaf.toShape() },
-    ProfileShapeDef("verysunny", "Very Sunny", 70) { MaterialShapes.VerySunny.toShape() }
+    ProfileShapeDef("circle", "Circle", R.string.profile_shape_circle, 1) { CircleShape },
+    ProfileShapeDef("square", "Square", R.string.profile_shape_square, 4) {
+        MaterialShapes.Square.toShape()
+    },
+    ProfileShapeDef("pill", "Pill", R.string.profile_shape_pill, 8) { MaterialShapes.Pill.toShape() },
+    ProfileShapeDef("pentagon", "Pentagon", R.string.profile_shape_pentagon, 12) {
+        MaterialShapes.Pentagon.toShape()
+    },
+    ProfileShapeDef("gem", "Gem", R.string.profile_shape_gem, 16) { MaterialShapes.Gem.toShape() },
+    ProfileShapeDef("cookie7", "Cookie 7", R.string.profile_shape_cookie7, 20) {
+        MaterialShapes.Cookie7Sided.toShape()
+    },
+    ProfileShapeDef("sunny", "Sunny", R.string.profile_shape_sunny, 24) {
+        MaterialShapes.Sunny.toShape()
+    },
+    ProfileShapeDef("slanted", "Slanted", R.string.profile_shape_slanted, 28) {
+        MaterialShapes.Slanted.toShape()
+    },
+    ProfileShapeDef("arch", "Arch", R.string.profile_shape_arch, 32) { MaterialShapes.Arch.toShape() },
+    ProfileShapeDef("burst", "Burst", R.string.profile_shape_burst, 36) {
+        MaterialShapes.Burst.toShape()
+    },
+    ProfileShapeDef("puffy", "Puffy", R.string.profile_shape_puffy, 40) {
+        MaterialShapes.Puffy.toShape()
+    },
+    ProfileShapeDef("bun", "Bun", R.string.profile_shape_bun, 44) { MaterialShapes.Bun.toShape() },
+    ProfileShapeDef("pixel", "Pixel Circle", R.string.profile_shape_pixel, 48) {
+        MaterialShapes.PixelCircle.toShape()
+    },
+    ProfileShapeDef("flower", "Flower", R.string.profile_shape_flower, 52) {
+        MaterialShapes.Flower.toShape()
+    },
+    ProfileShapeDef("cookie12", "Cookie 12", R.string.profile_shape_cookie12, 58) {
+        MaterialShapes.Cookie12Sided.toShape()
+    },
+    ProfileShapeDef("clover", "Clover 4", R.string.profile_shape_clover, 64) {
+        MaterialShapes.Clover4Leaf.toShape()
+    },
+    ProfileShapeDef("verysunny", "Very Sunny", R.string.profile_shape_verysunny, 70) {
+        MaterialShapes.VerySunny.toShape()
+    }
 )
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProfileShapeDef.resolveShape(): Shape = shapeResolver()
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
-fun nextLevelReward(level: Int): Pair<Int, String>? {
-    val upcoming = (LEVEL_TITLES.map { it.requiredLevel to it.name } +
-        AVATAR_BORDERS.map { it.requiredLevel to "${it.name} Border" } +
-        PROFILE_SHAPES.map { it.requiredLevel to "${it.name} Shape" })
-        .filter { it.first > level }
-    return upcoming.minByOrNull { it.first }
+enum class LevelRewardKind { TITLE, BORDER, SHAPE }
+
+/** One upcoming unlock shown in the "next reward" copy; [nameRes] is the localized name. */
+data class LevelReward(
+    val requiredLevel: Int,
+    @StringRes val nameRes: Int,
+    val kind: LevelRewardKind
+)
+
+/** Localized label for a reward, e.g. "余烬边框" / "五边形形状". */
+@Composable
+fun LevelReward.label(): String = when (kind) {
+    LevelRewardKind.TITLE -> stringResource(nameRes)
+    LevelRewardKind.BORDER ->
+        stringResource(R.string.profile_reward_border, stringResource(nameRes))
+    LevelRewardKind.SHAPE ->
+        stringResource(R.string.profile_reward_shape, stringResource(nameRes))
 }
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+fun nextLevelReward(level: Int): LevelReward? =
+    (LEVEL_TITLES.map { LevelReward(it.requiredLevel, it.nameRes, LevelRewardKind.TITLE) } +
+        AVATAR_BORDERS.map { LevelReward(it.requiredLevel, it.nameRes, LevelRewardKind.BORDER) } +
+        PROFILE_SHAPES.map { LevelReward(it.requiredLevel, it.nameRes, LevelRewardKind.SHAPE) })
+        .filter { it.requiredLevel > level }
+        .minByOrNull { it.requiredLevel }
 
 fun borderBrushFor(border: AvatarBorder): Brush =
     if (border.colors.size == 1) SolidColor(border.colors.first())
@@ -349,12 +424,12 @@ data class TierThreshold(val tier: ProfileTier, val required: Long, val requireL
 
 data class AchievementDef(
     val id: String,
-    val title: String,
-    val desc: String,
+    @StringRes val title: Int,
+    @StringRes val desc: Int,
     val icon: ImageVector,
     val category: AchievementCategory,
     val thresholds: List<TierThreshold>,
-    val tierNames: List<String> = emptyList(),
+    val tierNameRes: List<Int> = emptyList(),
     val unlimited: Boolean = false,
     val curveGrowth: Double = 2.0
 )
@@ -471,11 +546,22 @@ private val MILLIS_ACHIEVEMENTS = setOf("focus_hours", "time_saver", "loyal_trac
 
 fun formatProgressNumber(defId: String, value: Long): String =
     if (defId in MILLIS_ACHIEVEMENTS) formatCompactDuration(value) else value.toString()
+@Composable
 fun tierDisplayName(def: AchievementDef, level: Int): String {
-    if (level <= 0) return def.title
-    def.tierNames.getOrNull(level - 1)?.let { return it }
-    if (!isUnlimited(def)) return def.title
-    return generatedTierName(def.id, level)
+    if (level > 0) {
+        def.tierNameRes.getOrNull(level - 1)?.let { return stringResource(it) }
+        if (isUnlimited(def)) return generatedTierName(def.id, level)
+    }
+    return stringResource(def.title)
+}
+
+/** Non-composable variant for share cards and other background rendering. */
+fun tierDisplayName(context: android.content.Context, def: AchievementDef, level: Int): String {
+    if (level > 0) {
+        def.tierNameRes.getOrNull(level - 1)?.let { return context.getString(it) }
+        if (isUnlimited(def)) return generatedTierName(def.id, level)
+    }
+    return context.getString(def.title)
 }
 private val CAPPED_ACCUMULATION_IDS = setOf("profile_polisher", "taskmaster", "widget_wielder")
 
@@ -615,8 +701,8 @@ fun countTierSymbols(achievements: List<AchievementState>): Map<ProfileTier, Int
 
 fun buildAchievementDefs(): List<AchievementDef> = listOf(
     AchievementDef(
-        id = "onboarding_path", title = "Pathfinder",
-        desc = "Complete the Zenith guided path",
+        id = "onboarding_path", title = R.string.ach_onboarding_path_title,
+        desc = R.string.ach_onboarding_path_desc,
         icon = Icons.Outlined.Explore, category = AchievementCategory.EXPLORER,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 chapter"),
@@ -627,14 +713,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 6, "6 chapters"),
             TierThreshold(ProfileTier.M, 7, "Mastery")
         ),
-        tierNames = listOf(
-            "First Light", "Shieldbearer", "Stillness",
-            "Timekeeper", "Oracle", "Curator", "Zenith Master"
-        )
+        tierNameRes = listOf(R.string.ach_onboarding_path_tier_1, R.string.ach_onboarding_path_tier_2, R.string.ach_onboarding_path_tier_3, R.string.ach_onboarding_path_tier_4, R.string.ach_onboarding_path_tier_5, R.string.ach_onboarding_path_tier_6, R.string.ach_onboarding_path_tier_7)
     ),
     AchievementDef(
-        id = "pomo_first", title = "Focus Starter",
-        desc = "Complete a Pomodoro focus session",
+        id = "pomo_first", title = R.string.ach_pomo_first_title,
+        desc = R.string.ach_pomo_first_desc,
         icon = Icons.Outlined.Timer, category = AchievementCategory.EXPLORER,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 session"),
@@ -645,14 +728,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 500, "500 sessions"),
             TierThreshold(ProfileTier.M, 1000, "1000 sessions")
         ),
-        tierNames = listOf(
-            "First Spark", "Focus Starter", "Rhythm Finder", "Habit Former",
-            "Session Machine", "Century Club", "Focus Sage"
-        )
+        tierNameRes = listOf(R.string.ach_pomo_first_tier_1, R.string.ach_pomo_first_tier_2, R.string.ach_pomo_first_tier_3, R.string.ach_pomo_first_tier_4, R.string.ach_pomo_first_tier_5, R.string.ach_pomo_first_tier_6, R.string.ach_pomo_first_tier_7)
     ),
     AchievementDef(
-        id = "focus_hours", title = "Deep Focus",
-        desc = "Accumulate Pomodoro focus time",
+        id = "focus_hours", title = R.string.ach_focus_hours_title,
+        desc = R.string.ach_focus_hours_desc,
         icon = Icons.Outlined.HourglassEmpty, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 3_600_000L, "1h"),
@@ -663,14 +743,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 900_000_000L, "250h"),
             TierThreshold(ProfileTier.M, 1_800_000_000L, "500h")
         ),
-        tierNames = listOf(
-            "First Hour", "Deep Focus", "Flow Finder", "Flow Keeper",
-            "Marathon Mind", "Centurion", "Enlightened"
-        )
+        tierNameRes = listOf(R.string.ach_focus_hours_tier_1, R.string.ach_focus_hours_tier_2, R.string.ach_focus_hours_tier_3, R.string.ach_focus_hours_tier_4, R.string.ach_focus_hours_tier_5, R.string.ach_focus_hours_tier_6, R.string.ach_focus_hours_tier_7)
     ),
     AchievementDef(
-        id = "streak_keeper", title = "Streak Keeper",
-        desc = "Grow your best screen time streak",
+        id = "streak_keeper", title = R.string.ach_streak_keeper_title,
+        desc = R.string.ach_streak_keeper_desc,
         icon = Icons.Outlined.LocalFireDepartment, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 5, "5 days"),
@@ -681,14 +758,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 200, "200 days"),
             TierThreshold(ProfileTier.M, 365, "365 days")
         ),
-        tierNames = listOf(
-            "Streak in a Cup", "Streak in a Bag", "Streak Keeper", "Streak Warden",
-            "Streak Guardian", "Streak Legend", "Streak Eternal"
-        )
+        tierNameRes = listOf(R.string.ach_streak_keeper_tier_1, R.string.ach_streak_keeper_tier_2, R.string.ach_streak_keeper_tier_3, R.string.ach_streak_keeper_tier_4, R.string.ach_streak_keeper_tier_5, R.string.ach_streak_keeper_tier_6, R.string.ach_streak_keeper_tier_7)
     ),
     AchievementDef(
-        id = "time_saver", title = "Time Saver",
-        desc = "Save time under shield limits",
+        id = "time_saver", title = R.string.ach_time_saver_title,
+        desc = R.string.ach_time_saver_desc,
         icon = Icons.Outlined.Shield, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 3_600_000L, "1h saved"),
@@ -699,14 +773,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 900_000_000L, "250h saved"),
             TierThreshold(ProfileTier.M, 1_800_000_000L, "500h saved")
         ),
-        tierNames = listOf(
-            "Penny Saved", "Time Saver", "Hour Hoarder", "Time Vault",
-            "Time Banker", "Time Tycoon", "Time Lord"
-        )
+        tierNameRes = listOf(R.string.ach_time_saver_tier_1, R.string.ach_time_saver_tier_2, R.string.ach_time_saver_tier_3, R.string.ach_time_saver_tier_4, R.string.ach_time_saver_tier_5, R.string.ach_time_saver_tier_6, R.string.ach_time_saver_tier_7)
     ),
     AchievementDef(
-        id = "app_streaker", title = "App Streaker",
-        desc = "Best streak on any single app",
+        id = "app_streaker", title = R.string.ach_app_streaker_title,
+        desc = R.string.ach_app_streaker_desc,
         icon = Icons.Outlined.TrackChanges, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 5, "5 days"),
@@ -717,140 +788,137 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 200, "200 days"),
             TierThreshold(ProfileTier.M, 365, "365 days")
         ),
-        tierNames = listOf(
-            "App Sprout", "App Streaker", "App Regular", "App Devotee",
-            "App Champion", "App Legend", "App Immortal"
-        )
+        tierNameRes = listOf(R.string.ach_app_streaker_tier_1, R.string.ach_app_streaker_tier_2, R.string.ach_app_streaker_tier_3, R.string.ach_app_streaker_tier_4, R.string.ach_app_streaker_tier_5, R.string.ach_app_streaker_tier_6, R.string.ach_app_streaker_tier_7)
     ),
     AchievementDef(
-        id = "lockdown_explorer", title = "Lockdown Explorer",
-        desc = "Try Lockdown mode", icon = Icons.Outlined.Lock,
+        id = "lockdown_explorer", title = R.string.ach_lockdown_explorer_title,
+        desc = R.string.ach_lockdown_explorer_desc, icon = Icons.Outlined.Lock,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "bedtime_explorer", title = "Bedtime Explorer",
-        desc = "Try Bedtime mode", icon = Icons.Outlined.Bedtime,
+        id = "bedtime_explorer", title = R.string.ach_bedtime_explorer_title,
+        desc = R.string.ach_bedtime_explorer_desc, icon = Icons.Outlined.Bedtime,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "alarm_explorer", title = "Alarm Explorer",
-        desc = "Set an alarm", icon = Icons.Outlined.Alarm,
+        id = "alarm_explorer", title = R.string.ach_alarm_explorer_title,
+        desc = R.string.ach_alarm_explorer_desc, icon = Icons.Outlined.Alarm,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "1 alarm"))
     ),
     AchievementDef(
-        id = "pausepoint_explorer", title = "Pause Point Explorer",
-        desc = "Try Pause Point", icon = Icons.Outlined.PauseCircle,
+        id = "pausepoint_explorer", title = R.string.ach_pausepoint_explorer_title,
+        desc = R.string.ach_pausepoint_explorer_desc, icon = Icons.Outlined.PauseCircle,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "goal_setter", title = "Goal Setter",
-        desc = "Create a goal app", icon = Icons.Outlined.TrackChanges,
+        id = "goal_setter", title = R.string.ach_goal_setter_title,
+        desc = R.string.ach_goal_setter_desc, icon = Icons.Outlined.TrackChanges,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "1 goal"))
     ),
     AchievementDef(
-        id = "shield_setter", title = "Shield Bearer",
-        desc = "Protect an app with Shield", icon = Icons.Outlined.Shield,
+        id = "shield_setter", title = R.string.ach_shield_setter_title,
+        desc = R.string.ach_shield_setter_desc, icon = Icons.Outlined.Shield,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "1 shield"))
     ),
     AchievementDef(
-        id = "eyecare_explorer", title = "Eye Care Explorer",
-        desc = "Try Eye Care reminders", icon = Icons.Outlined.LightMode,
+        id = "eyecare_explorer", title = R.string.ach_eyecare_explorer_title,
+        desc = R.string.ach_eyecare_explorer_desc, icon = Icons.Outlined.LightMode,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "grace_explorer", title = "Grace Explorer",
-        desc = "Try Grace Period", icon = Icons.Outlined.HourglassEmpty,
+        id = "grace_explorer", title = R.string.ach_grace_explorer_title,
+        desc = R.string.ach_grace_explorer_desc, icon = Icons.Outlined.HourglassEmpty,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "hud_pilot", title = "HUD Pilot",
-        desc = "Enable the session usage overlay", icon = Icons.Outlined.PictureInPicture,
+        id = "hud_pilot", title = R.string.ach_hud_pilot_title,
+        desc = R.string.ach_hud_pilot_desc, icon = Icons.Outlined.PictureInPicture,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "patient_player", title = "Patient Player",
-        desc = "Delay an app instead of blocking it", icon = Icons.Outlined.HourglassFull,
+        id = "patient_player", title = R.string.ach_patient_player_title,
+        desc = R.string.ach_patient_player_desc, icon = Icons.Outlined.HourglassFull,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "1 delayed app"))
     ),
     AchievementDef(
-        id = "strict_enforcer", title = "Strict Enforcer",
-        desc = "Turn on strict mode on a shield", icon = Icons.Outlined.Gavel,
+        id = "strict_enforcer", title = R.string.ach_strict_enforcer_title,
+        desc = R.string.ach_strict_enforcer_desc, icon = Icons.Outlined.Gavel,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "caller_tuned", title = "Voice of Goals",
-        desc = "Enable the goal caller voice", icon = Icons.Outlined.Call,
+        id = "caller_tuned", title = R.string.ach_caller_tuned_title,
+        desc = R.string.ach_caller_tuned_desc, icon = Icons.Outlined.Call,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "auto_quitter", title = "Auto Quitter",
-        desc = "Let Zenith auto-quit an app", icon = Icons.Outlined.ExitToApp,
+        id = "auto_quitter", title = R.string.ach_auto_quitter_title,
+        desc = R.string.ach_auto_quitter_desc, icon = Icons.Outlined.ExitToApp,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "target_setter", title = "Target Setter",
-        desc = "Set a daily screen time target", icon = Icons.Outlined.Adjust,
+        id = "target_setter", title = R.string.ach_target_setter_title,
+        desc = R.string.ach_target_setter_desc, icon = Icons.Outlined.Adjust,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Target set"))
     ),
     AchievementDef(
-        id = "web_watcher", title = "Web Watcher",
-        desc = "Enable website auto-tracking", icon = Icons.Outlined.Public,
+        id = "web_watcher", title = R.string.ach_web_watcher_title,
+        desc = R.string.ach_web_watcher_desc, icon = Icons.Outlined.Public,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "dev_mode", title = "Developer Mode",
-        desc = "Unlock developer options", icon = Icons.Outlined.Code,
+        id = "dev_mode", title = R.string.ach_dev_mode_title,
+        desc = R.string.ach_dev_mode_desc, icon = Icons.Outlined.Code,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "perf_tuner", title = "Performance Tuner",
-        desc = "Craft a custom performance profile", icon = Icons.Outlined.Tune,
+        id = "perf_tuner", title = R.string.ach_perf_tuner_title,
+        desc = R.string.ach_perf_tuner_desc, icon = Icons.Outlined.Tune,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Custom profile"))
     ),
     AchievementDef(
-        id = "data_doctor", title = "Data Doctor",
-        desc = "Enable smart repair on refresh", icon = Icons.Outlined.Healing,
+        id = "data_doctor", title = R.string.ach_data_doctor_title,
+        desc = R.string.ach_data_doctor_desc, icon = Icons.Outlined.Healing,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "ghost_mode", title = "Ghost Mode",
-        desc = "Add an app to Private & Hidden Apps", icon = Icons.Outlined.VisibilityOff,
+        id = "ghost_mode", title = R.string.ach_ghost_mode_title,
+        desc = R.string.ach_ghost_mode_desc, icon = Icons.Outlined.VisibilityOff,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "1 excluded app"))
     ),
     AchievementDef(
-        id = "wind_downer", title = "Wind Downer",
-        desc = "Enable bedtime wind-down", icon = Icons.Outlined.NightsStay,
+        id = "wind_downer", title = R.string.ach_wind_downer_title,
+        desc = R.string.ach_wind_downer_desc, icon = Icons.Outlined.NightsStay,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "town_crier", title = "Town Crier",
-        desc = "Share your profile card", icon = Icons.Outlined.Campaign,
+        id = "town_crier", title = R.string.ach_town_crier_title,
+        desc = R.string.ach_town_crier_desc, icon = Icons.Outlined.Campaign,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Shared once"))
     ),
     AchievementDef(
-        id = "hot_streak", title = "Hot Streak",
-        desc = "Keep the current streak burning",
+        id = "hot_streak", title = R.string.ach_hot_streak_title,
+        desc = R.string.ach_hot_streak_desc,
         icon = Icons.Outlined.Whatshot, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 3, "3 days"),
@@ -861,14 +929,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 100, "100 days"),
             TierThreshold(ProfileTier.M, 200, "200 days")
         ),
-        tierNames = listOf(
-            "Warm Up", "Hot Streak", "On Fire", "Blazing",
-            "Inferno", "Unstoppable", "Eternal Flame"
-        )
+        tierNameRes = listOf(R.string.ach_hot_streak_tier_1, R.string.ach_hot_streak_tier_2, R.string.ach_hot_streak_tier_3, R.string.ach_hot_streak_tier_4, R.string.ach_hot_streak_tier_5, R.string.ach_hot_streak_tier_6, R.string.ach_hot_streak_tier_7)
     ),
     AchievementDef(
-        id = "escape_artist", title = "Escape Artist",
-        desc = "Total emergency uses spent",
+        id = "escape_artist", title = R.string.ach_escape_artist_title,
+        desc = R.string.ach_escape_artist_desc,
         icon = Icons.Outlined.DirectionsRun, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 escape"),
@@ -879,14 +944,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 35, "35 escapes"),
             TierThreshold(ProfileTier.M, 50, "50 escapes")
         ),
-        tierNames = listOf(
-            "First Escape", "Escape Artist", "Sneaky", "Houdini Act",
-            "Ghost Protocol", "Phantom", "Uncontainable"
-        )
+        tierNameRes = listOf(R.string.ach_escape_artist_tier_1, R.string.ach_escape_artist_tier_2, R.string.ach_escape_artist_tier_3, R.string.ach_escape_artist_tier_4, R.string.ach_escape_artist_tier_5, R.string.ach_escape_artist_tier_6, R.string.ach_escape_artist_tier_7)
     ),
     AchievementDef(
-        id = "scheduler_pro", title = "Scheduler",
-        desc = "Active focus schedules",
+        id = "scheduler_pro", title = R.string.ach_scheduler_pro_title,
+        desc = R.string.ach_scheduler_pro_desc,
         icon = Icons.Outlined.CalendarMonth, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 schedule"),
@@ -895,13 +957,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.L, 5, "5 schedules"),
             TierThreshold(ProfileTier.M, 8, "8 schedules")
         ),
-        tierNames = listOf(
-            "First Plan", "Scheduler", "Planner", "Timetable Keeper", "Grand Scheduler"
-        )
+        tierNameRes = listOf(R.string.ach_scheduler_pro_tier_1, R.string.ach_scheduler_pro_tier_2, R.string.ach_scheduler_pro_tier_3, R.string.ach_scheduler_pro_tier_4, R.string.ach_scheduler_pro_tier_5)
     ),
     AchievementDef(
-        id = "alarm_collector", title = "Alarm Collector",
-        desc = "Alarms ringing for you",
+        id = "alarm_collector", title = R.string.ach_alarm_collector_title,
+        desc = R.string.ach_alarm_collector_desc,
         icon = Icons.Outlined.AlarmOn, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 alarm"),
@@ -910,13 +970,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.L, 5, "5 alarms"),
             TierThreshold(ProfileTier.M, 8, "8 alarms")
         ),
-        tierNames = listOf(
-            "First Bell", "Alarm Collector", "Double Shift", "Morning Crew", "Ring Master"
-        )
+        tierNameRes = listOf(R.string.ach_alarm_collector_tier_1, R.string.ach_alarm_collector_tier_2, R.string.ach_alarm_collector_tier_3, R.string.ach_alarm_collector_tier_4, R.string.ach_alarm_collector_tier_5)
     ),
     AchievementDef(
-        id = "goal_getter", title = "Goal Getter",
-        desc = "Goals you are growing",
+        id = "goal_getter", title = R.string.ach_goal_getter_title,
+        desc = R.string.ach_goal_getter_desc,
         icon = Icons.Outlined.Flag, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 goal"),
@@ -925,13 +983,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.L, 5, "5 goals"),
             TierThreshold(ProfileTier.M, 8, "8 goals")
         ),
-        tierNames = listOf(
-            "First Goal", "Goal Getter", "Goal Hunter", "Goal Crusher", "Goal Machine"
-        )
+        tierNameRes = listOf(R.string.ach_goal_getter_tier_1, R.string.ach_goal_getter_tier_2, R.string.ach_goal_getter_tier_3, R.string.ach_goal_getter_tier_4, R.string.ach_goal_getter_tier_5)
     ),
     AchievementDef(
-        id = "xp_hoarder", title = "XP Hoarder",
-        desc = "Lifetime XP piled up",
+        id = "xp_hoarder", title = R.string.ach_xp_hoarder_title,
+        desc = R.string.ach_xp_hoarder_desc,
         icon = Icons.Outlined.Savings, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 500, "500 XP"),
@@ -942,14 +998,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 25000, "25000 XP"),
             TierThreshold(ProfileTier.M, 50000, "50000 XP")
         ),
-        tierNames = listOf(
-            "First Hoard", "XP Hoarder", "XP Stacker", "XP Vault",
-            "XP Tycoon", "XP Legend", "XP Deity"
-        )
+        tierNameRes = listOf(R.string.ach_xp_hoarder_tier_1, R.string.ach_xp_hoarder_tier_2, R.string.ach_xp_hoarder_tier_3, R.string.ach_xp_hoarder_tier_4, R.string.ach_xp_hoarder_tier_5, R.string.ach_xp_hoarder_tier_6, R.string.ach_xp_hoarder_tier_7)
     ),
     AchievementDef(
-        id = "taskmaster", title = "Taskmaster",
-        desc = "Pause Point task types mastered",
+        id = "taskmaster", title = R.string.ach_taskmaster_title,
+        desc = R.string.ach_taskmaster_desc,
         icon = Icons.Outlined.Assignment, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 type"),
@@ -957,91 +1010,89 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.X, 4, "4 types"),
             TierThreshold(ProfileTier.M, 6, "6 types")
         ),
-        tierNames = listOf(
-            "First Task", "Taskmaster", "Drill Sergeant", "Ringmaster"
-        )
+        tierNameRes = listOf(R.string.ach_taskmaster_tier_1, R.string.ach_taskmaster_tier_2, R.string.ach_taskmaster_tier_3, R.string.ach_taskmaster_tier_4)
     ),
     AchievementDef(
-        id = "palette_painter", title = "Palette Painter",
-        desc = "Paint overlays a custom hue", icon = Icons.Outlined.Colorize,
+        id = "palette_painter", title = R.string.ach_palette_painter_title,
+        desc = R.string.ach_palette_painter_desc, icon = Icons.Outlined.Colorize,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Custom hue"))
     ),
     AchievementDef(
-        id = "floater", title = "Floater",
-        desc = "Float the tab bar", icon = Icons.Outlined.Dock,
+        id = "floater", title = R.string.ach_floater_title,
+        desc = R.string.ach_floater_desc, icon = Icons.Outlined.Dock,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "pill_keeper", title = "Pill Keeper",
-        desc = "Pin the total usage pill", icon = Icons.Outlined.Medication,
+        id = "pill_keeper", title = R.string.ach_pill_keeper_title,
+        desc = R.string.ach_pill_keeper_desc, icon = Icons.Outlined.Medication,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "locked_in", title = "Locked In",
-        desc = "Arm the incentive lock", icon = Icons.Outlined.Lock,
+        id = "locked_in", title = R.string.ach_locked_in_title,
+        desc = R.string.ach_locked_in_desc, icon = Icons.Outlined.Lock,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "head_start", title = "Head Start",
-        desc = "Enable the early kick", icon = Icons.Outlined.Bolt,
+        id = "head_start", title = R.string.ach_head_start_title,
+        desc = R.string.ach_head_start_desc, icon = Icons.Outlined.Bolt,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "full_charge", title = "Full Charge",
-        desc = "Reset stats on full charge", icon = Icons.Outlined.BatteryChargingFull,
+        id = "full_charge", title = R.string.ach_full_charge_title,
+        desc = R.string.ach_full_charge_desc, icon = Icons.Outlined.BatteryChargingFull,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "day_maker", title = "Day Maker",
-        desc = "Define when your day starts", icon = Icons.Outlined.WbSunny,
+        id = "day_maker", title = R.string.ach_day_maker_title,
+        desc = R.string.ach_day_maker_desc, icon = Icons.Outlined.WbSunny,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Custom start"))
     ),
     AchievementDef(
-        id = "night_off", title = "Night Off",
-        desc = "Pause tracking in unused hours", icon = Icons.Outlined.BedtimeOff,
+        id = "night_off", title = R.string.ach_night_off_title,
+        desc = R.string.ach_night_off_desc, icon = Icons.Outlined.BedtimeOff,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "second_chance", title = "Second Chance",
-        desc = "Recover a broken streak", icon = Icons.Outlined.Replay,
+        id = "second_chance", title = R.string.ach_second_chance_title,
+        desc = R.string.ach_second_chance_desc, icon = Icons.Outlined.Replay,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Recovered once"))
     ),
     AchievementDef(
-        id = "cleaner", title = "Cleaner",
-        desc = "Dismiss an uninstalled app", icon = Icons.Outlined.CleaningServices,
+        id = "cleaner", title = R.string.ach_cleaner_title,
+        desc = R.string.ach_cleaner_desc, icon = Icons.Outlined.CleaningServices,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Cleaned once"))
     ),
     AchievementDef(
-        id = "bedtime_bouncer", title = "Bedtime Bouncer",
-        desc = "Curate the bedtime allowlist", icon = Icons.Outlined.Hotel,
+        id = "bedtime_bouncer", title = R.string.ach_bedtime_bouncer_title,
+        desc = R.string.ach_bedtime_bouncer_desc, icon = Icons.Outlined.Hotel,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "1 allowed app"))
     ),
     AchievementDef(
-        id = "silent_sleeper", title = "Silent Sleeper",
-        desc = "Sleep behind do-not-disturb", icon = Icons.Outlined.NotificationsOff,
+        id = "silent_sleeper", title = R.string.ach_silent_sleeper_title,
+        desc = R.string.ach_silent_sleeper_desc, icon = Icons.Outlined.NotificationsOff,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "shorts_spotter", title = "Shorts Spotter",
-        desc = "Catch Shorts in the act", icon = Icons.Outlined.PlayCircle,
+        id = "shorts_spotter", title = R.string.ach_shorts_spotter_title,
+        desc = R.string.ach_shorts_spotter_desc, icon = Icons.Outlined.PlayCircle,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Spotted once"))
     ),
     AchievementDef(
-        id = "widget_wielder", title = "Widget Wielder",
-        desc = "Pin Zenith widgets to home",
+        id = "widget_wielder", title = R.string.ach_widget_wielder_title,
+        desc = R.string.ach_widget_wielder_desc,
         icon = Icons.Outlined.Widgets, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 widget"),
@@ -1049,13 +1100,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.X, 3, "3 widgets"),
             TierThreshold(ProfileTier.M, 5, "5 widgets")
         ),
-        tierNames = listOf(
-            "First Pin", "Widget Wielder", "Home Decorator", "Widget Wall"
-        )
+        tierNameRes = listOf(R.string.ach_widget_wielder_tier_1, R.string.ach_widget_wielder_tier_2, R.string.ach_widget_wielder_tier_3, R.string.ach_widget_wielder_tier_4)
     ),
     AchievementDef(
-        id = "web_cartographer", title = "Web Cartographer",
-        desc = "Distinct domains tracked",
+        id = "web_cartographer", title = R.string.ach_web_cartographer_title,
+        desc = R.string.ach_web_cartographer_desc,
         icon = Icons.Outlined.Explore, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 3, "3 domains"),
@@ -1063,13 +1112,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.X, 25, "25 domains"),
             TierThreshold(ProfileTier.M, 50, "50 domains")
         ),
-        tierNames = listOf(
-            "First Domain", "Web Cartographer", "Domain Mapper", "Magellan"
-        )
+        tierNameRes = listOf(R.string.ach_web_cartographer_tier_1, R.string.ach_web_cartographer_tier_2, R.string.ach_web_cartographer_tier_3, R.string.ach_web_cartographer_tier_4)
     ),
     AchievementDef(
-        id = "interceptor", title = "Interceptor",
-        desc = "Notifications caught by schedules",
+        id = "interceptor", title = R.string.ach_interceptor_title,
+        desc = R.string.ach_interceptor_desc,
         icon = Icons.Outlined.NotificationsActive, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 10, "10 caught"),
@@ -1077,13 +1124,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.X, 200, "200 caught"),
             TierThreshold(ProfileTier.M, 1000, "1000 caught")
         ),
-        tierNames = listOf(
-            "First Block", "Interceptor", "Gatekeeper", "Firewall"
-        )
+        tierNameRes = listOf(R.string.ach_interceptor_tier_1, R.string.ach_interceptor_tier_2, R.string.ach_interceptor_tier_3, R.string.ach_interceptor_tier_4)
     ),
     AchievementDef(
-        id = "historian", title = "Historian",
-        desc = "Days of history preserved",
+        id = "historian", title = R.string.ach_historian_title,
+        desc = R.string.ach_historian_desc,
         icon = Icons.Outlined.AutoStories, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 7, "7 days"),
@@ -1092,13 +1137,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.L, 180, "180 days"),
             TierThreshold(ProfileTier.M, 365, "365 days")
         ),
-        tierNames = listOf(
-            "First Week", "Historian", "Chronicler", "Archivist", "Timekeeper"
-        )
+        tierNameRes = listOf(R.string.ach_historian_tier_1, R.string.ach_historian_tier_2, R.string.ach_historian_tier_3, R.string.ach_historian_tier_4, R.string.ach_historian_tier_5)
     ),
     AchievementDef(
-        id = "app_atlas", title = "App Atlas",
-        desc = "Distinct apps ever tracked",
+        id = "app_atlas", title = R.string.ach_app_atlas_title,
+        desc = R.string.ach_app_atlas_desc,
         icon = Icons.Outlined.Map, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 10, "10 apps"),
@@ -1107,13 +1150,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.L, 100, "100 apps"),
             TierThreshold(ProfileTier.M, 200, "200 apps")
         ),
-        tierNames = listOf(
-            "First Pin", "App Atlas", "Trailblazer", "Surveyor", "Cartographer"
-        )
+        tierNameRes = listOf(R.string.ach_app_atlas_tier_1, R.string.ach_app_atlas_tier_2, R.string.ach_app_atlas_tier_3, R.string.ach_app_atlas_tier_4, R.string.ach_app_atlas_tier_5)
     ),
     AchievementDef(
-        id = "variant_vanguard", title = "Variant Vanguard",
-        desc = "Custom Pause Point variants",
+        id = "variant_vanguard", title = R.string.ach_variant_vanguard_title,
+        desc = R.string.ach_variant_vanguard_desc,
         icon = Icons.Outlined.DashboardCustomize, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 variant"),
@@ -1121,13 +1162,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.X, 4, "4 variants"),
             TierThreshold(ProfileTier.M, 6, "6 variants")
         ),
-        tierNames = listOf(
-            "First Twist", "Variant Vanguard", "Remixer", "Mad Scientist"
-        )
+        tierNameRes = listOf(R.string.ach_variant_vanguard_tier_1, R.string.ach_variant_vanguard_tier_2, R.string.ach_variant_vanguard_tier_3, R.string.ach_variant_vanguard_tier_4)
     ),
     AchievementDef(
-        id = "under_budget", title = "Under Budget",
-        desc = "Days under the screen target",
+        id = "under_budget", title = R.string.ach_under_budget_title,
+        desc = R.string.ach_under_budget_desc,
         icon = Icons.Outlined.Savings, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 5, "5 days"),
@@ -1136,13 +1175,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.L, 20, "20 days"),
             TierThreshold(ProfileTier.M, 25, "25 days")
         ),
-        tierNames = listOf(
-            "First Save", "Under Budget", "Frugal", "Economist", "Minimalist"
-        )
+        tierNameRes = listOf(R.string.ach_under_budget_tier_1, R.string.ach_under_budget_tier_2, R.string.ach_under_budget_tier_3, R.string.ach_under_budget_tier_4, R.string.ach_under_budget_tier_5)
     ),
     AchievementDef(
-        id = "info_hunter", title = "Info Hunter",
-        desc = "Tap the info button across screens",
+        id = "info_hunter", title = R.string.ach_info_hunter_title,
+        desc = R.string.ach_info_hunter_desc,
         icon = Icons.Outlined.Explore, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 3, "3 screens"),
@@ -1150,145 +1187,131 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.X, 15, "15 screens"),
             TierThreshold(ProfileTier.M, 22, "22 screens")
         ),
-        tierNames = listOf(
-            "Peeker", "Info Hunter", "Curious Cat", "Know-It-All"
-        )
+        tierNameRes = listOf(R.string.ach_info_hunter_tier_1, R.string.ach_info_hunter_tier_2, R.string.ach_info_hunter_tier_3, R.string.ach_info_hunter_tier_4)
     ),
     AchievementDef(
-        id = "night_owl_lite", title = "Night Owl Lite",
-        desc = "Active during midnight hours",
+        id = "night_owl_lite", title = R.string.ach_night_owl_lite_title,
+        desc = R.string.ach_night_owl_lite_desc,
         icon = Icons.Outlined.Bedtime, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 3, "3 nights"),
             TierThreshold(ProfileTier.X, 7, "7 nights"),
             TierThreshold(ProfileTier.M, 14, "14 nights")
         ),
-        tierNames = listOf(
-            "Night Owl Lite", "Midnight Walker", "Insomniac"
-        )
+        tierNameRes = listOf(R.string.ach_night_owl_lite_tier_1, R.string.ach_night_owl_lite_tier_2, R.string.ach_night_owl_lite_tier_3)
     ),
     AchievementDef(
-        id = "early_bird", title = "Early Bird",
-        desc = "Active in the fresh morning",
+        id = "early_bird", title = R.string.ach_early_bird_title,
+        desc = R.string.ach_early_bird_desc,
         icon = Icons.Outlined.WbSunny, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 3, "3 mornings"),
             TierThreshold(ProfileTier.X, 7, "7 mornings"),
             TierThreshold(ProfileTier.M, 14, "14 mornings")
         ),
-        tierNames = listOf(
-            "Early Bird", "Sunrise Chaser", "Morning Person"
-        )
+        tierNameRes = listOf(R.string.ach_early_bird_tier_1, R.string.ach_early_bird_tier_2, R.string.ach_early_bird_tier_3)
     ),
     AchievementDef(
-        id = "weekend_warrior", title = "Weekend Warrior",
-        desc = "Weekends tracked with activity",
+        id = "weekend_warrior", title = R.string.ach_weekend_warrior_title,
+        desc = R.string.ach_weekend_warrior_desc,
         icon = Icons.Outlined.CalendarViewMonth, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 4, "4 weekends"),
             TierThreshold(ProfileTier.X, 8, "8 weekends"),
             TierThreshold(ProfileTier.M, 16, "16 weekends")
         ),
-        tierNames = listOf(
-            "Weekend Warrior", "Weekend Regular", "Weekend Veteran"
-        )
+        tierNameRes = listOf(R.string.ach_weekend_warrior_tier_1, R.string.ach_weekend_warrior_tier_2, R.string.ach_weekend_warrior_tier_3)
     ),
     AchievementDef(
-        id = "profile_polisher", title = "Profile Polisher",
-        desc = "Complete your profile identity",
+        id = "profile_polisher", title = R.string.ach_profile_polisher_title,
+        desc = R.string.ach_profile_polisher_desc,
         icon = Icons.Outlined.Badge, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 field"),
             TierThreshold(ProfileTier.X, 2, "2 fields"),
             TierThreshold(ProfileTier.M, 3, "3 fields")
         ),
-        tierNames = listOf(
-            "First Touch", "Profile Polisher", "Identity Complete"
-        )
+        tierNameRes = listOf(R.string.ach_profile_polisher_tier_1, R.string.ach_profile_polisher_tier_2, R.string.ach_profile_polisher_tier_3)
     ),
     AchievementDef(
-        id = "streak_roller", title = "Streak Roller",
-        desc = "Keep a week-long streak rolling",
+        id = "streak_roller", title = R.string.ach_streak_roller_title,
+        desc = R.string.ach_streak_roller_desc,
         icon = Icons.Outlined.EventRepeat, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 7, "7 days"),
             TierThreshold(ProfileTier.X, 14, "14 days"),
             TierThreshold(ProfileTier.M, 21, "21 days")
         ),
-        tierNames = listOf(
-            "Seven Up", "Streak Roller", "Fortnight"
-        )
+        tierNameRes = listOf(R.string.ach_streak_roller_tier_1, R.string.ach_streak_roller_tier_2, R.string.ach_streak_roller_tier_3)
     ),
     AchievementDef(
-        id = "overachiever", title = "Overachiever",
-        desc = "Days you blew past the limit",
+        id = "overachiever", title = R.string.ach_overachiever_title,
+        desc = R.string.ach_overachiever_desc,
         icon = Icons.Outlined.LocalFireDepartment, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 day"),
             TierThreshold(ProfileTier.X, 3, "3 days"),
             TierThreshold(ProfileTier.M, 7, "7 days")
         ),
-        tierNames = listOf(
-            "Guilty Pleasure", "Overachiever", "No Chill"
-        )
+        tierNameRes = listOf(R.string.ach_overachiever_tier_1, R.string.ach_overachiever_tier_2, R.string.ach_overachiever_tier_3)
     ),
     AchievementDef(
-        id = "midnight_oil", title = "Midnight Oil",
-        desc = "Active after midnight (00:00-04:00)", icon = Icons.Outlined.DarkMode,
+        id = "midnight_oil", title = R.string.ach_midnight_oil_title,
+        desc = R.string.ach_midnight_oil_desc, icon = Icons.Outlined.DarkMode,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Spotted once"))
     ),
     AchievementDef(
-        id = "sunrise_club", title = "Sunrise Club",
-        desc = "Up early (05:00-07:00)", icon = Icons.Outlined.LightMode,
+        id = "sunrise_club", title = R.string.ach_sunrise_club_title,
+        desc = R.string.ach_sunrise_club_desc, icon = Icons.Outlined.LightMode,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Spotted once"))
     ),
     AchievementDef(
-        id = "web_surf", title = "Web Surfer",
-        desc = "A web session sneaked into tracking", icon = Icons.Outlined.Language,
+        id = "web_surf", title = R.string.ach_web_surf_title,
+        desc = R.string.ach_web_surf_desc, icon = Icons.Outlined.Language,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Spotted once"))
     ),
     AchievementDef(
-        id = "theme_explorer", title = "Theme Explorer",
-        desc = "Try a non-default theme", icon = Icons.Outlined.Palette,
+        id = "theme_explorer", title = R.string.ach_theme_explorer_title,
+        desc = R.string.ach_theme_explorer_desc, icon = Icons.Outlined.Palette,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Switched once"))
     ),
     AchievementDef(
-        id = "font_explorer", title = "Font Explorer",
-        desc = "Try a different font", icon = Icons.Outlined.TextFields,
+        id = "font_explorer", title = R.string.ach_font_explorer_title,
+        desc = R.string.ach_font_explorer_desc, icon = Icons.Outlined.TextFields,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Switched once"))
     ),
     AchievementDef(
-        id = "contrast_seeker", title = "Contrast Seeker",
-        desc = "Brave dynamic color off", icon = Icons.Outlined.Contrast,
+        id = "contrast_seeker", title = R.string.ach_contrast_seeker_title,
+        desc = R.string.ach_contrast_seeker_desc, icon = Icons.Outlined.Contrast,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Turned off"))
     ),
     AchievementDef(
-        id = "calendar_seeker", title = "Calendar Seeker",
-        desc = "Check the calendar overlay", icon = Icons.Outlined.DateRange,
+        id = "calendar_seeker", title = R.string.ach_calendar_seeker_title,
+        desc = R.string.ach_calendar_seeker_desc, icon = Icons.Outlined.DateRange,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Opened once"))
     ),
     AchievementDef(
-        id = "overlay_tinter", title = "Overlay Tinter",
-        desc = "Give the overlay a custom color", icon = Icons.Outlined.ColorLens,
+        id = "overlay_tinter", title = R.string.ach_overlay_tinter_title,
+        desc = R.string.ach_overlay_tinter_desc, icon = Icons.Outlined.ColorLens,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Custom once"))
     ),
     AchievementDef(
-        id = "schedule_keeper", title = "Schedule Keeper",
-        desc = "Create a focus schedule", icon = Icons.Outlined.EventRepeat,
+        id = "schedule_keeper", title = R.string.ach_schedule_keeper_title,
+        desc = R.string.ach_schedule_keeper_desc, icon = Icons.Outlined.EventRepeat,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "1 schedule"))
     ),
     AchievementDef(
-        id = "qr_collector", title = "QR Collector",
-        desc = "Pause Point QR codes saved", icon = Icons.Outlined.QrCode2,
+        id = "qr_collector", title = R.string.ach_qr_collector_title,
+        desc = R.string.ach_qr_collector_desc, icon = Icons.Outlined.QrCode2,
         category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 code"),
@@ -1296,13 +1319,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.X, 3, "3 codes"),
             TierThreshold(ProfileTier.M, 5, "5 codes")
         ),
-        tierNames = listOf(
-            "First Code", "QR Collector", "Code Hoarder", "QR Master"
-        )
+        tierNameRes = listOf(R.string.ach_qr_collector_tier_1, R.string.ach_qr_collector_tier_2, R.string.ach_qr_collector_tier_3, R.string.ach_qr_collector_tier_4)
     ),
     AchievementDef(
-        id = "nfc_collector", title = "NFC Collector",
-        desc = "Pause Point NFC tags saved", icon = Icons.Outlined.Nfc,
+        id = "nfc_collector", title = R.string.ach_nfc_collector_title,
+        desc = R.string.ach_nfc_collector_desc, icon = Icons.Outlined.Nfc,
         category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 tag"),
@@ -1310,43 +1331,41 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.X, 3, "3 tags"),
             TierThreshold(ProfileTier.M, 5, "5 tags")
         ),
-        tierNames = listOf(
-            "First Tap", "NFC Collector", "Tag Hoarder", "NFC Master"
-        )
+        tierNameRes = listOf(R.string.ach_nfc_collector_tier_1, R.string.ach_nfc_collector_tier_2, R.string.ach_nfc_collector_tier_3, R.string.ach_nfc_collector_tier_4)
     ),
     AchievementDef(
-        id = "preset_saver", title = "Preset Saver",
-        desc = "Save a Pomodoro preset", icon = Icons.Outlined.Save,
+        id = "preset_saver", title = R.string.ach_preset_saver_title,
+        desc = R.string.ach_preset_saver_desc, icon = Icons.Outlined.Save,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "1 preset"))
     ),
     AchievementDef(
-        id = "theme_stylist", title = "Theme Stylist",
-        desc = "Enable expressive colors", icon = Icons.Outlined.Palette,
+        id = "theme_stylist", title = R.string.ach_theme_stylist_title,
+        desc = R.string.ach_theme_stylist_desc, icon = Icons.Outlined.Palette,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "backup_guardian", title = "Backup Guardian",
-        desc = "Protect data with a backup", icon = Icons.Outlined.Backup,
+        id = "backup_guardian", title = R.string.ach_backup_guardian_title,
+        desc = R.string.ach_backup_guardian_desc, icon = Icons.Outlined.Backup,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Backed up"))
     ),
     AchievementDef(
-        id = "mindful_explorer", title = "Mindful Explorer",
-        desc = "Try Mindful Gateway", icon = Icons.Outlined.SelfImprovement,
+        id = "mindful_explorer", title = R.string.ach_mindful_explorer_title,
+        desc = R.string.ach_mindful_explorer_desc, icon = Icons.Outlined.SelfImprovement,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "glimpse_user", title = "Glimpse User",
-        desc = "Enable Usage Glimpse", icon = Icons.Outlined.Visibility,
+        id = "glimpse_user", title = R.string.ach_glimpse_user_title,
+        desc = R.string.ach_glimpse_user_desc, icon = Icons.Outlined.Visibility,
         category = AchievementCategory.EXPLORER,
         thresholds = listOf(TierThreshold(ProfileTier.I, 1, "Enabled once"))
     ),
     AchievementDef(
-        id = "loyal_tracker", title = "Loyal Tracker",
-        desc = "Total time tracked by Zenith",
+        id = "loyal_tracker", title = R.string.ach_loyal_tracker_title,
+        desc = R.string.ach_loyal_tracker_desc,
         icon = Icons.Outlined.History, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 36_000_000L, "10h"),
@@ -1357,14 +1376,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 3_600_000_000L, "1000h"),
             TierThreshold(ProfileTier.M, 7_200_000_000L, "2000h")
         ),
-        tierNames = listOf(
-            "Newcomer", "Loyal Tracker", "Loyal Regular", "Loyal Veteran",
-            "Loyal Pillar", "Loyal Legend", "Zenith Soul"
-        )
+        tierNameRes = listOf(R.string.ach_loyal_tracker_tier_1, R.string.ach_loyal_tracker_tier_2, R.string.ach_loyal_tracker_tier_3, R.string.ach_loyal_tracker_tier_4, R.string.ach_loyal_tracker_tier_5, R.string.ach_loyal_tracker_tier_6, R.string.ach_loyal_tracker_tier_7)
     ),
     AchievementDef(
-        id = "night_guardian", title = "Night Guardian",
-        desc = "Grow your best bedtime streak",
+        id = "night_guardian", title = R.string.ach_night_guardian_title,
+        desc = R.string.ach_night_guardian_desc,
         icon = Icons.Outlined.Bedtime, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 7, "7 nights"),
@@ -1375,14 +1391,11 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 200, "200 nights"),
             TierThreshold(ProfileTier.M, 365, "365 nights")
         ),
-        tierNames = listOf(
-            "Night Owl", "Night Guardian", "Night Watch", "Night Warden",
-            "Night Sentinel", "Dream Keeper", "Sandman"
-        )
+        tierNameRes = listOf(R.string.ach_night_guardian_tier_1, R.string.ach_night_guardian_tier_2, R.string.ach_night_guardian_tier_3, R.string.ach_night_guardian_tier_4, R.string.ach_night_guardian_tier_5, R.string.ach_night_guardian_tier_6, R.string.ach_night_guardian_tier_7)
     ),
     AchievementDef(
-        id = "fortress_builder", title = "Fortress Builder",
-        desc = "Apps protected by shields and goals",
+        id = "fortress_builder", title = R.string.ach_fortress_builder_title,
+        desc = R.string.ach_fortress_builder_desc,
         icon = Icons.Outlined.Security, category = AchievementCategory.ACCUMULATION,
         thresholds = listOf(
             TierThreshold(ProfileTier.I, 1, "1 app"),
@@ -1393,10 +1406,7 @@ fun buildAchievementDefs(): List<AchievementDef> = listOf(
             TierThreshold(ProfileTier.D, 20, "20 apps"),
             TierThreshold(ProfileTier.M, 30, "30 apps")
         ),
-        tierNames = listOf(
-            "First Brick", "Fortress Builder", "Wall Raiser", "Gatekeeper",
-            "Bastion", "Citadel", "Eternal Fortress"
-        )
+        tierNameRes = listOf(R.string.ach_fortress_builder_tier_1, R.string.ach_fortress_builder_tier_2, R.string.ach_fortress_builder_tier_3, R.string.ach_fortress_builder_tier_4, R.string.ach_fortress_builder_tier_5, R.string.ach_fortress_builder_tier_6, R.string.ach_fortress_builder_tier_7)
     )
 )
 private val JOURNEY_ORDER = listOf(
@@ -1534,8 +1544,9 @@ fun buildAchievementStates(stats: ProfileAchievementStats): List<AchievementStat
     }
 }
 
+@Composable
 fun achievementProgressLabel(state: AchievementState): String {
-    val next = state.next ?: return "Max tier ${state.earnedTier?.name ?: ""}"
+    val next = state.next ?: return stringResource(R.string.achievement_max_tier, state.earnedTier?.name ?: "")
     return if (state.def.id in MILLIS_ACHIEVEMENTS) {
         "${formatCompactDuration(state.current)} / ${next.requireLabel}"
     } else {

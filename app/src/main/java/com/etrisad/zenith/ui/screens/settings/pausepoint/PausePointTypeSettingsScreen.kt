@@ -32,11 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.etrisad.zenith.BuildConfig
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.service.InterceptOverlayManager
@@ -46,6 +48,7 @@ import com.etrisad.zenith.ui.components.ZenithButtonType
 import com.etrisad.zenith.ui.components.ZenithButtonWeighted
 import com.etrisad.zenith.ui.components.ZenithGroupedButton
 import com.etrisad.zenith.ui.components.pausepoint.MathOperator
+import com.etrisad.zenith.ui.components.pausepoint.PausePointTask
 import com.etrisad.zenith.ui.components.pausepoint.PausePointTaskType
 import com.etrisad.zenith.ui.components.pausepoint.PausePointVariant
 import kotlinx.coroutines.launch
@@ -82,7 +85,7 @@ fun PausePointTypeSettingsScreen(
                 onGoalDismiss = {}
             )
         } else {
-            Toast.makeText(context, "Allow display over other apps to test", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.pause_toast_overlay_permission_required), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -140,8 +143,8 @@ fun PausePointTypeSettingsScreen(
                     item {
                         EmptyVariantsHintCard(
                             hint = when (taskType) {
-                                PausePointTaskType.TYPING -> "No custom texts yet. The default sentences will be picked randomly."
-                                else -> "No custom sub tasks yet. The default value will be used."
+                                PausePointTaskType.TYPING -> stringResource(R.string.pause_empty_typing_hint)
+                                else -> stringResource(R.string.pause_empty_variants_hint)
                             }
                         )
                     }
@@ -204,7 +207,7 @@ internal fun PausePointTestButton(
     ZenithButton(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        text = "Test",
+        text = stringResource(R.string.pause_test),
         icon = Icons.Filled.PlayArrow,
         type = ZenithButtonType.Tonal,
         size = ZenithButtonSize.Large
@@ -237,14 +240,14 @@ private fun PausePointTypeHeader(taskType: PausePointTaskType, variantCount: Int
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = taskType.displayName,
+            text = stringResource(taskType.displayNameRes),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
 
         Text(
-            text = taskType.description,
+            text = stringResource(taskType.descriptionRes),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -257,14 +260,16 @@ private fun PausePointTypeHeader(taskType: PausePointTaskType, variantCount: Int
         ) {
             Text(
                 text = when {
-                    variantCount < 0 -> "Uses goal apps automatically"
+                    variantCount < 0 -> stringResource(R.string.pause_header_uses_goal_apps)
                     taskType == com.etrisad.zenith.ui.components.pausepoint.PausePointTaskType.QR_SCAN ->
-                        if (variantCount == 1) "1 saved code" else "$variantCount saved codes"
+                        if (variantCount == 1) stringResource(R.string.pause_header_saved_code_one)
+                        else stringResource(R.string.pause_header_saved_codes_other, variantCount)
                     taskType == com.etrisad.zenith.ui.components.pausepoint.PausePointTaskType.NFC_SCAN ->
-                        if (variantCount == 1) "1 saved tag" else "$variantCount saved tags"
-                    variantCount == 0 -> "Default value"
-                    variantCount == 1 -> "1 sub task • picked randomly"
-                    else -> "$variantCount sub tasks • picked randomly"
+                        if (variantCount == 1) stringResource(R.string.pause_header_saved_tag_one)
+                        else stringResource(R.string.pause_header_saved_tags_other, variantCount)
+                    variantCount == 0 -> stringResource(R.string.pause_header_default_value)
+                    variantCount == 1 -> stringResource(R.string.pause_header_subtask_one)
+                    else -> stringResource(R.string.pause_header_subtasks_other, variantCount)
                 },
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                 style = MaterialTheme.typography.labelMedium,
@@ -328,7 +333,7 @@ private fun PausePointVariantCard(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = taskType.displayName,
+                    text = stringResource(taskType.displayNameRes),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -348,7 +353,7 @@ private fun PausePointVariantCard(
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "Delete sub task",
+                    contentDescription = stringResource(R.string.pause_delete_subtask),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -422,7 +427,7 @@ private fun AddVariantEditor(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Add Sub Task",
+                        text = stringResource(R.string.pause_add_sub_task),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -438,31 +443,31 @@ private fun AddVariantEditor(
 
             when (taskType) {
                 PausePointTaskType.WAITING -> EditorSlider(
-                    title = "Duration",
+                    title = stringResource(R.string.pause_duration),
                     value = sliderValue,
                     valueRange = 5f..60f,
                     steps = 54,
-                    unit = "sec",
+                    unit = stringResource(R.string.pause_unit_sec),
                     onValueChange = { sliderValue = it }
                 )
                 PausePointTaskType.BREATHING -> EditorSlider(
-                    title = "Breathing Rounds",
+                    title = stringResource(R.string.pause_breathing_rounds),
                     value = sliderValue,
                     valueRange = 1f..10f,
                     steps = 8,
-                    unit = "rounds",
+                    unit = stringResource(R.string.pause_unit_rounds),
                     onValueChange = { sliderValue = it }
                 )
                 PausePointTaskType.WALK -> EditorSlider(
-                    title = "Steps",
+                    title = stringResource(R.string.pause_steps),
                     value = sliderValue,
                     valueRange = 1f..50f,
                     steps = 48,
-                    unit = "steps",
+                    unit = stringResource(R.string.pause_unit_steps),
                     onValueChange = { sliderValue = it }
                 )
                 PausePointTaskType.NUMBER_SLIDE -> EditorSlider(
-                    title = "Grid Size",
+                    title = stringResource(R.string.pause_grid_size),
                     value = sliderValue,
                     valueRange = 3f..6f,
                     steps = 3,
@@ -471,11 +476,11 @@ private fun AddVariantEditor(
                 )
                 PausePointTaskType.SWITCH -> {
                     EditorSlider(
-                        title = "Lever Count",
+                        title = stringResource(R.string.pause_lever_count),
                         value = sliderValue,
                         valueRange = 2f..8f,
                         steps = 6,
-                        unit = "levers",
+                        unit = stringResource(R.string.pause_unit_levers),
                         onValueChange = { sliderValue = it }
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -485,12 +490,12 @@ private fun AddVariantEditor(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Time limit",
+                                text = stringResource(R.string.pause_time_limit),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Reset the puzzle if not solved in time",
+                                text = stringResource(R.string.pause_reset_puzzle_hint),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -543,11 +548,11 @@ private fun AddVariantEditor(
                     if (switchTimeEnabled) {
                         Spacer(modifier = Modifier.height(12.dp))
                         EditorSlider(
-                            title = "Time Limit",
+                            title = stringResource(R.string.pause_time_limit_caps),
                             value = switchTimeValue,
                             valueRange = 5f..60f,
                             steps = 54,
-                            unit = "sec",
+                            unit = stringResource(R.string.pause_unit_sec),
                             onValueChange = { switchTimeValue = it }
                         )
                     }
@@ -564,7 +569,7 @@ private fun AddVariantEditor(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     EditorSlider(
-                        title = "Max Operand",
+                        title = stringResource(R.string.pause_max_operand),
                         value = sliderValue,
                         valueRange = 1f..100f,
                         steps = 98,
@@ -579,7 +584,7 @@ private fun AddVariantEditor(
                 }
                 PausePointTaskType.COUNTING -> {
                     EditorSlider(
-                        title = "Target Number",
+                        title = stringResource(R.string.pause_target_number),
                         value = sliderValue,
                         valueRange = 5f..30f,
                         steps = 24,
@@ -591,8 +596,8 @@ private fun AddVariantEditor(
                         value = label,
                         onValueChange = { label = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Exercise name (optional)") },
-                        placeholder = { Text("e.g. push-ups") },
+                        label = { Text(stringResource(R.string.pause_exercise_name_label)) },
+                        placeholder = { Text(stringResource(R.string.pause_exercise_name_placeholder)) },
                         singleLine = true,
                         shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -608,8 +613,8 @@ private fun AddVariantEditor(
                         value = text,
                         onValueChange = { text = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = { Text("Sentence to type") },
-                        placeholder = { Text("e.g. Stay focused and mindful.") },
+                        label = { Text(stringResource(R.string.pause_sentence_label)) },
+                        placeholder = { Text(stringResource(R.string.pause_sentence_placeholder)) },
                         minLines = 2,
                         shape = RoundedCornerShape(16.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -650,7 +655,7 @@ private fun AddVariantEditor(
                     text = ""
                 },
                 modifier = Modifier.fillMaxWidth(),
-                text = "Add Sub Task",
+                text = stringResource(R.string.pause_add_sub_task),
                 icon = Icons.Filled.Add,
                 size = ZenithButtonSize.Large,
                 enabled = canAdd
@@ -666,7 +671,7 @@ private fun MathOperatorSelector(
 ) {
     Column {
         Text(
-            text = "Operator",
+            text = stringResource(R.string.pause_operator),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
@@ -732,15 +737,16 @@ private fun EditorSlider(
     )
 }
 
+@Composable
 private fun addEditorHint(taskType: PausePointTaskType): String = when (taskType) {
-    PausePointTaskType.WAITING -> "Pick a duration to add to the rotation"
-    PausePointTaskType.BREATHING -> "Pick a round count to add to the rotation"
-    PausePointTaskType.WALK -> "Pick a step count to add to the rotation"
-    PausePointTaskType.NUMBER_SLIDE -> "Pick a grid size to add to the rotation"
-    PausePointTaskType.SWITCH -> "Pick a lever count and an optional time limit"
-    PausePointTaskType.MATH -> "Pick an operator (+ − × ÷) and max operand for a new sub task"
-    PausePointTaskType.COUNTING -> "Give it a name (like push-ups) or leave it plain"
-    PausePointTaskType.TYPING -> "Write your own sentence to type"
+    PausePointTaskType.WAITING -> stringResource(R.string.pause_add_hint_waiting)
+    PausePointTaskType.BREATHING -> stringResource(R.string.pause_add_hint_breathing)
+    PausePointTaskType.WALK -> stringResource(R.string.pause_add_hint_walk)
+    PausePointTaskType.NUMBER_SLIDE -> stringResource(R.string.pause_add_hint_number_slide)
+    PausePointTaskType.SWITCH -> stringResource(R.string.pause_add_hint_switch)
+    PausePointTaskType.MATH -> stringResource(R.string.pause_add_hint_math)
+    PausePointTaskType.COUNTING -> stringResource(R.string.pause_add_hint_counting)
+    PausePointTaskType.TYPING -> stringResource(R.string.pause_add_hint_typing)
     else -> ""
 }
 
@@ -755,22 +761,31 @@ private fun defaultEditorValue(taskType: PausePointTaskType): Int = when (taskTy
     else -> 0
 }
 
+@Composable
 private fun variantSummary(taskType: PausePointTaskType, variant: PausePointVariant): String = when (taskType) {
-    PausePointTaskType.WAITING -> "Wait ${variant.seconds} sec"
-    PausePointTaskType.BREATHING -> "${variant.rounds} breath${if (variant.rounds == 1) "" else "s"}"
-    PausePointTaskType.WALK -> "Walk ${variant.steps} steps"
-    PausePointTaskType.NUMBER_SLIDE -> "${variant.size}x${variant.size} slide puzzle"
+    PausePointTaskType.WAITING -> stringResource(R.string.pause_summary_wait, variant.seconds)
+    PausePointTaskType.BREATHING ->
+        if (variant.rounds == 1) stringResource(R.string.pause_summary_breath_one, variant.rounds)
+        else stringResource(R.string.pause_summary_breaths_other, variant.rounds)
+    PausePointTaskType.WALK -> stringResource(R.string.pause_summary_walk, variant.steps)
+    PausePointTaskType.NUMBER_SLIDE -> stringResource(R.string.pause_summary_number_slide, variant.size, variant.size)
     PausePointTaskType.SWITCH ->
-        if (variant.seconds > 0) "${variant.levers} lever puzzle • ${variant.seconds}s limit"
-        else "${variant.levers} lever puzzle"
+        if (variant.seconds > 0) stringResource(R.string.pause_summary_lever_time, variant.levers, variant.seconds)
+        else stringResource(R.string.pause_summary_lever, variant.levers)
     PausePointTaskType.MATH -> {
         val op = MathOperator.fromSymbol(variant.mathOperator)
-        "${op.displaySymbol} • Max ${variant.maxOperand}"
+        stringResource(R.string.pause_summary_math, op.displaySymbol, variant.maxOperand)
     }
     PausePointTaskType.COUNTING ->
-        if (variant.label.isNotBlank()) "${variant.target} ${variant.label}" else "Count to ${variant.target}"
-    PausePointTaskType.TYPING -> "\u201C${variant.text}\u201D"
-    else -> "Default"
+        if (variant.label.isNotBlank()) stringResource(R.string.pause_summary_counting_named, variant.target, variant.label)
+        else stringResource(R.string.pause_summary_count_to, variant.target)
+    PausePointTaskType.TYPING -> {
+        val poolIndex = PausePointTask.sentencePool.indexOf(variant.text)
+        val sentence = if (poolIndex >= 0) stringResource(PausePointTask.sentencePoolRes[poolIndex])
+        else variant.text
+        "\u201C$sentence\u201D"
+    }
+    else -> stringResource(R.string.pause_summary_default)
 }
 
 @Composable
@@ -794,7 +809,7 @@ private fun ChooseAppConfigCard() {
             )
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = "This task suggests one of your goal apps from the Focus tab whenever you pause. No extra settings are needed here.",
+                text = stringResource(R.string.pause_choose_app_info),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

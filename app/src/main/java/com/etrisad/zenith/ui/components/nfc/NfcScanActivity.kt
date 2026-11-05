@@ -37,11 +37,13 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.lifecycleScope
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ZenithApplication
 import com.etrisad.zenith.data.preferences.ThemeConfig
 import com.etrisad.zenith.data.preferences.UserPreferences
@@ -54,6 +56,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class NfcScanActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(com.etrisad.zenith.util.AppLanguage.wrap(newBase))
+    }
 
     private var nfcAdapter: NfcAdapter? = null
     private var expectedIds: List<String> = emptyList()
@@ -171,10 +176,10 @@ class NfcScanActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
                             text = when {
-                                success != null -> "NFC tag accepted!"
-                                !supported -> "NFC not supported"
-                                !enabled -> "NFC is turned off"
-                                else -> "Hold NFC tag near your phone"
+                                success != null -> stringResource(R.string.onboarding_nfc_accepted)
+                                !supported -> stringResource(R.string.onboarding_nfc_not_supported)
+                                !enabled -> stringResource(R.string.onboarding_nfc_turned_off)
+                                else -> stringResource(R.string.onboarding_nfc_hold_tag)
                             },
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
@@ -183,14 +188,17 @@ class NfcScanActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = when {
-                                success != null -> "Tag ID: $success"
-                                !supported -> "This device has no NFC hardware."
-                                !enabled -> "Turn on NFC in system settings, then come back here."
+                                success != null -> stringResource(R.string.onboarding_nfc_tag_id, success)
+                                !supported -> stringResource(R.string.onboarding_nfc_no_hardware)
+                                !enabled -> stringResource(R.string.onboarding_nfc_turn_on_hint)
                                 error != null -> error ?: ""
                                 else -> if (acceptAny || expectedIds.isEmpty()) {
-                                    "Any NFC tag will do."
+                                    stringResource(R.string.onboarding_nfc_any_tag)
                                 } else {
-                                    "Tap one of your ${expectedIds.size} registered tag(s)."
+                                    stringResource(
+                                        R.string.onboarding_nfc_tap_registered,
+                                        expectedIds.size
+                                    )
                                 }
                             },
                             style = MaterialTheme.typography.bodyMedium,
@@ -204,7 +212,7 @@ class NfcScanActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
                         if (scanned != null && success == null && error == null) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Last read: $scanned",
+                                text = stringResource(R.string.onboarding_nfc_last_read, scanned),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -213,7 +221,7 @@ class NfcScanActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
                         if (!supported || !enabled) {
                             ZenithButton(
                                 onClick = { openNfcSettings(this@NfcScanActivity) },
-                                text = "Open NFC Settings",
+                                text = stringResource(R.string.onboarding_nfc_open_settings),
                                 icon = Icons.Outlined.Nfc,
                                 type = ZenithButtonType.Filled,
                                 size = ZenithButtonSize.Large,
@@ -223,7 +231,7 @@ class NfcScanActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
                         }
                         ZenithButton(
                             onClick = { finishAndRemoveTask() },
-                            text = "Cancel",
+                            text = stringResource(R.string.onboarding_nfc_cancel),
                             type = ZenithButtonType.Tonal,
                             size = ZenithButtonSize.Large,
                             modifier = Modifier.fillMaxWidth()
@@ -231,7 +239,7 @@ class NfcScanActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
                         Spacer(modifier = Modifier.height(24.dp))
                         ZenithButton(
                             onClick = { kickToLauncher() },
-                            text = "Close App",
+                            text = stringResource(R.string.onboarding_nfc_close_app),
                             type = ZenithButtonType.Text,
                             contentColor = MaterialTheme.colorScheme.error,
                             backgroundProgressProvider = { kickP },
@@ -318,7 +326,7 @@ class NfcScanActivity : ComponentActivity(), NfcAdapter.ReaderCallback {
                     setResult(RESULT_OK, data)
                 }
             } else {
-                lastError.value = "Wrong tag ($normalized), use one of your registered tags"
+                lastError.value = getString(R.string.onboarding_nfc_wrong_tag, normalized)
             }
         }
     }

@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.background
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.LimitPeriod
 import com.etrisad.zenith.data.local.entity.ShieldEntity
 import com.etrisad.zenith.ui.components.ZenithButton
@@ -92,12 +94,12 @@ fun ShieldSettingsBottomSheet(
     }
 
     val refreshOptions = listOf(
-        "Every 30 Minutes" to 30,
-        "Every 1 Hour" to 60,
-        "Every 2 Hours" to 120,
-        "Every 6 Hours" to 360,
-        "Every 12 Hours" to 720,
-        "Every 24 Hours" to 1440
+        stringResource(R.string.permission_refresh_every_30_minutes) to 30,
+        stringResource(R.string.permission_refresh_every_1_hour) to 60,
+        stringResource(R.string.permission_refresh_every_2_hours) to 120,
+        stringResource(R.string.permission_refresh_every_6_hours) to 360,
+        stringResource(R.string.permission_refresh_every_12_hours) to 720,
+        stringResource(R.string.permission_refresh_every_24_hours) to 1440
     )
 
     var isLockDetailExpanded by remember { mutableStateOf(false) }
@@ -163,12 +165,12 @@ fun ShieldSettingsBottomSheet(
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Shield Settings",
+                            text = stringResource(R.string.permission_shield_settings),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Today: ${formatRemainingTime(usageToday)}",
+                            text = stringResource(R.string.permission_shield_today, formatRemainingTime(usageToday)),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
@@ -193,7 +195,7 @@ fun ShieldSettingsBottomSheet(
                             val isDaily = selectedPeriod == LimitPeriod.DAILY
                             ZenithButtonWeighted(
                                 onClick = { selectedPeriod = LimitPeriod.DAILY },
-                                text = "Daily",
+                                text = stringResource(R.string.permission_period_daily),
                                 type = if (isDaily) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                                 selected = isDaily,
                                 size = ZenithButtonSize.Medium,
@@ -205,7 +207,7 @@ fun ShieldSettingsBottomSheet(
                             )
                             ZenithButtonWeighted(
                                 onClick = { selectedPeriod = LimitPeriod.WEEKLY },
-                                text = "Weekly",
+                                text = stringResource(R.string.permission_period_weekly),
                                 type = if (!isDaily) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                                 selected = !isDaily,
                                 size = ZenithButtonSize.Medium,
@@ -231,7 +233,7 @@ fun ShieldSettingsBottomSheet(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Hours",
+                                        text = stringResource(R.string.permission_hours_label),
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -267,7 +269,7 @@ fun ShieldSettingsBottomSheet(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
-                                        text = "Minutes",
+                                        text = stringResource(R.string.permission_minutes_label),
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -311,7 +313,7 @@ fun ShieldSettingsBottomSheet(
                                         hourText = (preset / 60).toString()
                                         minuteText = (preset % 60).toString()
                                     },
-                                    text = if (preset >= 60) "${preset / 60}h" else "${preset}m",
+                                    text = if (preset >= 60) stringResource(R.string.permission_preset_hours_short, preset / 60) else stringResource(R.string.permission_preset_minutes_short, preset),
                                     type = if (isPresetSelected) ZenithButtonType.Filled else ZenithButtonType.Tonal,
                                     size = ZenithButtonSize.Small,
                                     selected = isPresetSelected,
@@ -325,7 +327,15 @@ fun ShieldSettingsBottomSheet(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                val dayNames = listOf("S", "M", "T", "W", "T", "F", "S")
+                val dayNames = listOf(
+                    stringResource(R.string.permission_day_sun),
+                    stringResource(R.string.permission_day_mon),
+                    stringResource(R.string.permission_day_tue),
+                    stringResource(R.string.permission_day_wed),
+                    stringResource(R.string.permission_day_thu),
+                    stringResource(R.string.permission_day_fri),
+                    stringResource(R.string.permission_day_sat)
+                )
                 ZenithGroupedButton(size = ZenithButtonSize.Small) {
                     dayNames.forEachIndexed { index, dayLabel ->
                         val dayNum = index + 1
@@ -357,7 +367,7 @@ fun ShieldSettingsBottomSheet(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                PreferenceCategory(title = "Limits")
+                PreferenceCategory(title = stringResource(R.string.permission_section_limits))
 
                 CardGroup(shape = topShape, containerColor = containerColor) {
                     Row(
@@ -382,12 +392,12 @@ fun ShieldSettingsBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Times of Uses",
+                                text = stringResource(R.string.permission_times_of_uses_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Daily opening limit",
+                                text = stringResource(R.string.permission_times_of_uses_description),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -439,12 +449,12 @@ fun ShieldSettingsBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Refresh Period",
+                                text = stringResource(R.string.permission_refresh_period_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Usage reset interval",
+                                text = stringResource(R.string.permission_refresh_period_description),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -483,12 +493,12 @@ fun ShieldSettingsBottomSheet(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "Emergency Uses",
+                                text = stringResource(R.string.permission_emergency_uses_title),
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "Emergency access uses",
+                                text = stringResource(R.string.permission_emergency_uses_description),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -517,12 +527,12 @@ fun ShieldSettingsBottomSheet(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                PreferenceCategory(title = "Settings")
+                PreferenceCategory(title = stringResource(R.string.permission_section_settings))
 
                 CardGroup(shape = topShape, containerColor = containerColor) {
                     SettingsToggle(
-                        title = "Show Reminders",
-                        description = "Get notified before limit is reached",
+                        title = stringResource(R.string.permission_show_reminders_title),
+                        description = stringResource(R.string.permission_show_reminders_description),
                         checked = remindersEnabled,
                         onCheckedChange = { remindersEnabled = it },
                         icon = Icons.Outlined.NotificationsActive,
@@ -534,8 +544,8 @@ fun ShieldSettingsBottomSheet(
 
                 CardGroup(shape = middleShape, containerColor = containerColor) {
                     SettingsToggle(
-                        title = "Strict Mode",
-                        description = "No extensions allowed after limit",
+                        title = stringResource(R.string.permission_strict_mode_title),
+                        description = stringResource(R.string.permission_strict_mode_description),
                         checked = strictModeEnabled,
                         onCheckedChange = { strictModeEnabled = it },
                         icon = Icons.Outlined.GppGood,
@@ -547,8 +557,8 @@ fun ShieldSettingsBottomSheet(
 
                 CardGroup(shape = middleShape, containerColor = containerColor) {
                     SettingsToggle(
-                        title = "Pause Point",
-                        description = "Guard this app with a Pause Point task",
+                        title = stringResource(R.string.permission_pause_point_title),
+                        description = stringResource(R.string.permission_pause_point_description),
                         checked = pausePointEnabled,
                         onCheckedChange = { pausePointEnabled = it },
                         icon = Icons.Outlined.PauseCircle,
@@ -560,8 +570,8 @@ fun ShieldSettingsBottomSheet(
 
                 CardGroup(shape = middleShape, containerColor = containerColor) {
                     SettingsToggle(
-                        title = "End Overlay",
-                        description = "Show shield screen when a session ends",
+                        title = stringResource(R.string.permission_end_overlay_title),
+                        description = stringResource(R.string.permission_end_overlay_description),
                         checked = endOverlayEnabled,
                         onCheckedChange = { value ->
                             endOverlayEnabled = value
@@ -576,8 +586,8 @@ fun ShieldSettingsBottomSheet(
 
                 CardGroup(shape = middleShape, containerColor = containerColor) {
                     SettingsToggle(
-                        title = "Auto Quit",
-                        description = "Exit app automatically when session ends",
+                        title = stringResource(R.string.permission_auto_quit_title),
+                        description = stringResource(R.string.permission_auto_quit_description),
                         checked = autoQuitEnabled,
                         onCheckedChange = { value ->
                             autoQuitEnabled = value
@@ -592,8 +602,8 @@ fun ShieldSettingsBottomSheet(
 
                 CardGroup(shape = bottomShape, containerColor = containerColor) {
                     SettingsToggle(
-                        title = "Delay App",
-                        description = "Wait before reopening after being kicked out",
+                        title = stringResource(R.string.permission_delay_app_title),
+                        description = stringResource(R.string.permission_delay_app_description),
                         checked = isDelayAppEnabled,
                         onCheckedChange = { isDelayAppEnabled = it },
                         icon = Icons.Outlined.History,
@@ -711,7 +721,7 @@ fun ShieldSettingsBottomSheet(
                                 )
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Text(
-                                    text = "Settings are currently restricted",
+                                    text = stringResource(R.string.permission_settings_restricted),
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.weight(1f)
@@ -726,7 +736,7 @@ fun ShieldSettingsBottomSheet(
                                 Column {
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        text = "Shield settings are locked because your remaining limit is less than 50%. You can only save changes that make the shield more restrictive (e.g., lower limit) to prevent bypassing.",
+                                        text = stringResource(R.string.permission_settings_restricted_detail),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -757,7 +767,7 @@ fun ShieldSettingsBottomSheet(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Save Shield",
+                    text = stringResource(R.string.permission_save_shield),
                     enabled = canSave
                 )
             }

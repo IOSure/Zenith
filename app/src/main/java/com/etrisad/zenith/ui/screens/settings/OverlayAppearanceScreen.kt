@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.ThemeConfig
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
@@ -110,7 +112,7 @@ fun OverlayAppearanceScreen(
             .padding(top = innerPadding.calculateTopPadding() + 16.dp)
             .verticalScroll(rememberScrollState()),
     ) {
-        PreferenceCategory(title = "Preview")
+        PreferenceCategory(title = stringResource(R.string.pomodoro_block_preview))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -136,7 +138,7 @@ fun OverlayAppearanceScreen(
                     MaterialTheme(colorScheme = paletteScheme) {
                         ShieldOverlay(
                             packageName = "com.example.app",
-                            appName = "Example App",
+                            appName = stringResource(R.string.pomodoro_block_example_app),
                             shield = null,
                             totalUsageToday = 0L,
                             totalGlobalUsageToday = 0L,
@@ -152,7 +154,7 @@ fun OverlayAppearanceScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Sheet Customization")
+        PreferenceCategory(title = stringResource(R.string.pomodoro_block_sheet_customization))
 
         ColorPaletteSelector(
             palettes = predefinedPalettes,
@@ -190,8 +192,8 @@ fun OverlayAppearanceScreen(
         Spacer(modifier = Modifier.height(4.dp))
 
         SettingsToggle(
-            title = "Full Screen",
-            description = "Sheet fills the entire screen",
+            title = stringResource(R.string.pomodoro_block_full_screen),
+            description = stringResource(R.string.pomodoro_block_full_screen_desc),
             checked = fullScreen,
             onCheckedChange = { scope.launch { repository.setOverlayFullScreen(it) } },
             icon = Icons.Outlined.Fullscreen,
@@ -243,12 +245,12 @@ fun ColorPaletteSelector(
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Color Theme",
+                        text = stringResource(R.string.pomodoro_block_color_theme),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Choose overlay base color palette",
+                        text = stringResource(R.string.pomodoro_block_color_theme_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -421,7 +423,7 @@ fun ColorPaletteCircle(
         Spacer(modifier = Modifier.height(4.dp))
         
         Text(
-            text = palette.label,
+            text = paletteLabel(palette),
             style = MaterialTheme.typography.labelSmall,
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
@@ -467,12 +469,12 @@ fun OpacitySelector(
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Opacity",
+                        text = stringResource(R.string.pomodoro_block_opacity),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Adjust sheet transparency",
+                        text = stringResource(R.string.pomodoro_block_opacity_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -502,7 +504,7 @@ fun OpacitySelector(
                 )
             }
             Text(
-                text = "Opacity: ${(opacity * 100).toInt()}%",
+                text = stringResource(R.string.pomodoro_block_opacity_value, (opacity * 100).toInt()),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -552,12 +554,12 @@ fun HueSelector(
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Hue",
+                        text = stringResource(R.string.pomodoro_block_hue),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Adjust custom palette color",
+                        text = stringResource(R.string.pomodoro_block_hue_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -612,13 +614,29 @@ fun HueSelector(
             }
 
             Text(
-                text = "Hue: ${hue.toInt()}°",
+                text = stringResource(R.string.pomodoro_block_hue_value, hue.toInt()),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }
+}
+
+/** Localized display name for a predefined overlay palette (ids live in PREDEFINED_PALETTES). */
+@Composable
+private fun paletteLabel(palette: OverlayColorPalette): String = when (palette.id) {
+    "dynamic" -> stringResource(R.string.settings2_palette_dynamic)
+    "custom" -> stringResource(R.string.settings2_palette_custom)
+    "monochrome" -> stringResource(R.string.settings2_palette_monochrome)
+    "zenith" -> stringResource(R.string.settings2_palette_zenith)
+    "ocean" -> stringResource(R.string.settings2_palette_ocean)
+    "forest" -> stringResource(R.string.settings2_palette_forest)
+    "rose" -> stringResource(R.string.settings2_palette_rose)
+    "sunset" -> stringResource(R.string.settings2_palette_sunset)
+    "lavender" -> stringResource(R.string.settings2_palette_lavender)
+    "mint" -> stringResource(R.string.settings2_palette_mint)
+    else -> palette.label
 }
 
 

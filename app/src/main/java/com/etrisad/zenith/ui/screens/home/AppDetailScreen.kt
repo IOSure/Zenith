@@ -38,11 +38,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.graphics.shapes.toPath
 import coil.compose.SubcomposeAsyncImage
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.data.local.entity.ShieldEntity
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -80,7 +82,7 @@ fun AppDetailScreen(
     val detailHaptic = LocalHapticFeedback.current
     fun blockedByLockdown() {
         detailHaptic.performHapticFeedback(HapticFeedbackType.LongPress)
-        Toast.makeText(detailContext, "Locked during lockdown hours", Toast.LENGTH_SHORT).show()
+        Toast.makeText(detailContext, detailContext.getString(R.string.app_detail_locked_during_lockdown), Toast.LENGTH_SHORT).show()
     }
     val nowMillis by produceState(initialValue = System.currentTimeMillis()) {
         while (true) {
@@ -210,7 +212,7 @@ fun AppDetailScreen(
 
                     item {
                         UsageCard(
-                            title = "Today's Usage",
+                            title = stringResource(R.string.app_detail_todays_usage),
                             time = formatDuration(uiState.todayUsage),
                             targetMillis = targetMillis,
                             currentUsage = uiState.todayUsage,
@@ -259,7 +261,7 @@ fun AppDetailScreen(
                             onDaySelected = { },
                             olderWeekLoader = { chunkOffset -> viewModel.getPerAppWeekHistory(packageName, chunkOffset) },
                             loaderKey = packageName,
-                            title = "History",
+                            title = stringResource(R.string.app_detail_history),
                             shape = RoundedCornerShape(8.dp)
                         )
                         Spacer(modifier = Modifier.height(4.dp))
@@ -562,7 +564,7 @@ fun AppHeader(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.LocalFireDepartment,
-                                contentDescription = "Streak",
+                                contentDescription = stringResource(R.string.app_detail_streak),
                                 modifier = Modifier.size(14.dp),
                                 tint = MaterialTheme.colorScheme.onTertiary
                             )
@@ -652,7 +654,7 @@ fun AppHeader(
 
         if (usesExhausted && remainingResetMillis > 0) {
             Text(
-                text = "Uses Exhausted • Reset in ${remainingResetMillis / 60000}m",
+                text = stringResource(R.string.app_detail_uses_exhausted_reset_in, remainingResetMillis / 60000),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
                 fontWeight = FontWeight.Bold,
@@ -667,13 +669,17 @@ fun AppHeader(
         ) {
             if (focusType != null) {
                 val typeColor = if (focusType == FocusType.SHIELD) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiary
+                val focusTypeLabel = stringResource(
+                    if (focusType == FocusType.SHIELD) R.string.app_detail2_type_shield
+                    else R.string.app_detail2_type_goal
+                )
                 Surface(
                     color = typeColor.copy(alpha = 0.1f),
                     shape = CircleShape,
                     modifier = Modifier.padding(top = 8.dp)
                 ) {
                     Text(
-                        text = focusType.name,
+                        text = focusTypeLabel,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelMedium,
                         color = typeColor,
@@ -738,14 +744,29 @@ fun UsageCard(
                     val isGoal = focusType == FocusType.GOAL
 
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = if (isGoal) {
-                                if (currentUsage >= targetMillis) "Goal achieved! Keep it up."
-                                else "Goal: ${formatDuration(targetMillis)} (${formatDuration(targetMillis - currentUsage)} more to go)"
+                        val targetProgressText = if (isGoal) {
+                            if (currentUsage >= targetMillis) {
+                                stringResource(R.string.app_detail_goal_achieved)
                             } else {
-                                if (isExceeded) "Limit exceeded!"
-                                else "Limit: ${formatDuration(targetMillis)} (${formatDuration(targetMillis - currentUsage)} left)"
-                            },
+                                stringResource(
+                                    R.string.app_detail_goal_progress,
+                                    formatDuration(targetMillis),
+                                    formatDuration(targetMillis - currentUsage)
+                                )
+                            }
+                        } else {
+                            if (isExceeded) {
+                                stringResource(R.string.app_detail_limit_exceeded)
+                            } else {
+                                stringResource(
+                                    R.string.app_detail_limit_remaining,
+                                    formatDuration(targetMillis),
+                                    formatDuration(targetMillis - currentUsage)
+                                )
+                            }
+                        }
+                        Text(
+                            text = targetProgressText,
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (isExceeded) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
@@ -808,7 +829,7 @@ fun UsageTrendsRow(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "Yesterday",
+                    stringResource(R.string.app_detail_yesterday),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -830,7 +851,7 @@ fun UsageTrendsRow(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "Trend",
+                    stringResource(R.string.app_detail_trend),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -892,7 +913,7 @@ fun StreakCard(
         ) {
             Column {
                 Text(
-                    text = "Streak",
+                    text = stringResource(R.string.app_detail_streak),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -905,7 +926,7 @@ fun StreakCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Best Streak",
+                    text = stringResource(R.string.app_detail_best_streak),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.outline
                 )
@@ -928,7 +949,7 @@ fun StreakCard(
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "days today",
+                    text = stringResource(R.string.app_detail_days_today),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -966,13 +987,13 @@ fun PauseShieldCard(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        "Pause Shield/Goal",
+                        stringResource(R.string.app_detail_pause_shield_goal),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.secondary
                     )
                     Text(
-                        "Temporarily disable limits",
+                        stringResource(R.string.app_detail_temporarily_disable_limits),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -981,7 +1002,7 @@ fun PauseShieldCard(
             IconButton(onClick = onPauseClick) {
                 Icon(
                     Icons.Outlined.ChevronRight,
-                    contentDescription = "Pause",
+                    contentDescription = stringResource(R.string.app_detail_pause),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -1002,8 +1023,10 @@ fun ResumeCard(
         else (pauseEndTimestamp - nowMillis).coerceAtLeast(0L)
     }
 
+    val manuallyLabel = stringResource(R.string.app_detail_manually)
+
     val resumeTimeStr = remember(pauseEndTimestamp) {
-        if (pauseEndTimestamp == 0L) "Manually"
+        if (pauseEndTimestamp == 0L) manuallyLabel
         else {
             val instant = java.time.Instant.ofEpochMilli(pauseEndTimestamp)
             val formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm")
@@ -1034,13 +1057,13 @@ fun ResumeCard(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
-                            "Shield Paused",
+                            stringResource(R.string.app_detail_shield_paused),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            if (remainingMillis == -1L) "Paused indefinitely"
-                            else "Resumes in ${formatDuration(remainingMillis)}",
+                            if (remainingMillis == -1L) stringResource(R.string.app_detail_paused_indefinitely)
+                            else stringResource(R.string.app_detail_resumes_in, formatDuration(remainingMillis)),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1052,7 +1075,7 @@ fun ResumeCard(
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Resume Now", style = MaterialTheme.typography.labelLarge)
+                    Text(stringResource(R.string.app_detail_resume_now), style = MaterialTheme.typography.labelLarge)
                 }
             }
             
@@ -1075,7 +1098,7 @@ fun ResumeCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        "Estimated time: $resumeTimeStr",
+                        stringResource(R.string.app_detail_estimated_time, resumeTimeStr),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline
                     )
@@ -1104,7 +1127,7 @@ fun SecondaryStatsRow(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "Daily Average",
+                    stringResource(R.string.app_detail_daily_average),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1126,7 +1149,7 @@ fun SecondaryStatsRow(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "Today's Opens",
+                    stringResource(R.string.app_detail_todays_opens),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1178,18 +1201,20 @@ fun PeakHourCard(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        "Peak Usage Hour",
+                        stringResource(R.string.app_detail_peak_usage_hour),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    val amPm = if (peakHour < 12) "AM" else "PM"
+                    val amPm = stringResource(
+                        if (peakHour < 12) R.string.app_detail_am else R.string.app_detail_pm
+                    )
                     val displayHour = when {
                         peakHour == 0 -> 12
                         peakHour > 12 -> peakHour - 12
                         else -> peakHour
                     }
                     Text(
-                        "Most active around $displayHour $amPm",
+                        stringResource(R.string.app_detail_most_active_around, displayHour, amPm),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -1258,7 +1283,7 @@ fun HourlyUsageChart(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Hourly Usage",
+                        text = stringResource(R.string.app_detail_hourly_usage),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -1292,7 +1317,7 @@ fun HourlyUsageChart(
                         }
                     } else {
                         Text(
-                            text = "Tap a bar for details",
+                            text = stringResource(R.string.app_detail_tap_bar_for_details),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
@@ -1370,8 +1395,10 @@ fun BatteryUsageCard(
     onReset: () -> Unit,
     shape: androidx.compose.ui.graphics.Shape = RoundedCornerShape(8.dp)
 ) {
+    val neverLabel = stringResource(R.string.app_detail_never)
+
     val lastResetText = remember(lastResetTimestamp) {
-        if (lastResetTimestamp <= 0L) "Never"
+        if (lastResetTimestamp <= 0L) neverLabel
         else {
             val sdf = java.text.SimpleDateFormat("MMM d, HH:mm", java.util.Locale.getDefault())
             sdf.format(java.util.Date(lastResetTimestamp))
@@ -1405,7 +1432,7 @@ fun BatteryUsageCard(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        "Since Last Charge/Reset",
+                        stringResource(R.string.app_detail_since_last_charge_reset),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1416,7 +1443,7 @@ fun BatteryUsageCard(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = "Last: $lastResetText",
+                        text = stringResource(R.string.app_detail_last_reset, lastResetText),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -1432,7 +1459,7 @@ fun BatteryUsageCard(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Refresh,
-                    contentDescription = "Reset",
+                    contentDescription = stringResource(R.string.app_detail_reset),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -1468,13 +1495,13 @@ fun DeleteShieldCard(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        "Remove from Zenith",
+                        stringResource(R.string.app_detail_remove_from_zenith),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error
                     )
                     Text(
-                        "Stop tracking limits for this app",
+                        stringResource(R.string.app_detail_stop_tracking_limits),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1483,7 +1510,7 @@ fun DeleteShieldCard(
             IconButton(onClick = onDelete) {
                 Icon(
                     Icons.Outlined.ChevronRight,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.app_detail_delete),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
@@ -1522,7 +1549,7 @@ fun PerAppLongTermSection(
             modifier = Modifier.fillMaxWidth()
         ) {
             LongTermSection(
-                title = "Heatmap for this app",
+                title = stringResource(R.string.app_detail_heatmap_for_this_app),
                 accentColor = MaterialTheme.colorScheme.tertiary,
                 highlightColor = MaterialTheme.colorScheme.primary,
                 selectedRange = selectedRange,
@@ -1534,7 +1561,7 @@ fun PerAppLongTermSection(
                 totalMillis = totalForPeriod,
                 prevTotal = prevPerApp,
                 dailyHistory = dailyHistory,
-                heatmapEmptyText = "No daily data for this app in this period",
+                heatmapEmptyText = stringResource(R.string.app_detail_no_daily_data),
                 formatDuration = viewModel::formatLongDuration,
                 periodDays = periodDays,
                 dataNote = dataNote

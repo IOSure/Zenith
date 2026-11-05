@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -45,6 +46,7 @@ import com.etrisad.zenith.ui.viewmodel.FocusUiState
 import com.etrisad.zenith.ui.viewmodel.PickerTab
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.model.AlarmItem
 import com.etrisad.zenith.ui.components.pausepoint.AlarmDismissTasks
 import com.etrisad.zenith.ui.components.pausepoint.PausePointTaskType
@@ -121,7 +123,7 @@ fun AlarmItemSettingsBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AlarmSettingsSheetContent(
-    initialAlarmName: String = "Alarm",
+    initialAlarmName: String = stringResource(R.string.settings2_alarm_default_name),
     initialSoundUri: String?,
     initialSoundEnabled: Boolean,
     initialAutoRepeatEnabled: Boolean,
@@ -207,6 +209,7 @@ private fun AlarmSettingsSheetContent(
     }
 
     var ttsEngine by remember { mutableStateOf<android.speech.tts.TextToSpeech?>(null) }
+    // Internal TTS status tokens are compared below, so they stay in English and are localized at display time.
     var ttsEngineStatus by remember { mutableStateOf("") }
     var availableLocales by remember { mutableStateOf<List<java.util.Locale>>(emptyList()) }
     var selectedLocale by remember { mutableStateOf<java.util.Locale?>(null) }
@@ -265,23 +268,27 @@ private fun AlarmSettingsSheetContent(
                 } else null
             }
 
-            val dayNames = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+            val dayNames = listOf(
+                context.getString(R.string.alarm_sheet_day_short_sun),
+                context.getString(R.string.alarm_sheet_day_short_mon),
+                context.getString(R.string.alarm_sheet_day_short_tue),
+                context.getString(R.string.alarm_sheet_day_short_wed),
+                context.getString(R.string.alarm_sheet_day_short_thu),
+                context.getString(R.string.alarm_sheet_day_short_fri),
+                context.getString(R.string.alarm_sheet_day_short_sat)
+            )
             val recurrence = when {
                 selectedDays.isEmpty() -> null
-                selectedDays.size == 7 -> "Every day"
-                selectedDays == setOf(1, 7) -> "Weekends"
-                selectedDays == setOf(2, 3, 4, 5, 6) -> "Weekdays"
+                selectedDays.size == 7 -> context.getString(R.string.alarm_sheet_every_day)
+                selectedDays == setOf(1, 7) -> context.getString(R.string.alarm_sheet_weekends)
+                selectedDays == setOf(2, 3, 4, 5, 6) -> context.getString(R.string.alarm_sheet_weekdays)
                 else -> selectedDays.sorted().joinToString(", ") { dayNames[it - 1] }
             }
 
-            if (recurrence != null) recurrence
-            else {
-                val suffix = when (isTomorrow) {
-                    true -> "Tomorrow"
-                    false -> "Today"
-                    null -> ""
-                }
-                if (suffix.isEmpty()) "Once" else "Once $suffix"
+            recurrence ?: when (isTomorrow) {
+                true -> context.getString(R.string.alarm_sheet_once_tomorrow)
+                false -> context.getString(R.string.alarm_sheet_once_today)
+                null -> context.getString(R.string.alarm_sheet_once)
             }
         }
     }
@@ -418,7 +425,7 @@ private fun AlarmSettingsSheetContent(
                         val countdownHour = currentTimeText?.split(":")?.getOrNull(0)?.toIntOrNull() ?: 7
                         val countdownMinute = currentTimeText?.split(":")?.getOrNull(1)?.toIntOrNull() ?: 0
 
-                        var countdownSubText by remember { mutableStateOf("calculating...") }
+                        var countdownSubText by remember { mutableStateOf(context.getString(R.string.alarm_sheet_countdown_calculating)) }
 
                         LaunchedEffect(countdownHour, countdownMinute, selectedDays) {
                             while (true) {
@@ -449,7 +456,7 @@ private fun AlarmSettingsSheetContent(
                                         nextAlarm = nextAlarm.plusDays(1)
                                     }
                                     if (!found) {
-                                        countdownSubText = "no upcoming schedule"
+                                        countdownSubText = context.getString(R.string.alarm_sheet_countdown_no_schedule)
                                         delay(60_000)
                                         continue
                                     }
@@ -462,12 +469,12 @@ private fun AlarmSettingsSheetContent(
                                 val minutes = totalMinutes % 60
 
                                 countdownSubText = when {
-                                    days > 0 && hours > 0 -> "in ${days}d ${hours}h"
-                                    days > 0 -> "in ${days}d"
-                                    hours > 0 && minutes > 0 -> "in ${hours}h ${minutes}m"
-                                    hours > 0 -> "in ${hours}h"
-                                    totalMinutes > 0 -> "in ${totalMinutes}m"
-                                    else -> "<1m"
+                                    days > 0 && hours > 0 -> context.getString(R.string.alarm_sheet_countdown_days_hours, days, hours)
+                                    days > 0 -> context.getString(R.string.alarm_sheet_countdown_days, days)
+                                    hours > 0 && minutes > 0 -> context.getString(R.string.alarm_sheet_countdown_hours_minutes, hours, minutes)
+                                    hours > 0 -> context.getString(R.string.alarm_sheet_countdown_hours, hours)
+                                    totalMinutes > 0 -> context.getString(R.string.alarm_sheet_countdown_minutes, totalMinutes)
+                                    else -> context.getString(R.string.alarm_sheet_countdown_less_than_minute)
                                 }
 
                                 val sleepMillis = when {
@@ -515,7 +522,7 @@ private fun AlarmSettingsSheetContent(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Alarm Time",
+                                    text = stringResource(R.string.alarm_sheet_alarm_time),
                                     style = MaterialTheme.typography.labelLarge,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold
@@ -533,7 +540,15 @@ private fun AlarmSettingsSheetContent(
 
                         Spacer(modifier = Modifier.height(4.dp))
 
-                        val dayNames = listOf("S", "M", "T", "W", "T", "F", "S")
+                        val dayNames = listOf(
+                            stringResource(R.string.alarm_sheet_day_letter_sun),
+                            stringResource(R.string.alarm_sheet_day_letter_mon),
+                            stringResource(R.string.alarm_sheet_day_letter_tue),
+                            stringResource(R.string.alarm_sheet_day_letter_wed),
+                            stringResource(R.string.alarm_sheet_day_letter_thu),
+                            stringResource(R.string.alarm_sheet_day_letter_fri),
+                            stringResource(R.string.alarm_sheet_day_letter_sat)
+                        )
                         ZenithGroupedButton(size = ZenithButtonSize.Small) {
                             dayNames.forEachIndexed { index, dayLabel ->
                                 val dayNum = index + 1
@@ -562,7 +577,7 @@ private fun AlarmSettingsSheetContent(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        PreferenceCategory(title = "Alarm Behavior")
+                        PreferenceCategory(title = stringResource(R.string.alarm_sheet_category_alarm_behavior))
 
                         CardGroup(shape = topShape, containerColor = containerColor) {
                             Row(
@@ -587,18 +602,18 @@ private fun AlarmSettingsSheetContent(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Snooze Duration",
+                                        text = stringResource(R.string.alarm_sheet_snooze_duration_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Minutes before alarm rings again",
+                                        text = stringResource(R.string.alarm_sheet_snooze_duration_description),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                                 ZenithDropdown(
-                                    options = snoozeDurationOptions.map { "${it} min" to it },
+                                    options = snoozeDurationOptions.map { context.getString(R.string.alarm_sheet_minutes_short, it) to it },
                                     selectedOption = snoozeDurationMinutes,
                                     onOptionSelected = { snoozeDurationMinutes = it },
                                     width = 120.dp
@@ -631,18 +646,21 @@ private fun AlarmSettingsSheetContent(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Max Snooze Count",
+                                        text = stringResource(R.string.alarm_sheet_max_snooze_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Maximum times you can snooze",
+                                        text = stringResource(R.string.alarm_sheet_max_snooze_description),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                                 ZenithDropdown(
-                                    options = snoozeCountOptions.map { if (it == Int.MAX_VALUE) "Unlimited" to it else "${it}x" to it },
+                                    options = snoozeCountOptions.map {
+                                        if (it == Int.MAX_VALUE) context.getString(R.string.alarm_sheet_unlimited) to it
+                                        else context.getString(R.string.alarm_sheet_snooze_count_option, it) to it
+                                    },
                                     selectedOption = snoozeMaxCount,
                                     onOptionSelected = { snoozeMaxCount = it },
                                     width = 120.dp
@@ -676,12 +694,12 @@ private fun AlarmSettingsSheetContent(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Auto Repeat Alarm",
+                                        text = stringResource(R.string.alarm_sheet_auto_repeat_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Re-trigger alarm every 5 min if you don't use your phone within 1 min after dismissing",
+                                        text = stringResource(R.string.alarm_sheet_auto_repeat_description),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -696,7 +714,7 @@ private fun AlarmSettingsSheetContent(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        PreferenceCategory(title = "Wake Mission")
+                        PreferenceCategory(title = stringResource(R.string.alarm_sheet_category_wake_mission))
 
                         CardGroup(shape = topShape, containerColor = containerColor) {
                             Column {
@@ -726,12 +744,12 @@ private fun AlarmSettingsSheetContent(
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "Use certain app for completion",
+                                            text = stringResource(R.string.alarm_sheet_certain_app_title),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "Wake up by using selected apps",
+                                            text = stringResource(R.string.alarm_sheet_certain_app_description),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -785,12 +803,12 @@ private fun AlarmSettingsSheetContent(
                                                 Spacer(modifier = Modifier.width(16.dp))
                                                 Column(modifier = Modifier.weight(1f)) {
                                                     Text(
-                                                        text = "Select Apps",
+                                                        text = stringResource(R.string.alarm_sheet_select_apps_title),
                                                         style = MaterialTheme.typography.titleMedium,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     Text(
-                                                        text = "Apps to open before alarm stops",
+                                                        text = stringResource(R.string.alarm_sheet_select_apps_description),
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -827,7 +845,7 @@ private fun AlarmSettingsSheetContent(
                                                 if (isEmpty) {
                                                     ZenithButton(
                                                         onClick = { showWakeUpAppPicker = true },
-                                                        text = "Choose Apps",
+                                                        text = stringResource(R.string.alarm_sheet_choose_apps),
                                                         type = ZenithButtonType.Outlined,
                                                         size = ZenithButtonSize.Medium,
                                                         fillMaxWidth = true
@@ -863,7 +881,7 @@ private fun AlarmSettingsSheetContent(
                                                             Spacer(modifier = Modifier.width(16.dp))
                                                             Column(modifier = Modifier.weight(1f)) {
                                                                 Text(
-                                                                    text = "$selectedCount selected",
+                                                                    text = stringResource(R.string.alarm_sheet_apps_selected, selectedCount),
                                                                     style = MaterialTheme.typography.titleMedium,
                                                                     fontWeight = FontWeight.Bold
                                                                 )
@@ -873,7 +891,9 @@ private fun AlarmSettingsSheetContent(
                                                                             if (index > 0) append(", ")
                                                                             append(name)
                                                                         }
-                                                                        if (selectedCount > 2) append(" +${selectedCount - 2} Other Apps")
+                                                                        if (selectedCount > 2) append(
+                                                                            " " + context.getString(R.string.alarm_sheet_other_apps_count, selectedCount - 2)
+                                                                        )
                                                                     },
                                                                     style = MaterialTheme.typography.bodySmall,
                                                                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -882,7 +902,7 @@ private fun AlarmSettingsSheetContent(
                                                             Spacer(modifier = Modifier.width(8.dp))
                                                             Icon(
                                                                 Icons.Outlined.Edit,
-                                                                contentDescription = "Edit",
+                                                                contentDescription = stringResource(R.string.alarm_sheet_edit),
                                                                 tint = MaterialTheme.colorScheme.primary,
                                                                 modifier = Modifier.size(20.dp)
                                                             )
@@ -897,7 +917,13 @@ private fun AlarmSettingsSheetContent(
                                             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
                                         )
 
-                                        val durationOptions = listOf(30 to "30 sec", 60 to "1 min", 120 to "2 min", 180 to "3 min", 300 to "5 min")
+                                        val durationOptions = listOf(
+                                            30 to context.getString(R.string.alarm_sheet_seconds_short, 30),
+                                            60 to context.getString(R.string.alarm_sheet_minutes_short, 1),
+                                            120 to context.getString(R.string.alarm_sheet_minutes_short, 2),
+                                            180 to context.getString(R.string.alarm_sheet_minutes_short, 3),
+                                            300 to context.getString(R.string.alarm_sheet_minutes_short, 5)
+                                        )
                                         Row(
                                             modifier = Modifier
                                                 .fillMaxWidth()
@@ -920,12 +946,12 @@ private fun AlarmSettingsSheetContent(
                                             Spacer(modifier = Modifier.width(16.dp))
                                             Column(modifier = Modifier.weight(1f)) {
                                                 Text(
-                                                    text = "Usage Duration",
+                                                    text = stringResource(R.string.alarm_sheet_usage_duration_title),
                                                     style = MaterialTheme.typography.titleMedium,
                                                     fontWeight = FontWeight.Bold
                                                 )
                                                 Text(
-                                                    text = "Time needed on selected apps",
+                                                    text = stringResource(R.string.alarm_sheet_usage_duration_description),
                                                     style = MaterialTheme.typography.bodySmall,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
@@ -951,13 +977,13 @@ private fun AlarmSettingsSheetContent(
                                             ) {
                                                 Column(modifier = Modifier.padding(12.dp)) {
                                                     Text(
-                                                        text = "Usage Access required",
+                                                        text = stringResource(R.string.alarm_sheet_usage_access_required),
                                                         style = MaterialTheme.typography.titleSmall,
                                                         fontWeight = FontWeight.Bold,
                                                         color = MaterialTheme.colorScheme.onErrorContainer
                                                     )
                                                     Text(
-                                                        text = "Without this permission Zenith can't verify app usage.",
+                                                        text = stringResource(R.string.alarm_sheet_usage_access_description),
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onErrorContainer
                                                     )
@@ -972,7 +998,7 @@ private fun AlarmSettingsSheetContent(
                                                                 )
                                                             } catch (_: Exception) { }
                                                         },
-                                                        text = "Grant Access",
+                                                        text = stringResource(R.string.alarm_sheet_grant_access),
                                                         type = ZenithButtonType.Outlined,
                                                         size = ZenithButtonSize.Small,
                                                         fillMaxWidth = true
@@ -999,7 +1025,7 @@ private fun AlarmSettingsSheetContent(
                                                     )
                                                     Spacer(modifier = Modifier.width(8.dp))
                                                     Text(
-                                                        text = "Select at least 1 app, or this is skipped on save.",
+                                                        text = stringResource(R.string.alarm_sheet_select_one_app_warning),
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onErrorContainer
                                                     )
@@ -1037,19 +1063,19 @@ private fun AlarmSettingsSheetContent(
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "Dismiss Missions",
+                                            text = stringResource(R.string.alarm_sheet_dismiss_missions_title),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "Finish a Pause Point task to dismiss the alarm",
+                                            text = stringResource(R.string.alarm_sheet_dismiss_missions_description),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                     if (dismissTaskTypeNames.isNotEmpty()) {
                                         TextButton(onClick = { dismissTaskTypeNames = emptySet() }) {
-                                            Text("Clear")
+                                            Text(stringResource(R.string.alarm_sheet_clear))
                                         }
                                     }
                                 }
@@ -1092,22 +1118,22 @@ private fun AlarmSettingsSheetContent(
 
                                 Text(
                                     text = if (dismissTaskTypeNames.isEmpty())
-                                        "No mission: the alarm dismisses directly, like before."
-                                    else "One random mission is picked each time the alarm fires. Missions reuse your global Pause Point setups (durations, QR codes, NFC tags).",
+                                        stringResource(R.string.alarm_sheet_no_mission_hint)
+                                    else stringResource(R.string.alarm_sheet_mission_random_hint),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
 
                                 if (PausePointTaskType.QR_SCAN.name in dismissTaskTypeNames && pausePointQrCodeCount == 0) {
                                     Text(
-                                        text = "No saved QR codes yet. Register one under Settings > Features > Pause Point, otherwise QR missions fall back to waiting.",
+                                        text = stringResource(R.string.alarm_sheet_no_qr_codes_warning),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.error
                                     )
                                 }
                                 if (PausePointTaskType.NFC_SCAN.name in dismissTaskTypeNames && pausePointNfcTagCount == 0) {
                                     Text(
-                                        text = "No saved NFC tags yet. Register one under Settings > Features > Pause Point, otherwise NFC missions fall back to waiting.",
+                                        text = stringResource(R.string.alarm_sheet_no_nfc_tags_warning),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.error
                                     )
@@ -1145,7 +1171,7 @@ private fun AlarmSettingsSheetContent(
                                             )
                                         )
                                     },
-                                    text = "Test Alarm",
+                                    text = stringResource(R.string.alarm_sheet_test_alarm),
                                     icon = Icons.Outlined.PlayArrow,
                                     type = ZenithButtonType.Outlined,
                                     size = ZenithButtonSize.Medium,
@@ -1156,7 +1182,7 @@ private fun AlarmSettingsSheetContent(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        PreferenceCategory(title = "Settings")
+                        PreferenceCategory(title = stringResource(R.string.alarm_sheet_category_settings))
 
                         CardGroup(shape = topShape, containerColor = containerColor) {
                             Column {
@@ -1183,12 +1209,12 @@ private fun AlarmSettingsSheetContent(
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "Alarm Sound",
+                                            text = stringResource(R.string.alarm_sheet_alarm_sound_title),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "Play sound when alarm rings",
+                                            text = stringResource(R.string.alarm_sheet_alarm_sound_description),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -1221,7 +1247,7 @@ private fun AlarmSettingsSheetContent(
                                                 .padding(16.dp)
                                         ) {
                                             Text(
-                                                text = "Sound Source",
+                                                text = stringResource(R.string.alarm_sheet_sound_source),
                                                 style = MaterialTheme.typography.titleSmall,
                                                 fontWeight = FontWeight.Bold,
                                                 color = MaterialTheme.colorScheme.primary
@@ -1238,19 +1264,19 @@ private fun AlarmSettingsSheetContent(
                                                 val isFile = alarmSoundUri != null && alarmSoundUri?.startsWith("content://media") == false
 
                                                 GroupedOptionButton(
-                                                    label = "Default",
+                                                    label = stringResource(R.string.alarm_sheet_sound_default),
                                                     selected = isDefault,
                                                     onClick = { alarmSoundUri = null },
                                                     isFirst = true,
                                                     isLast = false
                                                 )
                                                 GroupedOptionButton(
-                                                    label = "System",
+                                                    label = stringResource(R.string.alarm_sheet_sound_system),
                                                     selected = isSystem,
                                                     onClick = {
                                                         val intent = android.content.Intent(android.media.RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                                                             putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TYPE, android.media.RingtoneManager.TYPE_ALARM)
-                                                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Sound")
+                                                            putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(R.string.alarm_sheet_select_alarm_sound))
                                                             putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, alarmSoundUri?.toUri())
                                                             putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
                                                             putExtra(android.media.RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
@@ -1261,7 +1287,7 @@ private fun AlarmSettingsSheetContent(
                                                     isLast = false
                                                 )
                                                 GroupedOptionButton(
-                                                    label = "File",
+                                                    label = stringResource(R.string.alarm_sheet_sound_file),
                                                     selected = isFile,
                                                     onClick = { filePickerLauncher.launch(arrayOf("audio/*")) },
                                                     isFirst = false,
@@ -1272,7 +1298,7 @@ private fun AlarmSettingsSheetContent(
                                             if (alarmSoundUri != null) {
                                                 Spacer(modifier = Modifier.height(8.dp))
                                                 Text(
-                                                    text = "Custom sound selected",
+                                                    text = stringResource(R.string.alarm_sheet_custom_sound_selected),
                                                     style = MaterialTheme.typography.labelSmall,
                                                     color = MaterialTheme.colorScheme.primary
                                                 )
@@ -1281,7 +1307,8 @@ private fun AlarmSettingsSheetContent(
                                             Spacer(modifier = Modifier.height(12.dp))
 
                                             val previewIcon = if (isPlayingPreview) Icons.Outlined.StopCircle else Icons.Outlined.PlayCircle
-                                            val previewText = if (isPlayingPreview) "Stop Preview" else "Preview Sound"
+                                            val previewText = if (isPlayingPreview) stringResource(R.string.alarm_sheet_stop_preview)
+                                                              else stringResource(R.string.alarm_sheet_preview_sound)
                                             val previewColor = if (isPlayingPreview) MaterialTheme.colorScheme.error
                                                                else MaterialTheme.colorScheme.primary
 
@@ -1354,14 +1381,14 @@ private fun AlarmSettingsSheetContent(
 
                         CardGroup(shape = middleShape, containerColor = containerColor) {
                             val gradualVolumeOptions = listOf(
-                                "Off" to 0,
-                                "15 sec" to 15,
-                                "30 sec" to 30,
-                                "45 sec" to 45,
-                                "1 min" to 60,
-                                "2 min" to 120,
-                                "3 min" to 180,
-                                "5 min" to 300
+                                context.getString(R.string.alarm_sheet_off) to 0,
+                                context.getString(R.string.alarm_sheet_seconds_short, 15) to 15,
+                                context.getString(R.string.alarm_sheet_seconds_short, 30) to 30,
+                                context.getString(R.string.alarm_sheet_seconds_short, 45) to 45,
+                                context.getString(R.string.alarm_sheet_minutes_short, 1) to 60,
+                                context.getString(R.string.alarm_sheet_minutes_short, 2) to 120,
+                                context.getString(R.string.alarm_sheet_minutes_short, 3) to 180,
+                                context.getString(R.string.alarm_sheet_minutes_short, 5) to 300
                             )
                             Row(
                                 modifier = Modifier
@@ -1385,12 +1412,12 @@ private fun AlarmSettingsSheetContent(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Gradual Volume",
+                                        text = stringResource(R.string.alarm_sheet_gradual_volume_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Volume increases slowly from 0 to full",
+                                        text = stringResource(R.string.alarm_sheet_gradual_volume_description),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -1432,12 +1459,12 @@ private fun AlarmSettingsSheetContent(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Alarm Volume",
+                                        text = stringResource(R.string.alarm_sheet_alarm_volume_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Set the volume level for the alarm",
+                                        text = stringResource(R.string.alarm_sheet_alarm_volume_description),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -1513,12 +1540,12 @@ private fun AlarmSettingsSheetContent(
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Column(modifier = Modifier.weight(1f)) {
                                         Text(
-                                            text = "Text-to-Speech",
+                                            text = stringResource(R.string.alarm_sheet_tts_title),
                                             style = MaterialTheme.typography.titleMedium,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "Announce alarm time when ringing",
+                                            text = stringResource(R.string.alarm_sheet_tts_description),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -1569,12 +1596,20 @@ private fun AlarmSettingsSheetContent(
                                                 Spacer(modifier = Modifier.width(16.dp))
                                                 Column(modifier = Modifier.weight(1f)) {
                                                     Text(
-                                                        text = "TTS Engine",
+                                                        text = stringResource(R.string.alarm_sheet_tts_engine_title),
                                                         style = MaterialTheme.typography.titleMedium,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     Text(
-                                                        text = if (ttsEngineStatus == "Ready" && selectedLocale != null) "Ready (${selectedLocale!!.displayName})" else ttsEngineStatus,
+                                                        text = when {
+                                                            ttsEngineStatus == "Ready" && selectedLocale != null ->
+                                                                stringResource(R.string.alarm_sheet_tts_status_ready_with_language, selectedLocale!!.displayName)
+                                                            ttsEngineStatus == "Ready" -> stringResource(R.string.alarm_sheet_tts_status_ready)
+                                                            ttsEngineStatus == "Missing data" -> stringResource(R.string.alarm_sheet_tts_status_missing_data)
+                                                            ttsEngineStatus == "Not supported" -> stringResource(R.string.alarm_sheet_tts_status_not_supported)
+                                                            ttsEngineStatus == "Init failed" -> stringResource(R.string.alarm_sheet_tts_status_init_failed)
+                                                            else -> ttsEngineStatus
+                                                        },
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -1584,7 +1619,7 @@ private fun AlarmSettingsSheetContent(
                                                 Spacer(modifier = Modifier.height(12.dp))
                                                 Text(
                                                     modifier = Modifier.padding(horizontal = 16.dp),
-                                                    text = "Zenith uses your device's built-in Text-to-Speech engine. If a language is missing, consider installing Google Speech Services from the Play Store.",
+                                                    text = stringResource(R.string.alarm_sheet_tts_engine_hint),
                                                     style = MaterialTheme.typography.bodySmall,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                                 )
@@ -1611,7 +1646,7 @@ private fun AlarmSettingsSheetContent(
                                                         )
                                                         Spacer(modifier = Modifier.width(8.dp))
                                                         Text(
-                                                            text = "Open TTS Settings",
+                                                            text = stringResource(R.string.alarm_sheet_open_tts_settings),
                                                             style = MaterialTheme.typography.labelLarge,
                                                             fontWeight = FontWeight.Bold,
                                                             color = MaterialTheme.colorScheme.primary
@@ -1654,12 +1689,12 @@ private fun AlarmSettingsSheetContent(
                                                 Spacer(modifier = Modifier.width(16.dp))
                                                 Column(modifier = Modifier.weight(1f)) {
                                                     Text(
-                                                        text = "Voice Language",
+                                                        text = stringResource(R.string.alarm_sheet_voice_language_title),
                                                         style = MaterialTheme.typography.titleMedium,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     Text(
-                                                        text = "Language for spoken alarm alerts",
+                                                        text = stringResource(R.string.alarm_sheet_voice_language_description),
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -1688,20 +1723,20 @@ private fun AlarmSettingsSheetContent(
                                             modifier = Modifier.fillMaxWidth()
                                         ) {
                                             val ttsTalkAfterOptions = listOf(
-                                                "Immediately" to 0,
-                                                "3 sec" to 3,
-                                                "5 sec" to 5,
-                                                "10 sec" to 10,
-                                                "15 sec" to 15,
-                                                "30 sec" to 30
+                                                context.getString(R.string.alarm_sheet_immediately) to 0,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 3) to 3,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 5) to 5,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 10) to 10,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 15) to 15,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 30) to 30
                                             )
                                             val ttsRepeatOptions = listOf(
-                                                "Once" to 1,
-                                                "2 times" to 2,
-                                                "3 times" to 3,
-                                                "5 times" to 5,
-                                                "10 times" to 10,
-                                                "Unlimited" to 0
+                                                context.getString(R.string.alarm_sheet_repeat_once) to 1,
+                                                context.getString(R.string.alarm_sheet_times_count, 2) to 2,
+                                                context.getString(R.string.alarm_sheet_times_count, 3) to 3,
+                                                context.getString(R.string.alarm_sheet_times_count, 5) to 5,
+                                                context.getString(R.string.alarm_sheet_times_count, 10) to 10,
+                                                context.getString(R.string.alarm_sheet_unlimited) to 0
                                             )
 
                                             Row(
@@ -1726,12 +1761,12 @@ private fun AlarmSettingsSheetContent(
                                                 Spacer(modifier = Modifier.width(16.dp))
                                                 Column(modifier = Modifier.weight(1f)) {
                                                     Text(
-                                                        text = "Talk After",
+                                                        text = stringResource(R.string.alarm_sheet_talk_after_title),
                                                         style = MaterialTheme.typography.titleMedium,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     Text(
-                                                        text = "Delay before TTS starts after alarm",
+                                                        text = stringResource(R.string.alarm_sheet_talk_after_description),
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -1771,12 +1806,12 @@ private fun AlarmSettingsSheetContent(
                                                 Spacer(modifier = Modifier.width(16.dp))
                                                 Column(modifier = Modifier.weight(1f)) {
                                                     Text(
-                                                        text = "Repeat",
+                                                        text = stringResource(R.string.alarm_sheet_repeat_title),
                                                         style = MaterialTheme.typography.titleMedium,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     Text(
-                                                        text = "How many times TTS repeats",
+                                                        text = stringResource(R.string.alarm_sheet_repeat_description),
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -1795,11 +1830,11 @@ private fun AlarmSettingsSheetContent(
                                             )
 
                                             val ttsIntervalOptions = listOf(
-                                                "3 sec" to 3,
-                                                "5 sec" to 5,
-                                                "8 sec" to 8,
-                                                "10 sec" to 10,
-                                                "15 sec" to 15
+                                                context.getString(R.string.alarm_sheet_seconds_short, 3) to 3,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 5) to 5,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 8) to 8,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 10) to 10,
+                                                context.getString(R.string.alarm_sheet_seconds_short, 15) to 15
                                             )
 
                                             Row(
@@ -1824,12 +1859,12 @@ private fun AlarmSettingsSheetContent(
                                                 Spacer(modifier = Modifier.width(16.dp))
                                                 Column(modifier = Modifier.weight(1f)) {
                                                     Text(
-                                                        text = "TTS Interval",
+                                                        text = stringResource(R.string.alarm_sheet_tts_interval_title),
                                                         style = MaterialTheme.typography.titleMedium,
                                                         fontWeight = FontWeight.Bold
                                                     )
                                                     Text(
-                                                        text = "Pause between TTS repeats",
+                                                        text = stringResource(R.string.alarm_sheet_tts_interval_description),
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
@@ -1871,12 +1906,12 @@ private fun AlarmSettingsSheetContent(
                                                     Spacer(modifier = Modifier.width(16.dp))
                                                     Column(modifier = Modifier.weight(1f)) {
                                                         Text(
-                                                            text = "Custom Phrase",
+                                                            text = stringResource(R.string.alarm_sheet_custom_phrase_title),
                                                             style = MaterialTheme.typography.titleMedium,
                                                             fontWeight = FontWeight.Bold
                                                         )
                                                         Text(
-                                                            text = "Default: \"Wake up, it's {time}\". Use {time} to include current time.",
+                                                            text = stringResource(R.string.alarm_sheet_custom_phrase_description),
                                                             style = MaterialTheme.typography.bodySmall,
                                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                                         )
@@ -1890,7 +1925,7 @@ private fun AlarmSettingsSheetContent(
                                                         .padding(horizontal = 16.dp)
                                                         .padding(bottom = 16.dp),
                                                     singleLine = true,
-                                                    placeholder = { Text("Wake up, it's {time}") },
+                                                    placeholder = { Text(stringResource(R.string.alarm_sheet_custom_phrase_placeholder)) },
                                                     shape = RoundedCornerShape(16.dp)
                                                 )
                                             }
@@ -1904,8 +1939,8 @@ private fun AlarmSettingsSheetContent(
 
                         CardGroup(shape = middleShape, containerColor = containerColor) {
                             SettingsToggle(
-                                title = "Vibrate",
-                                description = "Vibrate device when alarm rings",
+                                title = stringResource(R.string.alarm_sheet_vibrate_title),
+                                description = stringResource(R.string.alarm_sheet_vibrate_description),
                                 checked = vibrateEnabled,
                                 onCheckedChange = { vibrateEnabled = it },
                                 icon = Icons.Outlined.NotificationsActive,
@@ -1917,8 +1952,8 @@ private fun AlarmSettingsSheetContent(
 
                         CardGroup(shape = bottomShape, containerColor = containerColor) {
                             SettingsToggle(
-                                title = "Prevent Volume Drop",
-                                description = "Keep alarm volume from being lowered by the system",
+                                title = stringResource(R.string.alarm_sheet_prevent_volume_drop_title),
+                                description = stringResource(R.string.alarm_sheet_prevent_volume_drop_description),
                                 checked = preventVolumeDrop,
                                 onCheckedChange = { preventVolumeDrop = it },
                                 icon = Icons.AutoMirrored.Outlined.VolumeUp,
@@ -1971,7 +2006,7 @@ private fun AlarmSettingsSheetContent(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Save Settings",
+                    text = stringResource(R.string.alarm_sheet_save_settings),
                     isLoading = isSaving
                 )
             }

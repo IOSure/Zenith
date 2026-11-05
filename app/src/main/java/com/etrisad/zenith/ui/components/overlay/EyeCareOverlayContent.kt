@@ -14,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -89,7 +91,7 @@ fun EyeCareOverlayContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Time to rest your eyes",
+                text = stringResource(R.string.misc_eye_care_rest_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
@@ -98,7 +100,7 @@ fun EyeCareOverlayContent(
             Spacer(modifier = Modifier.height(4.dp))
 
             Text(
-                text = "Look away at something 20 feet away",
+                text = stringResource(R.string.misc_eye_care_look_away),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -127,7 +129,7 @@ fun EyeCareOverlayContent(
                         fontWeight = FontWeight.Black
                     )
                     Text(
-                        text = "seconds",
+                        text = stringResource(R.string.misc_eye_care_seconds),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -144,7 +146,7 @@ fun EyeCareOverlayContent(
                 )
             ) {
                 Text(
-                    text = "Your break will end automatically",
+                    text = stringResource(R.string.misc_eye_care_auto_end),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,

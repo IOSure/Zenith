@@ -86,15 +86,18 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import androidx.compose.foundation.layout.*
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.data.local.entity.LimitPeriod
 import com.etrisad.zenith.data.local.entity.ScheduleEntity
+import com.etrisad.zenith.data.local.entity.ScheduleMode
 import com.etrisad.zenith.data.local.entity.ShieldEntity
 import com.etrisad.zenith.data.website.WebsiteRepository
 import com.etrisad.zenith.util.DateTimeUtils
@@ -131,12 +134,12 @@ fun AppTypeTabRow(
         Tab(
             selected = selectedTab == AppTypeTab.APPS,
             onClick = { onTabChange(AppTypeTab.APPS) },
-            text = { Text("Apps") }
+            text = { Text(stringResource(R.string.reels_tab_apps)) }
         )
         Tab(
             selected = selectedTab == AppTypeTab.WEBSITES,
             onClick = { onTabChange(AppTypeTab.WEBSITES) },
-            text = { Text("Websites") }
+            text = { Text(stringResource(R.string.reels_tab_websites)) }
         )
     }
 }
@@ -335,7 +338,7 @@ fun ActiveShieldCard(
                             ) {
                                 Icon(
                                     imageVector = Icons.Outlined.LocalFireDepartment,
-                                    contentDescription = "Streak",
+                                    contentDescription = stringResource(R.string.reels_cd_streak),
                                     modifier = Modifier.size(10.dp),
                                     tint = MaterialTheme.colorScheme.onTertiary
                                 )
@@ -427,14 +430,33 @@ fun ActiveShieldCard(
                     if (!isHomeScreen) {
                         val hours = shield.timeLimitMinutes / 60
                         val mins = shield.timeLimitMinutes % 60
-                        val typeText = if (shield.type == FocusType.GOAL) "target" else "limit"
-                        val periodText = when (shield.limitPeriod) {
-                            LimitPeriod.DAILY -> "/day"
-                            LimitPeriod.WEEKLY -> "/week"
+                        val typeText = if (shield.type == FocusType.GOAL) {
+                            stringResource(R.string.reels_type_target)
+                        } else {
+                            stringResource(R.string.reels_type_limit)
                         }
-                        val limitText = if (hours > 0) "${hours}h ${mins}m $typeText" else "${mins}m $typeText"
-                        val statusText = if (shield.type == FocusType.GOAL) "Productive" else {
-                            if (shield.isStrictModeEnabled) "Strict" else "Normal"
+                        val periodText = when (shield.limitPeriod) {
+                            LimitPeriod.DAILY -> stringResource(R.string.reels_period_day)
+                            LimitPeriod.WEEKLY -> stringResource(R.string.reels_period_week)
+                        }
+                        val limitText = if (hours > 0) {
+                            stringResource(
+                                R.string.reels_limit_with_hours,
+                                hours,
+                                mins,
+                                typeText
+                            )
+                        } else {
+                            stringResource(R.string.reels_limit_with_minutes, mins, typeText)
+                        }
+                        val statusText = if (shield.type == FocusType.GOAL) {
+                            stringResource(R.string.reels_status_productive)
+                        } else {
+                            if (shield.isStrictModeEnabled) {
+                                stringResource(R.string.reels_status_strict)
+                            } else {
+                                stringResource(R.string.reels_status_normal)
+                            }
                         }
                         Text(
                             text = "$limitText$periodText • $statusText",
@@ -443,7 +465,11 @@ fun ActiveShieldCard(
                         )
                     }
 
-                    val timeLabel = if (shield.type == FocusType.GOAL) "To Go" else "Left"
+                    val timeLabel = if (shield.type == FocusType.GOAL) {
+                        stringResource(R.string.reels_time_to_go)
+                    } else {
+                        stringResource(R.string.reels_time_left)
+                    }
                     AnimatedContent(
                         targetState = Triple(usesExhausted, remainingMillis, remainingResetMillis),
                         transitionSpec = {
@@ -452,7 +478,7 @@ fun ActiveShieldCard(
                         label = "ShieldRemainingTimeAnimation"
                     ) { (isExhausted, remaining, resetMillis) ->
                         val displayText = if (isExhausted && resetMillis > 0) {
-                            "Reset in ${formatRemainingTime(resetMillis)}"
+                            stringResource(R.string.reels_reset_in, formatRemainingTime(resetMillis))
                         } else {
                             "${formatRemainingTime(remaining)} $timeLabel"
                         }
@@ -494,7 +520,7 @@ fun ActiveShieldCard(
                         if (!isSelectionMode) {
                             if (onEdit != null) {
                                 IconButton(onClick = onEdit) {
-                                    Icon(Icons.Outlined.Edit, contentDescription = "Edit", tint = if (isSelected) contentColor else MaterialTheme.colorScheme.primary)
+                                    Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.reels_cd_edit), tint = if (isSelected) contentColor else MaterialTheme.colorScheme.primary)
                                 }
                             }
                         } else {
@@ -641,17 +667,29 @@ fun ActiveScheduleCard(
             ListItem(
                 headlineContent = { Text(schedule.name, fontWeight = FontWeight.Bold, color = contentColor) },
                 supportingContent = {
-                    val modeText = schedule.mode.name.lowercase().replaceFirstChar { it.uppercase() }
+                    val modeText = stringResource(
+                        when (schedule.mode) {
+                            ScheduleMode.BLOCK -> R.string.app_detail2_schedule_mode_block
+                            ScheduleMode.ALLOW -> R.string.app_detail2_schedule_mode_allow
+                        }
+                    )
                     val statusText = when {
-                        !schedule.isActive -> "Inactive"
-                        isGoalCompleted -> "Completed"
-                        isActiveNow -> "Active"
-                        isGoalLockActive -> "Goal Lock"
-                        else -> "Inactive"
+                        !schedule.isActive -> stringResource(R.string.reels_schedule_status_inactive)
+                        isGoalCompleted -> stringResource(R.string.reels_schedule_status_completed)
+                        isActiveNow -> stringResource(R.string.reels_schedule_status_active)
+                        isGoalLockActive -> stringResource(R.string.reels_schedule_status_goal_lock)
+                        else -> stringResource(R.string.reels_schedule_status_inactive)
                     }
                     Column {
                         Text(
-                            text = "${schedule.startTime} - ${schedule.endTime} • $modeText • $statusText • ${schedule.packageNames.size} apps",
+                            text = stringResource(
+                                R.string.reels_schedule_summary,
+                                schedule.startTime,
+                                schedule.endTime,
+                                modeText,
+                                statusText,
+                                schedule.packageNames.size
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = if (isEnforcingNow) {
                                 if (isSelected) contentColor else MaterialTheme.colorScheme.primary
@@ -666,7 +704,11 @@ fun ActiveScheduleCard(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "${schedule.emergencyUseCount}/${schedule.maxEmergencyUses} emergency uses left",
+                                text = stringResource(
+                                    R.string.reels_emergency_uses_left,
+                                    schedule.emergencyUseCount,
+                                    schedule.maxEmergencyUses
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = secondaryColor
                             )
@@ -707,11 +749,11 @@ fun ActiveScheduleCard(
                     if (!isHomeScreen && !isSelectionMode) {
                         Row {
                             IconButton(onClick = onEdit) {
-                                Icon(Icons.Outlined.Edit, contentDescription = "Edit", tint = if (isSelected) contentColor else MaterialTheme.colorScheme.primary)
+                                Icon(Icons.Outlined.Edit, contentDescription = stringResource(R.string.reels_cd_edit), tint = if (isSelected) contentColor else MaterialTheme.colorScheme.primary)
                             }
                             if (onDelete != null) {
                                 IconButton(onClick = onDelete) {
-                                    Icon(Icons.Outlined.Delete, contentDescription = "Delete", tint = if (isSelected) contentColor else MaterialTheme.colorScheme.error)
+                                    Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.reels_cd_delete), tint = if (isSelected) contentColor else MaterialTheme.colorScheme.error)
                                 }
                             }
                         }
@@ -843,7 +885,9 @@ fun LazyListScope.activeShieldSection(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
-                EmptyFocusMessage(message = "No active $title. Go to Focus to add one!")
+                EmptyFocusMessage(
+                    message = stringResource(R.string.reels_empty_active_items, title)
+                )
             }
         }
     } else {
@@ -941,7 +985,7 @@ fun LazyListScope.activeScheduleSection(
 
     item(key = "${key}_header") {
         Text(
-            text = "Active Schedules",
+            text = stringResource(R.string.reels_active_schedules),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
@@ -956,7 +1000,7 @@ fun LazyListScope.activeScheduleSection(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
-                EmptyFocusMessage(message = "No active schedules yet")
+                EmptyFocusMessage(message = stringResource(R.string.reels_empty_schedules))
             }
         }
     } else {
@@ -1068,7 +1112,9 @@ fun ShieldSectionContent(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
-                EmptyFocusMessage(message = "No active $title. Go to Focus to add one!")
+                EmptyFocusMessage(
+                    message = stringResource(R.string.reels_empty_active_items, title)
+                )
             }
         } else {
             filteredShields.forEachIndexed { index, shield ->

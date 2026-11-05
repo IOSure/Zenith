@@ -28,7 +28,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.toArgb
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.CurrentCalendarEvent
 import com.etrisad.zenith.data.model.IncentiveTier
 import com.etrisad.zenith.data.preferences.UserPreferences
@@ -184,6 +187,7 @@ fun BedtimeAlertPill(
     userPreferences: UserPreferences,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val bedtimeInfo = remember(userPreferences) {
         val now = Calendar.getInstance()
         val currentMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
@@ -234,7 +238,11 @@ fun BedtimeAlertPill(
         val h = remaining / 60
         val m = remaining % 60
         
-        val formattedTime = if (h > 0) "${h}h ${m}m" else "${m}m"
+        val formattedTime = if (h > 0) {
+            context.getString(R.string.winddown_bedtime_remaining_hm, h, m)
+        } else {
+            context.getString(R.string.winddown_bedtime_remaining_m, m)
+        }
 
         Triple(progress, formattedTime, true)
     }
@@ -255,13 +263,13 @@ fun BedtimeAlertPill(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "It's Bedtime!",
+                    text = stringResource(R.string.winddown_bedtime_title),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onTertiaryContainer
                 )
                 Text(
-                    text = "Finish up soon and continue tomorrow.",
+                    text = stringResource(R.string.winddown_bedtime_subtitle),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f),
                     lineHeight = 14.sp
@@ -328,9 +336,9 @@ fun OverlayDragHandleWithIndicators(
             } else if (isIncentiveLocked) {
                 val tier = incentiveTier ?: IncentiveTier.LOCKED
                 val displayText = when {
-                    tier == IncentiveTier.LOCKED -> "Locked"
-                    tier.bonusUses < Int.MAX_VALUE -> "$bonusUsesLeft left"
-                    else -> "Unlocked"
+                    tier == IncentiveTier.LOCKED -> stringResource(R.string.winddown_locked)
+                    tier.bonusUses < Int.MAX_VALUE -> stringResource(R.string.winddown_bonus_uses_left, bonusUsesLeft)
+                    else -> stringResource(R.string.winddown_unlocked)
                 }
                 val icon = when {
                     tier == IncentiveTier.LOCKED -> Icons.Outlined.Lock
@@ -425,7 +433,7 @@ fun TotalUsagePill(totalGlobalUsageToday: Long, userPrefs: UserPreferences, modi
             )
         ) {
             Text(
-                text = "Total",
+                text = stringResource(R.string.winddown_total_label),
                 style = MaterialTheme.typography.labelSmall,
                 color = totalPillContentColor,
                 fontWeight = FontWeight.Bold,
@@ -519,7 +527,11 @@ fun EmergencyButton(onEmergencyUse: () -> Unit, onHoldingChange: (Boolean) -> Un
             Spacer(modifier = Modifier.width(8.dp))
             val secondsRemaining = kotlin.math.ceil(5 * (1f - holdProgress.value)).toInt()
             Text(
-                text = if (isPressed) "Hold for ${secondsRemaining}s..." else "Hold for 5s to use Emergency",
+                text = if (isPressed) {
+                    stringResource(R.string.winddown_emergency_hold_progress, secondsRemaining)
+                } else {
+                    stringResource(R.string.winddown_emergency_hold)
+                },
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium
             )
@@ -536,7 +548,11 @@ fun CloseAppTextButton(
 ) {
     ZenithButton(
         onClick = onCloseApp,
-        text = if (isWebsite) "Quit Web" else "Close App",
+        text = if (isWebsite) {
+            stringResource(R.string.winddown_quit_web)
+        } else {
+            stringResource(R.string.winddown_close_app)
+        },
         type = ZenithButtonType.Text,
         contentColor = MaterialTheme.colorScheme.error,
         backgroundProgressProvider = autoKickProgress,
@@ -695,7 +711,7 @@ fun DurationButton(
                 }
             } else {
                 Text(
-                    text = "$minutes mins",
+                    text = stringResource(R.string.winddown_duration_minutes_button, minutes),
                     fontWeight = FontWeight.Bold,
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -704,14 +720,15 @@ fun DurationButton(
     }
 }
 
+@Composable
 fun formatMillis(millis: Long): String {
     val totalSeconds = (millis / 1000).coerceAtLeast(0)
     val minutes = totalSeconds / 60
     val hours = minutes / 60
     return if (hours > 0) {
-        "${hours}h ${minutes % 60}m"
+        stringResource(R.string.tail_overlay_duration_hours_minutes, hours, minutes % 60)
     } else {
-        "${minutes}m"
+        stringResource(R.string.tail_overlay_duration_minutes, minutes)
     }
 }
 

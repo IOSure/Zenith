@@ -35,6 +35,10 @@ class ZenithApplication : Application(), ImageLoaderFactory {
     private var startedActivityCount = 0
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
+    override fun attachBaseContext(base: android.content.Context) {
+        super.attachBaseContext(com.etrisad.zenith.util.AppLanguage.wrap(base))
+    }
+
     companion object {
         private var workersEnqueued = false
     }
@@ -78,6 +82,7 @@ class ZenithApplication : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
+        com.etrisad.zenith.util.AppLanguage.applyTo(this)
         CrashHandler.install(this)
 
         lastUiMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK

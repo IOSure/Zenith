@@ -29,10 +29,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.onboarding.onboardingAnchor
 import com.etrisad.zenith.data.preferences.ForegroundNotificationStatusMode
 import com.etrisad.zenith.data.preferences.MindfulGatewayDefaults
@@ -134,11 +136,11 @@ fun FeaturesSettings(
     }
 
     Column {
-        PreferenceCategory(title = "Interface Overlays")
+        PreferenceCategory(title = stringResource(R.string.features_category_interface_overlays))
 
         SettingsToggle(
-            title = "Total Usage Pill",
-            description = "Show your total screen time in the mindful pause overlay",
+            title = stringResource(R.string.features_total_usage_pill_title),
+            description = stringResource(R.string.features_total_usage_pill_description),
             checked = preferences.totalUsagePillEnabled,
             onCheckedChange = onTotalUsagePillEnabledChange,
             icon = Icons.Outlined.Public,
@@ -147,8 +149,8 @@ fun FeaturesSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsToggle(
-            title = "Session Usage Overlay",
-            description = "Show a floating HUD with remaining time when an app is allowed",
+            title = stringResource(R.string.features_session_usage_overlay_title),
+            description = stringResource(R.string.features_session_usage_overlay_description),
             checked = preferences.sessionUsageOverlayEnabled,
             onCheckedChange = onSessionUsageOverlayEnabledChange,
             icon = Icons.Outlined.Timer,
@@ -174,8 +176,8 @@ fun FeaturesSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsToggle(
-            title = "Usage Glimpse",
-            description = "Briefly show your total screen time every 5 minutes in a corner HUD",
+            title = stringResource(R.string.features_usage_glimpse_title),
+            description = stringResource(R.string.features_usage_glimpse_description),
             checked = preferences.usageGlimpseEnabled,
             onCheckedChange = onUsageGlimpseEnabledChange,
             icon = Icons.Outlined.Visibility,
@@ -184,14 +186,14 @@ fun FeaturesSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsToggle(
-            title = "Show Current Event",
-            description = if (calendarPermissionGranted) "Show your current calendar event with progress during app delay" else "Grant Calendar Access permission in Settings to enable",
+            title = stringResource(R.string.features_show_current_event_title),
+            description = if (calendarPermissionGranted) stringResource(R.string.features_show_current_event_description) else stringResource(R.string.features_show_current_event_description_no_permission),
             checked = preferences.showCurrentEvent,
             onCheckedChange = { enabled ->
                 if (calendarPermissionGranted) {
                     onShowCurrentEventEnabledChange(enabled)
                 } else {
-                    Toast.makeText(context, "Please enable Calendar Access permission in Settings", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.features_enable_calendar_access_permission), Toast.LENGTH_SHORT).show()
                 }
             },
             icon = Icons.Outlined.CalendarMonth,
@@ -200,7 +202,7 @@ fun FeaturesSettings(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Notifications")
+        PreferenceCategory(title = stringResource(R.string.features_category_notifications))
 
         ForegroundNotificationStatusSelector(
             selectedMode = preferences.foregroundNotificationStatusMode,
@@ -210,8 +212,8 @@ fun FeaturesSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsToggle(
-            title = "Daily Focus Recap",
-            description = "Receive a daily summary of your total focus time and screen usage each evening",
+            title = stringResource(R.string.features_daily_focus_recap_title),
+            description = stringResource(R.string.features_daily_focus_recap_description),
             checked = preferences.dailyRecapEnabled,
             onCheckedChange = onDailyRecapEnabledChange,
             icon = Icons.Outlined.Today,
@@ -220,8 +222,8 @@ fun FeaturesSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsToggle(
-            title = "Weekly Insight",
-            description = "Get a weekly breakdown comparing your focus trends across the week",
+            title = stringResource(R.string.features_weekly_insight_title),
+            description = stringResource(R.string.features_weekly_insight_description),
             checked = preferences.weeklyInsightEnabled,
             onCheckedChange = onWeeklyInsightEnabledChange,
             icon = Icons.Outlined.Assessment,
@@ -230,8 +232,8 @@ fun FeaturesSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsToggle(
-            title = "Trend Milestones",
-            description = "Celebrate achievements like focus streaks and usage milestones",
+            title = stringResource(R.string.features_trend_milestones_title),
+            description = stringResource(R.string.features_trend_milestones_description),
             checked = preferences.trendMilestoneEnabled,
             onCheckedChange = onTrendMilestoneEnabledChange,
             icon = Icons.Outlined.EmojiEvents,
@@ -239,12 +241,12 @@ fun FeaturesSettings(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Entry Control")
+        PreferenceCategory(title = stringResource(R.string.features_category_entry_control))
 
         Box(modifier = Modifier.onboardingAnchor("features.mindful_gateway")) {
             SettingsToggle(
-                title = "Mindful Gateway",
-                description = "Interrupt every restricted app with a mindful pause, even without a specific shield",
+                title = stringResource(R.string.features_mindful_gateway_title),
+                description = stringResource(R.string.features_mindful_gateway_description),
                 checked = preferences.mindfulGatewayEnabled,
                 onCheckedChange = onMindfulGatewayEnabledChange,
                 icon = Icons.Outlined.AutoFixHigh,
@@ -260,8 +262,8 @@ fun FeaturesSettings(
             Column {
                 Spacer(modifier = Modifier.height(4.dp))
                 SettingsActionItem(
-                    title = "Mindful Gateway Defaults",
-                    summary = "Default uses, emergency, and pause behavior for every gateway shield",
+                    title = stringResource(R.string.features_mindful_gateway_defaults_title),
+                    summary = stringResource(R.string.features_mindful_gateway_defaults_summary),
                     onClick = { showGatewayDefaultsSheet = true },
                     icon = Icons.Outlined.Tune,
                     shape = RoundedCornerShape(8.dp)
@@ -273,15 +275,15 @@ fun FeaturesSettings(
         val isDisablingIncentiveLock = preferences.incentiveLockDisableRequestTimestamp > 0
 
         SettingsToggle(
-            title = "Incentive Lock",
-            description = "Progressively unlock shields as you complete app goals. Bonus uses are awarded at 25% and 50% progress.",
+            title = stringResource(R.string.features_incentive_lock_title),
+            description = stringResource(R.string.features_incentive_lock_description),
             checked = preferences.incentiveLockEnabled,
             onCheckedChange = { enabled ->
                 if (enabled) {
                     if (goalCount > 0) {
                         onIncentiveLockEnabledChange(true)
                     } else {
-                        Toast.makeText(context, "Please add at least one app goal first", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.features_add_app_goal_first), Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     showConfirmSheet = true
@@ -336,7 +338,7 @@ fun FeaturesSettings(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                "Disabling Incentive Lock...",
+                                stringResource(R.string.features_disabling_incentive_lock),
                                 style = MaterialTheme.typography.titleSmall,
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
@@ -345,13 +347,13 @@ fun FeaturesSettings(
                             val timeStr = String.format("%02d:%02d", minutesLeft, secondsLeft)
                             val targetTimeStr = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date(deactivationTime))
                             Text(
-                                "Feature will be disabled in $timeStr (around $targetTimeStr)",
+                                stringResource(R.string.features_incentive_lock_disable_countdown, timeStr, targetTimeStr),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
                             )
                         }
                         IconButton(onClick = onIncentiveLockCancelDisableRequest) {
-                            Icon(Icons.Outlined.Close, contentDescription = "Cancel", tint = MaterialTheme.colorScheme.error)
+                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.features_cancel), tint = MaterialTheme.colorScheme.error)
                         }
                     }
                 }
@@ -361,8 +363,8 @@ fun FeaturesSettings(
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.onboardingAnchor("features.grace_period")) {
             SettingsActionItem(
-                title = "Grace Period",
-                summary = "Set a daily window where all restrictions are lifted (max 2 h; optional weekly edit lock)",
+                title = stringResource(R.string.features_grace_period_title),
+                summary = stringResource(R.string.features_grace_period_summary),
                 onClick = onNavigateToGracePeriod,
                 icon = Icons.Outlined.FreeBreakfast,
                 shape = RoundedCornerShape(8.dp)
@@ -372,8 +374,8 @@ fun FeaturesSettings(
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.onboardingAnchor("features.eye_care")) {
             SettingsActionItem(
-                title = "Eye Care",
-                summary = "Remind you to look away every ${preferences.eyeCareWorkMinutes} minutes to reduce eye strain",
+                title = stringResource(R.string.features_eye_care_title),
+                summary = stringResource(R.string.features_eye_care_summary, preferences.eyeCareWorkMinutes),
                 onClick = onNavigateToEyeCare,
                 icon = Icons.Outlined.RemoveRedEye,
                 shape = RoundedCornerShape(8.dp)
@@ -383,8 +385,8 @@ fun FeaturesSettings(
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.onboardingAnchor("features.pomodoro")) {
             SettingsActionItem(
-                title = "Pomodoro",
-                summary = "Lock down distractions and take puzzle-guided breaks",
+                title = stringResource(R.string.features_pomodoro_title),
+                summary = stringResource(R.string.features_pomodoro_summary),
                 onClick = onNavigateToPomodoro,
                 icon = Icons.Outlined.Visibility,
                 shape = RoundedCornerShape(8.dp)
@@ -394,8 +396,8 @@ fun FeaturesSettings(
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.onboardingAnchor("features.lockdown")) {
             SettingsActionItem(
-                title = "Lockdown",
-                summary = if (preferences.lockdownEnabled && preferences.isInLockdown()) "Editing is currently restricted" else "Restrict editing during specific hours",
+                title = stringResource(R.string.features_lockdown_title),
+                summary = if (preferences.lockdownEnabled && preferences.isInLockdown()) stringResource(R.string.features_lockdown_summary_active) else stringResource(R.string.features_lockdown_summary),
                 onClick = onNavigateToLockdown,
                 icon = Icons.Outlined.Lock,
                 shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
@@ -403,15 +405,15 @@ fun FeaturesSettings(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Short Video")
+        PreferenceCategory(title = stringResource(R.string.features_category_short_video))
 
         Box(modifier = Modifier.onboardingAnchor("features.reels_shield")) {
             SettingsActionItem(
-                title = "Reels Shield",
+                title = stringResource(R.string.features_reels_shield_title),
                 summary = if (preferences.reelsShieldEnabled) {
-                    "On · ${preferences.reelsShieldDailyLimit} reels per day shared across ${preferences.reelsShieldPackages.size} apps"
+                    stringResource(R.string.features_reels_shield_summary_on, preferences.reelsShieldDailyLimit, preferences.reelsShieldPackages.size)
                 } else {
-                    "Count short videos watched across apps, then press back when the daily limit is reached"
+                    stringResource(R.string.features_reels_shield_summary)
                 },
                 onClick = onNavigateToReelsShield,
                 icon = Icons.Outlined.SwapVert,
@@ -420,14 +422,14 @@ fun FeaturesSettings(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Protection")
+        PreferenceCategory(title = stringResource(R.string.features_category_protection))
 
         SettingsActionItem(
-            title = "Redirect Shield",
+            title = stringResource(R.string.features_redirect_shield_title),
             summary = if (preferences.redirectShieldEnabled) {
-                "On · ${preferences.redirectShieldApps.size} shielded apps · ${preferences.redirectShieldTriggerApps.size} trigger apps"
+                stringResource(R.string.features_redirect_shield_summary_on, preferences.redirectShieldApps.size, preferences.redirectShieldTriggerApps.size)
             } else {
-                "Bounce back to home when a shielded app is opened from a trigger app"
+                stringResource(R.string.features_redirect_shield_summary)
             },
             onClick = onNavigateToRedirectShield,
             icon = Icons.Outlined.Security,
@@ -437,24 +439,24 @@ fun FeaturesSettings(
         Spacer(modifier = Modifier.height(4.dp))
 
         SettingsActionItem(
-            title = "Tamper Protection",
-            summary = if (preferences.tamperProtectionEnabled) "On. PIN required to turn it off" else "Add an extra Android step before Zenith can be uninstalled",
+            title = stringResource(R.string.features_tamper_protection_title),
+            summary = if (preferences.tamperProtectionEnabled) stringResource(R.string.features_tamper_protection_summary_on) else stringResource(R.string.features_tamper_protection_summary),
             onClick = onNavigateToTamperProtection,
             icon = Icons.Outlined.AdminPanelSettings,
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Pause Point")
+        PreferenceCategory(title = stringResource(R.string.features_category_pause_point))
 
         Box(modifier = Modifier.onboardingAnchor("features.pause_point")) {
             SettingsActionItem(
-                title = "Pause Point",
+                title = stringResource(R.string.features_pause_point_title),
                 summary = if (preferences.pausePointEnabled) {
                     val count = preferences.pausePointTaskTypes.size
-                    if (count == 0) "Enabled (no task types selected)"
-                    else "Random tasks enabled ($count types)"
-                } else "Disabled",
+                    if (count == 0) stringResource(R.string.features_pause_point_summary_enabled_no_types)
+                    else stringResource(R.string.features_pause_point_summary_enabled, count)
+                } else stringResource(R.string.features_pause_point_summary_disabled),
                 onClick = onNavigateToPausePoint,
                 icon = Icons.Outlined.PauseCircle,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
@@ -462,11 +464,11 @@ fun FeaturesSettings(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Triggers")
+        PreferenceCategory(title = stringResource(R.string.features_category_triggers))
 
         SettingsToggle(
-            title = "Pause Media",
-            description = "Automatically pause media when an overlay appears",
+            title = stringResource(R.string.features_pause_media_title),
+            description = stringResource(R.string.features_pause_media_description),
             checked = preferences.interceptAudioFocusEnabled,
             onCheckedChange = onInterceptAudioFocusEnabledChange,
             icon = Icons.Outlined.MusicNote,
@@ -476,8 +478,8 @@ fun FeaturesSettings(
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier.onboardingAnchor("features.early_kick")) {
             SettingsToggle(
-                title = "Early Kick",
-                description = "Eject you from an app 5 minutes before its time limit expires, as an advance warning",
+                title = stringResource(R.string.features_early_kick_title),
+                description = stringResource(R.string.features_early_kick_description),
                 checked = preferences.earlyKickEnabled,
                 onCheckedChange = onEarlyKickEnabledChange,
                 icon = Icons.Outlined.ExitToApp,
@@ -487,8 +489,8 @@ fun FeaturesSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsToggle(
-            title = "Battery Usage Reset",
-            description = "Track app usage since last charge and provide a reset option in app details",
+            title = stringResource(R.string.features_battery_usage_reset_title),
+            description = stringResource(R.string.features_battery_usage_reset_description),
             checked = preferences.batteryStatsResetEnabled,
             onCheckedChange = onBatteryStatsResetEnabledChange,
             icon = Icons.Outlined.BatteryChargingFull,
@@ -496,12 +498,12 @@ fun FeaturesSettings(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Website")
+        PreferenceCategory(title = stringResource(R.string.features_category_website))
 
         Box(modifier = Modifier.onboardingAnchor("features.website_tracking")) {
             SettingsToggle(
-                title = "Auto Track Websites",
-                description = "Automatically record time spent on all websites (not just shielded ones) and show them in usage stats",
+                title = stringResource(R.string.features_auto_track_websites_title),
+                description = stringResource(R.string.features_auto_track_websites_description),
                 checked = preferences.websiteAutoTrackingEnabled,
                 onCheckedChange = onWebsiteAutoTrackingEnabledChange,
                 icon = Icons.Outlined.Language,
@@ -512,8 +514,8 @@ fun FeaturesSettings(
         Spacer(modifier = Modifier.height(4.dp))
 
         SettingsToggle(
-            title = "Block Adult Websites",
-            description = "Automatically block known adult content websites",
+            title = stringResource(R.string.features_block_adult_websites_title),
+            description = stringResource(R.string.features_block_adult_websites_description),
             checked = preferences.websiteBlockerBlockAdult,
             onCheckedChange = onWebsiteBlockerBlockAdultChange,
             icon = Icons.Outlined.Security,
@@ -523,8 +525,8 @@ fun FeaturesSettings(
         Spacer(modifier = Modifier.height(4.dp))
 
         SettingsActionItem(
-            title = "Blocked Keywords & Patterns",
-            summary = "${preferences.websiteBlockerKeywords.size} custom keywords/patterns configured",
+            title = stringResource(R.string.features_blocked_keywords_title),
+            summary = stringResource(R.string.features_blocked_keywords_summary, preferences.websiteBlockerKeywords.size),
             onClick = { showKeywordsSheet = true },
             icon = Icons.Outlined.Description,
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
@@ -571,12 +573,12 @@ fun ForegroundNotificationStatusSelector(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Status Notification",
+                        text = stringResource(R.string.features_status_notification_title),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                     )
                     Text(
-                        text = "Choose what Zenith shows while monitoring is active",
+                        text = stringResource(R.string.features_status_notification_description),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -586,9 +588,9 @@ fun ForegroundNotificationStatusSelector(
             Spacer(modifier = Modifier.height(16.dp))
 
             val modeOptions = listOf(
-                ForegroundNotificationStatusMode.DAILY_USAGE to "Usage",
-                ForegroundNotificationStatusMode.ACTIVE_FOCUS to "Focus",
-                ForegroundNotificationStatusMode.DEFAULT to "Default"
+                ForegroundNotificationStatusMode.DAILY_USAGE to stringResource(R.string.features_notification_mode_usage),
+                ForegroundNotificationStatusMode.ACTIVE_FOCUS to stringResource(R.string.features_notification_mode_focus),
+                ForegroundNotificationStatusMode.DEFAULT to stringResource(R.string.features_notification_mode_default)
             )
 
             ZenithToggleButtonGroup(
@@ -632,7 +634,7 @@ fun HUDAppearanceSettings(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "HUD Appearance",
+                text = stringResource(R.string.features_hud_appearance_title),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -652,7 +654,7 @@ fun HUDAppearanceSettings(
                 Icon(Icons.Outlined.PhotoSizeSelectLarge, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Text(
-                text = "Size: ${localSize.toInt()}%",
+                text = stringResource(R.string.features_hud_size, localSize.toInt()),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -672,7 +674,7 @@ fun HUDAppearanceSettings(
                 Icon(Icons.Outlined.Contrast, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Text(
-                text = "Opacity: ${localOpacity.toInt()}%",
+                text = stringResource(R.string.features_hud_opacity, localOpacity.toInt()),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -681,7 +683,7 @@ fun HUDAppearanceSettings(
             Spacer(modifier = Modifier.height(24.dp))
             
             Text(
-                text = "Preview",
+                text = stringResource(R.string.features_hud_preview_label),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                 modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -738,7 +740,7 @@ fun HUDAppearanceSettings(
                         waveSpeed = 0.dp
                     )
                     Text(
-                        text = "15m",
+                        text = stringResource(R.string.features_hud_preview_time),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = androidx.compose.ui.text.font.FontWeight.Black,
                         color = MaterialTheme.colorScheme.onSurface
@@ -785,12 +787,12 @@ fun MindfulGatewayDefaultsBottomSheet(
     var autoQuitEnabled by remember { mutableStateOf(initialAutoQuitEnabled) }
 
     val refreshOptions = listOf(
-        "Every 30 Minutes" to 30,
-        "Every 1 Hour" to 60,
-        "Every 2 Hours" to 120,
-        "Every 6 Hours" to 360,
-        "Every 12 Hours" to 720,
-        "Every 24 Hours" to 1440
+        stringResource(R.string.features_refresh_every_30_minutes) to 30,
+        stringResource(R.string.features_refresh_every_1_hour) to 60,
+        stringResource(R.string.features_refresh_every_2_hours) to 120,
+        stringResource(R.string.features_refresh_every_6_hours) to 360,
+        stringResource(R.string.features_refresh_every_12_hours) to 720,
+        stringResource(R.string.features_refresh_every_24_hours) to 1440
     )
 
     val currentMaxUses = maxUsesText.toIntOrNull() ?: initialMaxUses
@@ -845,20 +847,20 @@ fun MindfulGatewayDefaultsBottomSheet(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Mindful Gateway Defaults",
+                            text = stringResource(R.string.features_mindful_gateway_defaults_title),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Default behavior for every mindful pause",
+                            text = stringResource(R.string.features_mindful_gateway_defaults_subtitle),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary,
                             textAlign = TextAlign.Center
                         )
                         Text(
-                            text = "Zenith ships with these defaults, so nothing changes until you edit them",
+                            text = stringResource(R.string.features_mindful_gateway_defaults_note),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium,
@@ -876,7 +878,7 @@ fun MindfulGatewayDefaultsBottomSheet(
                     ) {
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        PreferenceCategory(title = "Limits")
+                        PreferenceCategory(title = stringResource(R.string.features_category_limits))
 
                         CardGroup(shape = topShape, containerColor = containerColor) {
                             Row(
@@ -901,12 +903,12 @@ fun MindfulGatewayDefaultsBottomSheet(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Times of Uses",
+                                        text = stringResource(R.string.features_times_of_uses_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Skip allowance per refresh period",
+                                        text = stringResource(R.string.features_times_of_uses_description),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -960,12 +962,12 @@ fun MindfulGatewayDefaultsBottomSheet(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Refresh Period",
+                                        text = stringResource(R.string.features_refresh_period_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Usage reset interval",
+                                        text = stringResource(R.string.features_refresh_period_description),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -1004,12 +1006,12 @@ fun MindfulGatewayDefaultsBottomSheet(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Emergency Uses",
+                                        text = stringResource(R.string.features_emergency_uses_title),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                     Text(
-                                        text = "Emergency access uses",
+                                        text = stringResource(R.string.features_emergency_uses_description),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -1040,12 +1042,12 @@ fun MindfulGatewayDefaultsBottomSheet(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        PreferenceCategory(title = "Settings")
+                        PreferenceCategory(title = stringResource(R.string.features_category_settings))
 
                         CardGroup(shape = topShape, containerColor = containerColor) {
                             SettingsToggle(
-                                title = "Show Reminders",
-                                description = "Get notified before limit is reached",
+                                title = stringResource(R.string.features_show_reminders_title),
+                                description = stringResource(R.string.features_show_reminders_description),
                                 checked = remindersEnabled,
                                 onCheckedChange = { remindersEnabled = it },
                                 icon = Icons.Outlined.NotificationsActive,
@@ -1057,8 +1059,8 @@ fun MindfulGatewayDefaultsBottomSheet(
 
                         CardGroup(shape = middleShape, containerColor = containerColor) {
                             SettingsToggle(
-                                title = "Strict Mode",
-                                description = "No extensions allowed after limit",
+                                title = stringResource(R.string.features_strict_mode_title),
+                                description = stringResource(R.string.features_strict_mode_description),
                                 checked = strictModeEnabled,
                                 onCheckedChange = { strictModeEnabled = it },
                                 icon = Icons.Outlined.GppGood,
@@ -1070,8 +1072,8 @@ fun MindfulGatewayDefaultsBottomSheet(
 
                         CardGroup(shape = middleShape, containerColor = containerColor) {
                             SettingsToggle(
-                                title = "Pause Point",
-                                description = "Guard each app open with a Pause Point task",
+                                title = stringResource(R.string.features_pause_point_title),
+                                description = stringResource(R.string.features_pause_point_description),
                                 checked = pausePointEnabled,
                                 onCheckedChange = { pausePointEnabled = it },
                                 icon = Icons.Outlined.PauseCircle,
@@ -1083,8 +1085,8 @@ fun MindfulGatewayDefaultsBottomSheet(
 
                         CardGroup(shape = middleShape, containerColor = containerColor) {
                             SettingsToggle(
-                                title = "End Overlay",
-                                description = "Show shield screen when a session ends",
+                                title = stringResource(R.string.features_end_overlay_title),
+                                description = stringResource(R.string.features_end_overlay_description),
                                 checked = endOverlayEnabled,
                                 onCheckedChange = { value ->
                                     endOverlayEnabled = value
@@ -1099,8 +1101,8 @@ fun MindfulGatewayDefaultsBottomSheet(
 
                         CardGroup(shape = bottomShape, containerColor = containerColor) {
                             SettingsToggle(
-                                title = "Auto Quit",
-                                description = "Exit app automatically when session ends",
+                                title = stringResource(R.string.features_auto_quit_title),
+                                description = stringResource(R.string.features_auto_quit_description),
                                 checked = autoQuitEnabled,
                                 onCheckedChange = { value ->
                                     autoQuitEnabled = value
@@ -1163,7 +1165,7 @@ fun MindfulGatewayDefaultsBottomSheet(
                                 MindfulGatewayDefaults.AUTO_QUIT_ENABLED
                             )
                         },
-                        text = "Reset",
+                        text = stringResource(R.string.features_reset),
                         type = ZenithButtonType.Tonal,
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.onErrorContainer,
@@ -1188,7 +1190,7 @@ fun MindfulGatewayDefaultsBottomSheet(
                                 onDismiss()
                             }
                         },
-                        text = "Save Defaults",
+                        text = stringResource(R.string.features_save_defaults),
                         weight = 1.5f,
                         isFirst = false,
                         isLast = true,

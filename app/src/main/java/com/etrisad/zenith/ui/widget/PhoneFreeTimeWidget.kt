@@ -20,6 +20,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -107,6 +108,7 @@ class PhoneFreeTimeWidget : GlanceAppWidget() {
         backgroundBitmap: Bitmap
     ) {
         val size = LocalSize.current
+        val context = LocalContext.current
         val squareSize = minOf(size.width, size.height)
         val scaleFactor = squareSize.value / 100f
 
@@ -116,7 +118,11 @@ class PhoneFreeTimeWidget : GlanceAppWidget() {
 
         val idleHours = idleMillis / 3600000
         val idleMinutes = (idleMillis % 3600000) / 60000
-        val timeText = if (idleHours > 0) "${idleHours}h ${idleMinutes}m" else "${idleMinutes}m"
+        val timeText = if (idleHours > 0) {
+            context.getString(R.string.small_duration_hours_minutes, idleHours, idleMinutes)
+        } else {
+            context.getString(R.string.small_duration_minutes, idleMinutes)
+        }
 
         val mainFontSize = when {
             timeText.length >= 7 -> (16 * scaleFactor).sp
@@ -176,7 +182,7 @@ class PhoneFreeTimeWidget : GlanceAppWidget() {
                             )
                         )
                         Text(
-                            text = "AWAY",
+                            text = context.getString(R.string.small_widget_away),
                             style = TextStyle(
                                 fontSize = labelFontSize,
                                 fontWeight = FontWeight.Medium,

@@ -760,9 +760,9 @@ class ZenithService : AccessibilityService() {
         }
 
         val message = if (reason == WebsiteBlocker.REASON_ADULT) {
-            "Adult website blocked by Zenith"
+            getString(R.string.usage_history_adult_website_blocked)
         } else {
-            "Website blocked by Zenith"
+            getString(R.string.usage_history_website_blocked)
         }
         mainHandler.post {
             android.widget.Toast.makeText(this, message, android.widget.Toast.LENGTH_SHORT).show()
@@ -790,9 +790,9 @@ class ZenithService : AccessibilityService() {
         val channelId = "zenith_banking_channel"
         if (notificationManager.getNotificationChannel(channelId) == null) {
             val channel = NotificationChannel(
-                channelId, "Banking App Safety", NotificationManager.IMPORTANCE_HIGH
+                channelId, getString(R.string.usage_history_banking_channel_name), NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Reminders to turn off Zenith accessibility before using banking apps"
+                description = getString(R.string.usage_history_banking_channel_desc)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -802,8 +802,8 @@ class ZenithService : AccessibilityService() {
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Banking Apps Detected")
-            .setContentText("Turn off Zenith accessibility before opening banking apps for safety.")
+            .setContentTitle(getString(R.string.usage_history_banking_detected_title))
+            .setContentText(getString(R.string.usage_history_banking_detected_text))
             .setSmallIcon(R.drawable.ic_warning)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
@@ -822,14 +822,14 @@ class ZenithService : AccessibilityService() {
     private fun showFinancialAppInUseNotification(packageName: String) {
         val appName = try {
             packageManager.getApplicationLabel(packageManager.getApplicationInfo(packageName, 0)).toString()
-        } catch (_: Exception) { "banking app" }
+        } catch (_: Exception) { getString(R.string.usage_history_banking_app_fallback) }
 
         val channelId = "zenith_banking_channel"
         if (notificationManager.getNotificationChannel(channelId) == null) {
             val channel = NotificationChannel(
-                channelId, "Banking App Safety", NotificationManager.IMPORTANCE_HIGH
+                channelId, getString(R.string.usage_history_banking_channel_name), NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Reminders to turn off Zenith accessibility before using banking apps"
+                description = getString(R.string.usage_history_banking_channel_desc)
             }
             notificationManager.createNotificationChannel(channel)
         }
@@ -839,8 +839,8 @@ class ZenithService : AccessibilityService() {
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Banking App in Use")
-            .setContentText("$appName is open. Turn off Zenith accessibility for safety.")
+            .setContentTitle(getString(R.string.usage_history_banking_in_use_title))
+            .setContentText(getString(R.string.usage_history_banking_in_use_text, appName))
             .setSmallIcon(R.drawable.ic_warning)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
@@ -862,9 +862,9 @@ class ZenithService : AccessibilityService() {
         val channelId = "zenith_accessibility_active_channel"
         if (notificationManager.getNotificationChannel(channelId) == null) {
             val channel = NotificationChannel(
-                channelId, "Accessibility Active Warning", NotificationManager.IMPORTANCE_LOW
+                channelId, getString(R.string.usage_history_accessibility_channel_name), NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Persistent reminder when Zenith accessibility service is active"
+                description = getString(R.string.usage_history_accessibility_channel_desc)
                 setSound(null, null)
                 enableVibration(false)
             }
@@ -876,8 +876,8 @@ class ZenithService : AccessibilityService() {
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Zenith Accessibility Active")
-            .setContentText("Please disable Zenith accessibility before opening sensitive apps to avoid unexpected restrictions.")
+            .setContentTitle(getString(R.string.usage_history_accessibility_active_title))
+            .setContentText(getString(R.string.usage_history_accessibility_active_text))
             .setSmallIcon(R.drawable.ic_warning)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setSound(null)
@@ -1239,14 +1239,14 @@ class ZenithService : AccessibilityService() {
 
         if (manager.getNotificationChannel(channelId) == null) {
             val channel = NotificationChannel(
-                channelId, "Goal Reminders", NotificationManager.IMPORTANCE_DEFAULT
+                channelId, getString(R.string.usage_history_goal_channel_name), NotificationManager.IMPORTANCE_DEFAULT
             )
             manager.createNotificationChannel(channel)
         }
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Goal Achieved!")
-            .setContentText("You've reached your target usage for $appName. Keep it up!")
+            .setContentTitle(getString(R.string.usage_history_goal_achieved_title))
+            .setContentText(getString(R.string.usage_history_goal_achieved_text, appName))
             .setSmallIcon(R.drawable.ic_flag)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
@@ -1750,9 +1750,9 @@ class ZenithService : AccessibilityService() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             if (notificationManager.getNotificationChannel(BEDTIME_CHANNEL_ID) == null) {
                 val channel = NotificationChannel(
-                    BEDTIME_CHANNEL_ID, "Bedtime & Wind Down", NotificationManager.IMPORTANCE_DEFAULT
+                    BEDTIME_CHANNEL_ID, getString(R.string.usage_history_bedtime_channel_name), NotificationManager.IMPORTANCE_DEFAULT
                 ).apply {
-                    description = "Notifications for bedtime and wind down mode"
+                    description = getString(R.string.usage_history_bedtime_channel_desc)
                 }
                 notificationManager.createNotificationChannel(channel)
             }
@@ -1766,8 +1766,8 @@ class ZenithService : AccessibilityService() {
         )
 
         val notification = NotificationCompat.Builder(this, BEDTIME_CHANNEL_ID)
-            .setContentTitle("Time for Wind Down")
-            .setContentText("Bedtime is in 30 minutes. Prepare and get ready for bed.")
+            .setContentTitle(getString(R.string.usage_history_wind_down_title))
+            .setContentText(getString(R.string.usage_history_wind_down_text))
             .setSmallIcon(R.drawable.ic_fire_department_outlined)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)

@@ -48,11 +48,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -95,7 +97,7 @@ fun CrashScreen(
 
         Spacer(Modifier.height(16.dp))
         Text(
-            text = "Zenith stopped unexpectedly",
+            text = stringResource(R.string.reels_settings_crash_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
@@ -118,8 +120,7 @@ fun CrashScreen(
         if (record == null) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    text = "No crash details were saved, but the app can be restarted or " +
-                        "booted in Safe Mode from here.",
+                    text = stringResource(R.string.reels_settings_crash_no_details),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(16.dp)
                 )
@@ -152,13 +153,22 @@ fun CrashScreen(
 
             Spacer(Modifier.height(4.dp))
             TextButton(onClick = { showDetails = !showDetails }) {
-                Text(if (showDetails) "Hide technical details" else "Show technical details")
+                Text(
+                    if (showDetails) stringResource(R.string.reels_settings_crash_hide_details)
+                    else stringResource(R.string.reels_settings_crash_show_details)
+                )
             }
 
             if (showDetails) {
-                DetailBlock(title = "Stack trace", content = record.stackTrace)
+                DetailBlock(
+                    title = stringResource(R.string.reels_settings_crash_stack_trace),
+                    content = record.stackTrace
+                )
                 Spacer(Modifier.height(12.dp))
-                DetailBlock(title = "App device: ${record.device}", content = record.logTail)
+                DetailBlock(
+                    title = stringResource(R.string.reels_settings_crash_app_device, record.device),
+                    content = record.logTail
+                )
             }
         }
 
@@ -172,7 +182,7 @@ fun CrashScreen(
         ) {
             Icon(Icons.Outlined.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
-            Text("Retry")
+            Text(stringResource(R.string.reels_settings_crash_retry))
         }
 
         Spacer(Modifier.height(10.dp))
@@ -185,12 +195,11 @@ fun CrashScreen(
         ) {
             Icon(Icons.Outlined.Security, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
-            Text("Enter Safe Mode")
+            Text(stringResource(R.string.reels_settings_crash_enter_safe_mode))
         }
         Spacer(Modifier.height(4.dp))
         Text(
-            text = "Starts Zenith without loading your data. Recommended when the " +
-                "crash keeps coming back; your saved data is not modified.",
+            text = stringResource(R.string.reels_settings_crash_safe_mode_desc),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -208,7 +217,7 @@ fun CrashScreen(
             if (exporting) {
                 CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                 Spacer(Modifier.width(8.dp))
-                Text("Preparing report...")
+                Text(stringResource(R.string.reels_settings_crash_preparing))
             } else {
                 Icon(
                     Icons.Outlined.FileDownload,
@@ -216,7 +225,7 @@ fun CrashScreen(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(8.dp))
-                Text("Export diagnostic report (ZIP)")
+                Text(stringResource(R.string.reels_settings_crash_export_zip))
             }
         }
 
@@ -231,10 +240,15 @@ fun CrashScreen(
                     if (shareText.isNotBlank()) {
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
-                            putExtra(Intent.EXTRA_SUBJECT, "Zenith crash report")
+                            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.reels_settings_crash_report_subject))
                             putExtra(Intent.EXTRA_TEXT, shareText)
                         }
-                        context.startActivity(Intent.createChooser(intent, "Share crash report"))
+                        context.startActivity(
+                            Intent.createChooser(
+                                intent,
+                                context.getString(R.string.reels_settings_crash_share_chooser)
+                            )
+                        )
                     }
                 },
                 enabled = shareText.isNotBlank(),
@@ -242,7 +256,7 @@ fun CrashScreen(
             ) {
                 Icon(Icons.Outlined.Share, contentDescription = null, modifier = Modifier.size(16.dp))
                 Spacer(Modifier.width(6.dp))
-                Text("Share log", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.reels_settings_crash_share_log), style = MaterialTheme.typography.labelLarge)
             }
             OutlinedButton(
                 onClick = {
@@ -259,7 +273,7 @@ fun CrashScreen(
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(Modifier.width(6.dp))
-                Text("Copy log", style = MaterialTheme.typography.labelLarge)
+                Text(stringResource(R.string.reels_settings_crash_copy_log), style = MaterialTheme.typography.labelLarge)
             }
         }
 
@@ -273,13 +287,12 @@ fun CrashScreen(
                 modifier = Modifier.size(18.dp)
             )
             Spacer(Modifier.width(8.dp))
-            Text("Exit Zenith", color = MaterialTheme.colorScheme.error)
+            Text(stringResource(R.string.reels_settings_crash_exit), color = MaterialTheme.colorScheme.error)
         }
 
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Nothing is sent automatically. Reports are only shared when you tap " +
-                "Export or Share above.",
+            text = stringResource(R.string.reels_settings_crash_nothing_sent),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -289,6 +302,7 @@ fun CrashScreen(
 
 @Composable
 private fun DetailBlock(title: String, content: String) {
+    val emptyText = stringResource(R.string.reels_settings_crash_detail_empty)
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = title,
@@ -308,7 +322,7 @@ private fun DetailBlock(title: String, content: String) {
         ) {
             SelectionContainer {
                 Text(
-                    text = content.ifBlank { "(empty)" },
+                    text = content.ifBlank { emptyText },
                     style = MaterialTheme.typography.bodySmall,
                     fontFamily = FontFamily.Monospace,
                     modifier = Modifier.verticalScroll(rememberScrollState())

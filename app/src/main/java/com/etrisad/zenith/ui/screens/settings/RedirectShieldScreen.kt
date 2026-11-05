@@ -60,10 +60,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.focus.rememberAccessibilityServiceEnabled
@@ -165,8 +167,8 @@ fun RedirectShieldScreen(
                 if (!accessibilityEnabled) {
                     item(key = "redirect_accessibility") {
                         SettingsActionItem(
-                            title = "Accessibility Service Off",
-                            summary = "Turn on Zenith's accessibility service so app switches can be detected",
+                            title = stringResource(R.string.data_repair_accessibility_off_title),
+                            summary = stringResource(R.string.data_repair_accessibility_off_summary),
                             onClick = {
                                 context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                             },
@@ -177,18 +179,18 @@ fun RedirectShieldScreen(
                 }
 
                 item(key = "redirect_lists_header") {
-                    SectionHeader(title = "App lists")
+                    SectionHeader(title = stringResource(R.string.data_repair_app_lists))
                 }
 
                 item(key = "redirect_shielded") {
                     SettingsActionItem(
-                        title = "Shielded Apps",
+                        title = stringResource(R.string.data_repair_shielded_apps),
                         summary = if (shieldedCount == 0) {
-                            "No apps shielded yet. Tap to choose the apps to block."
+                            stringResource(R.string.data_repair_shielded_empty)
                         } else if (shieldedCount == 1) {
-                            "1 app sends you back to your previous app"
+                            stringResource(R.string.data_repair_shielded_one)
                         } else {
-                            "$shieldedCount apps send you back to your previous app"
+                            stringResource(R.string.data_repair_shielded_many, shieldedCount)
                         },
                         onClick = { pickerRole = RedirectShieldAppRole.SHIELDED },
                         icon = Icons.Outlined.Security,
@@ -203,13 +205,13 @@ fun RedirectShieldScreen(
 
                 item(key = "redirect_whitelist") {
                     SettingsActionItem(
-                        title = "Whitelisted Apps",
+                        title = stringResource(R.string.data_repair_whitelist_title),
                         summary = if (whitelistCount == 0) {
-                            "No exceptions. Every app is redirected while armed."
+                            stringResource(R.string.data_repair_whitelist_empty)
                         } else if (whitelistCount == 1) {
-                            "1 app may open shielded apps"
+                            stringResource(R.string.data_repair_whitelist_one)
                         } else {
-                            "$whitelistCount apps may open shielded apps"
+                            stringResource(R.string.data_repair_whitelist_many, whitelistCount)
                         },
                         onClick = { pickerRole = RedirectShieldAppRole.WHITELISTED },
                         icon = Icons.Outlined.Apps,
@@ -219,13 +221,13 @@ fun RedirectShieldScreen(
 
                 item(key = "redirect_trigger") {
                     SettingsActionItem(
-                        title = "Trigger Apps",
+                        title = stringResource(R.string.data_repair_trigger_title),
                         summary = if (triggerCount == 0) {
-                            "No trigger apps yet. Tap to choose what activates the shield."
+                            stringResource(R.string.data_repair_trigger_empty)
                         } else if (triggerCount == 1) {
-                            "1 app arms the shield"
+                            stringResource(R.string.data_repair_trigger_one)
                         } else {
-                            "$triggerCount apps arm the shield"
+                            stringResource(R.string.data_repair_trigger_many, triggerCount)
                         },
                         onClick = { pickerRole = RedirectShieldAppRole.TRIGGER },
                         icon = Icons.Outlined.Shield,
@@ -243,13 +245,13 @@ fun RedirectShieldScreen(
                         Spacer(modifier = Modifier.height(8.dp))
                         RedirectInfoCard(
                             icon = Icons.Outlined.Shield,
-                            title = "Setup incomplete",
+                            title = stringResource(R.string.data_repair_setup_incomplete),
                             body = if (triggerCount == 0 && shieldedCount == 0) {
-                                "Pick at least one trigger app and one shielded app before the shield can protect you."
+                                stringResource(R.string.data_repair_setup_both_missing)
                             } else if (triggerCount == 0) {
-                                "Pick at least one trigger app so the shield knows when to arm."
+                                stringResource(R.string.data_repair_setup_trigger_missing)
                             } else {
-                                "Pick at least one shielded app so the shield has something to block."
+                                stringResource(R.string.data_repair_setup_shielded_missing)
                             },
                             containerColor = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f),
                             contentColor = MaterialTheme.colorScheme.onTertiaryContainer
@@ -258,7 +260,7 @@ fun RedirectShieldScreen(
                 }
 
                 item(key = "redirect_how_header") {
-                    SectionHeader(title = "How it works")
+                    SectionHeader(title = stringResource(R.string.data_repair_how_it_works))
                 }
 
                 item(key = "redirect_how") {
@@ -275,18 +277,18 @@ fun RedirectShieldScreen(
                         ) {
                             RedirectStep(
                                 number = 1,
-                                title = "Trigger apps arm the shield",
-                                body = "While a trigger app is in the foreground the shield stays armed."
+                                title = stringResource(R.string.data_repair_step1_title),
+                                body = stringResource(R.string.data_repair_step1_body)
                             )
                             RedirectStep(
                                 number = 2,
-                                title = "Shielded apps bounce you back",
-                                body = "Opening a shielded app in that window returns you to the app you came from."
+                                title = stringResource(R.string.data_repair_step2_title),
+                                body = stringResource(R.string.data_repair_step2_body)
                             )
                             RedirectStep(
                                 number = 3,
-                                title = "Whitelisted apps are the exception",
-                                body = "Whitelisted apps can open shielded apps, and being in one disarms the shield."
+                                title = stringResource(R.string.data_repair_step3_title),
+                                body = stringResource(R.string.data_repair_step3_body)
                             )
                         }
                     }
@@ -336,15 +338,15 @@ private fun RedirectShieldToggleCard(enabled: Boolean, onToggle: (Boolean) -> Un
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Redirect Shield",
+                    text = stringResource(R.string.data_repair_redirect_shield_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = if (enabled) {
-                        "Sends shielded apps back to your previous app"
+                        stringResource(R.string.data_repair_redirect_shield_summary_on)
                     } else {
-                        "Currently disabled"
+                        stringResource(R.string.data_repair_redirect_shield_disabled)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

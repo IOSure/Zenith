@@ -9,6 +9,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.ShieldEntity
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.data.local.entity.LimitPeriod
@@ -167,7 +168,7 @@ class HomeViewModel(
                 cal.set(java.util.Calendar.DAY_OF_MONTH, 1)
                 cal.add(java.util.Calendar.MONTH, -offset)
                 val fmt = java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault())
-                if (offset == 0) "This month" else fmt.format(cal.time)
+                if (offset == 0) context.getString(R.string.home_stats_this_month) else fmt.format(cal.time)
             }
             StatsRange.YEARLY -> {
                 cal.set(java.util.Calendar.DAY_OF_YEAR, 1)
@@ -245,7 +246,7 @@ class HomeViewModel(
         if (keyFmt.format(java.util.Date(periodDays.first())) < earliest) {
             val parsed = try { keyFmt.parse(earliest) } catch (_: Exception) { null } ?: return null
             val pretty = java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale.ENGLISH)
-            return "Data available since ${pretty.format(parsed)}"
+            return context.getString(R.string.home_stats_data_available_since, pretty.format(parsed))
         }
         return null
     }

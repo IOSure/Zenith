@@ -22,8 +22,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -159,13 +161,13 @@ fun AppExclusionsBottomSheet(
                         .padding(top = 24.dp)
                 ) {
                     Text(
-                        text = "Private & Hidden Apps",
+                        text = stringResource(R.string.debug_app_exclusions_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = "Private ignores the app completely. Hidden only removes it from stats.",
+                        text = stringResource(R.string.debug_app_exclusions_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(bottom = 12.dp)
@@ -183,12 +185,22 @@ fun AppExclusionsBottomSheet(
                         Tab(
                             selected = mode == AppExclusionMode.PRIVATE,
                             onClick = { mode = AppExclusionMode.PRIVATE },
-                            text = { Text("Private (${privateApps.size})", fontWeight = FontWeight.Bold) }
+                            text = {
+                                Text(
+                                    stringResource(R.string.debug_app_exclusions_tab_private, privateApps.size),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         )
                         Tab(
                             selected = mode == AppExclusionMode.USAGE_ONLY,
                             onClick = { mode = AppExclusionMode.USAGE_ONLY },
-                            text = { Text("Hidden (${usageOnlyApps.size})", fontWeight = FontWeight.Bold) }
+                            text = {
+                                Text(
+                                    stringResource(R.string.debug_app_exclusions_tab_hidden, usageOnlyApps.size),
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                         )
                     }
 
@@ -216,9 +228,9 @@ fun AppExclusionsBottomSheet(
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
                                 text = if (mode == AppExclusionMode.PRIVATE) {
-                                    "No tracking, shields, or notification access. Stored data is deleted when added."
+                                    stringResource(R.string.debug_app_exclusions_private_hint)
                                 } else {
-                                    "Excluded from usage totals, history, and streaks. Still monitored; no data is deleted."
+                                    stringResource(R.string.debug_app_exclusions_hidden_hint)
                                 },
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -236,15 +248,21 @@ fun AppExclusionsBottomSheet(
                                 onExpandedChange = {},
                                 placeholder = {
                                     Text(
-                                        if (mode == AppExclusionMode.PRIVATE) "Search private apps..."
-                                        else "Search hidden apps..."
+                                        if (mode == AppExclusionMode.PRIVATE) {
+                                            stringResource(R.string.debug_app_exclusions_search_private)
+                                        } else {
+                                            stringResource(R.string.debug_app_exclusions_search_hidden)
+                                        }
                                     )
                                 },
                                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                                 trailingIcon = {
                                     if (searchQuery.isNotEmpty()) {
                                         IconButton(onClick = { searchQuery = "" }) {
-                                            Icon(Icons.Outlined.Close, contentDescription = "Clear search")
+                                            Icon(
+                                                Icons.Outlined.Close,
+                                                contentDescription = stringResource(R.string.debug_app_exclusions_clear_search)
+                                            )
                                         }
                                     }
                                 }
@@ -295,7 +313,7 @@ fun AppExclusionsBottomSheet(
                             if (userApps.isNotEmpty()) {
                                 item(key = "user_apps_header") {
                                     Text(
-                                        "User Apps",
+                                        stringResource(R.string.debug_app_exclusions_section_user_apps),
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary,
@@ -319,7 +337,7 @@ fun AppExclusionsBottomSheet(
                             if (preinstalledApps.isNotEmpty()) {
                                 item(key = "preinstalled_apps_header") {
                                     Text(
-                                        "Preinstalled Apps",
+                                        stringResource(R.string.debug_app_exclusions_section_preinstalled_apps),
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.secondary,
@@ -353,13 +371,18 @@ fun AppExclusionsBottomSheet(
                                         ListItem(
                                             headlineContent = {
                                                 Text(
-                                                    "System Apps",
+                                                    stringResource(R.string.debug_app_exclusions_section_system_apps),
                                                     style = MaterialTheme.typography.titleMedium,
                                                     fontWeight = FontWeight.SemiBold
                                                 )
                                             },
                                             supportingContent = {
-                                                Text("${systemApps.size} apps hidden by default")
+                                                Text(
+                                                    stringResource(
+                                                        R.string.debug_app_exclusions_system_apps_hidden,
+                                                        systemApps.size
+                                                    )
+                                                )
                                             },
                                             trailingContent = {
                                                 Icon(
@@ -405,7 +428,10 @@ fun AppExclusionsBottomSheet(
                     .padding(24.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = "Save app exclusions")
+                Icon(
+                    Icons.AutoMirrored.Outlined.ArrowForward,
+                    contentDescription = stringResource(R.string.debug_app_exclusions_save)
+                )
             }
         }
     }

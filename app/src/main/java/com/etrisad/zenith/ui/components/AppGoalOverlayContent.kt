@@ -30,12 +30,14 @@ import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.toPath
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 
 data class GoalAppInfo(
     val packageName: String,
@@ -92,12 +94,10 @@ fun AppGoalOverlayContent(
         }
     }
 
-    val displayTitle = remember(appInfos) {
-        if (appInfos.size == 1) {
-            appInfos[0].appName
-        } else {
-            "${appInfos[0].appName} +${appInfos.size - 1} Others"
-        }
+    val displayTitle = if (appInfos.size == 1) {
+        appInfos[0].appName
+    } else {
+        stringResource(R.string.warn_goal_title_with_others, appInfos[0].appName, appInfos.size - 1)
     }
 
     val sunnyShape = remember {
@@ -217,7 +217,7 @@ fun AppGoalOverlayContent(
                     )
 
                     Text(
-                        text = "Ready to make some progress?",
+                        text = stringResource(R.string.warn_goal_ready),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -285,7 +285,7 @@ fun AppGoalOverlayContent(
                 )
 
                 Text(
-                    text = "Ready to make some progress?",
+                    text = stringResource(R.string.warn_goal_ready),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -493,7 +493,7 @@ private fun AppGoalSnoozeButton(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Snooze for 5 minutes",
+                    text = stringResource(R.string.warn_goal_snooze_five_minutes),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -537,7 +537,7 @@ private fun AppGoalActionGroup(
                 Icon(Icons.Default.CallEnd, contentDescription = null, tint = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Hang up", 
+                    text = stringResource(R.string.warn_goal_hang_up),
                     fontWeight = FontWeight.Bold, 
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
@@ -565,7 +565,7 @@ private fun AppGoalActionGroup(
                 Icon(Icons.Default.Call, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = if (isMulti) "Pick App" else "Answer", 
+                    text = stringResource(if (isMulti) R.string.warn_goal_pick_app else R.string.warn_goal_answer),
                     fontWeight = FontWeight.ExtraBold, 
                     color = MaterialTheme.colorScheme.onPrimary
                 )

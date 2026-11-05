@@ -20,10 +20,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.navigation.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,7 +57,7 @@ fun ZenithHeader(
     currentRoute: String?,
     scrollBehavior: TopAppBarScrollBehavior,
     isNavRailVisible: Boolean = false,
-    userName: String = "User",
+    userName: String = stringResource(R.string.notifications_default_user_name),
     categoryName: String? = null,
     pausePointTypeName: String? = null,
     onBack: () -> Unit,
@@ -151,45 +153,48 @@ fun ZenithHeader(
                 label = "TitleOffset"
             )
 
+            val settingsTitle = stringResource(R.string.notifications_settings)
+
             val title = when {
                 isHome -> "home_header"
-                currentRoute == Screen.Focus.route -> "Focus"
-                currentRoute == Screen.Settings.route -> "Settings"
-                currentRoute == Screen.UsageStats.route -> "Usage Stats"
-                currentRoute == Screen.Bedtime.route -> "Bedtime"
-                currentRoute == Screen.GracePeriod.route -> "Grace Period"
-                currentRoute == Screen.EyeCare.route -> "Eye Care"
-                currentRoute == Screen.ReelsShield.route -> "Reels Shield"
-                currentRoute == Screen.RedirectShield.route -> "Redirect Shield"
-                currentRoute == Screen.Lockdown.route -> "Lockdown"
-                currentRoute == Screen.TamperProtection.route -> "Tamper Protection"
-                currentRoute == Screen.DatabaseDebug.route -> "Database"
-                currentRoute == Screen.DataRepairment.route -> "Data Repairment"
-                currentRoute == Screen.FontTest.route -> "M3 Expressive Editor"
-                currentRoute == Screen.GSFlexCustomizer.route -> "GS Flex Designer"
-                currentRoute == Screen.SystemUsageDebug.route -> "System Usage Fetch"
-                currentRoute == Screen.OverlayAppearance.route -> "Overlay Appearance"
-                currentRoute == Screen.Alarm.route -> "Alarm"
-                currentRoute == Screen.Pomodoro.route -> "Pomodoro"
-                currentRoute == Screen.PausePoint.route -> "Pause Point"
-        currentRoute == Screen.Profile.route -> "Profile"
-        currentRoute == Screen.Achievements.route -> "Achievements"
-        currentRoute == Screen.Level.route -> "Level"
+                currentRoute == Screen.Focus.route -> stringResource(R.string.notifications_focus)
+                currentRoute == Screen.Settings.route -> settingsTitle
+                currentRoute == Screen.UsageStats.route -> stringResource(R.string.notifications_usage_stats)
+                currentRoute == Screen.Bedtime.route -> stringResource(R.string.notifications_bedtime)
+                currentRoute == Screen.GracePeriod.route -> stringResource(R.string.notifications_grace_period)
+                currentRoute == Screen.EyeCare.route -> stringResource(R.string.notifications_eye_care)
+                currentRoute == Screen.ReelsShield.route -> stringResource(R.string.notifications_reels_shield)
+                currentRoute == Screen.RedirectShield.route -> stringResource(R.string.notifications_redirect_shield)
+                currentRoute == Screen.Lockdown.route -> stringResource(R.string.notifications_lockdown)
+                currentRoute == Screen.TamperProtection.route -> stringResource(R.string.notifications_tamper_protection)
+                currentRoute == Screen.DatabaseDebug.route -> stringResource(R.string.notifications_database)
+                currentRoute == Screen.DataRepairment.route -> stringResource(R.string.notifications_data_repairment)
+                currentRoute == Screen.FontTest.route -> stringResource(R.string.notifications_m3_expressive_editor)
+                currentRoute == Screen.GSFlexCustomizer.route -> stringResource(R.string.notifications_gs_flex_designer)
+                currentRoute == Screen.SystemUsageDebug.route -> stringResource(R.string.notifications_system_usage_fetch)
+                currentRoute == Screen.OverlayAppearance.route -> stringResource(R.string.notifications_overlay_appearance)
+                currentRoute == Screen.Alarm.route -> stringResource(R.string.notifications_alarm)
+                currentRoute == Screen.Pomodoro.route -> stringResource(R.string.notifications_pomodoro)
+                currentRoute == Screen.PausePoint.route -> stringResource(R.string.notifications_pause_point)
+                currentRoute == Screen.Profile.route -> stringResource(R.string.notifications_profile)
+                currentRoute == Screen.Achievements.route -> stringResource(R.string.notifications_achievements)
+                currentRoute == Screen.Level.route -> stringResource(R.string.notifications_level)
                 currentRoute?.startsWith("pause_point_type") == true ->
-                    pausePointTypeName?.ifEmpty { null } ?: "Pause Point"
+                    pausePointTypeName?.ifEmpty { null } ?: stringResource(R.string.notifications_pause_point)
                 currentRoute?.startsWith("settings_category") == true -> {
                     val raw = categoryName ?: ""
-                    when (raw.lowercase()) {
-                        "developer" -> "Developer"
-                        "features" -> "Features"
-                        "appearance" -> "Appearance"
-                        "performance" -> "Performance"
-                        "data management" -> "Data Management"
+                    val localizedCategory = when (raw.lowercase()) {
+                        "developer" -> stringResource(R.string.notifications_developer)
+                        "features" -> stringResource(R.string.notifications_features)
+                        "appearance" -> stringResource(R.string.notifications_appearance)
+                        "performance" -> stringResource(R.string.notifications_performance)
+                        "data management" -> stringResource(R.string.notifications_data_management)
                         else -> raw.replaceFirstChar { if (it.isLowerCase()) it.uppercase() else it.toString() }
-                    }.ifEmpty { "Settings" }
+                    }
+                    localizedCategory.ifEmpty { settingsTitle }
                 }
-                currentRoute?.startsWith("app_detail") == true -> "App Detail"
-                else -> "Zenith"
+                currentRoute?.startsWith("app_detail") == true -> stringResource(R.string.notifications_app_detail)
+                else -> stringResource(R.string.notifications_app_name)
             }
 
             AnimatedContent(
@@ -201,15 +206,14 @@ fun ZenithHeader(
                 modifier = Modifier.offset(x = titleXOffset)
             ) { state ->
                 if (state == "home_header") {
-                    val greeting = remember {
-                        listOf(
-                            "Welcome Back",
-                            "Stay Focused",
-                            "Keep Going",
-                            "Stay Strong",
-                            "You Got This"
-                        ).random()
-                    }
+                    val greetingOptions = listOf(
+                        stringResource(R.string.notifications_greeting_welcome_back),
+                        stringResource(R.string.notifications_greeting_stay_focused),
+                        stringResource(R.string.notifications_greeting_keep_going),
+                        stringResource(R.string.notifications_greeting_stay_strong),
+                        stringResource(R.string.notifications_greeting_you_got_this)
+                    )
+                    val greeting = remember { greetingOptions.random() }
                     var stage by remember { mutableStateOf(0) }
                     LaunchedEffect(Unit) {
                         delay(1700)
@@ -230,7 +234,7 @@ fun ZenithHeader(
                             text = when (currentStage) {
                                 0 -> greeting
                                 1 -> userName
-                                else -> "Zenith"
+                                else -> stringResource(R.string.notifications_app_name)
                             },
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = if (currentStage == 2) FontWeight.ExtraBold else FontWeight.Bold,
@@ -256,7 +260,7 @@ fun ZenithHeader(
                             val coroutineScope = rememberCoroutineScope()
                             val tooltipState = rememberTooltipState(isPersistent = true)
                             ZenithTooltipBox(
-                                tooltipText = "Beta",
+                                tooltipText = stringResource(R.string.notifications_beta),
                                 state = tooltipState,
                                 arrowPosition = TooltipArrowPosition.TopCenter
                             ) {
@@ -393,7 +397,7 @@ fun ZenithHeader(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Info,
-                        contentDescription = "Screen info",
+                        contentDescription = stringResource(R.string.notifications_screen_info),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(24.dp)
                     )

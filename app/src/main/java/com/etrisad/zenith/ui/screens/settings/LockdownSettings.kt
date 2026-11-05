@@ -20,8 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.ConfirmBottomSheet
@@ -115,7 +117,7 @@ fun LockdownSettings(
                         if (inLockdownNow) {
                             android.widget.Toast.makeText(
                                 toastContext,
-                                "Cannot change time during lockdown",
+                                toastContext.getString(R.string.about_cannot_change_time_during_lockdown),
                                 android.widget.Toast.LENGTH_SHORT
                             ).show()
                         } else {
@@ -126,7 +128,7 @@ fun LockdownSettings(
                         if (inLockdownNow) {
                             android.widget.Toast.makeText(
                                 toastContext,
-                                "Cannot change time during lockdown",
+                                toastContext.getString(R.string.about_cannot_change_time_during_lockdown),
                                 android.widget.Toast.LENGTH_SHORT
                             ).show()
                         } else {
@@ -143,7 +145,7 @@ fun LockdownSettings(
                         if (inLockdownNow) {
                             android.widget.Toast.makeText(
                                 toastContext,
-                                "Cannot change days during lockdown",
+                                toastContext.getString(R.string.about_cannot_change_days_during_lockdown),
                                 android.widget.Toast.LENGTH_SHORT
                             ).show()
                         } else {
@@ -176,7 +178,7 @@ fun LockdownSettings(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "During lockdown hours, adding, editing, or deleting shields, goals, and schedules is blocked to help you stay focused.",
+                            text = stringResource(R.string.about_lockdown_info),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -186,7 +188,7 @@ fun LockdownSettings(
                 Spacer(modifier = Modifier.height(16.dp))
                 ZenithButton(
                     onClick = { showDisableSheet = true },
-                    text = "Disable Lockdown",
+                    text = stringResource(R.string.about_disable_lockdown),
                     icon = Icons.Outlined.Lock,
                     type = ZenithButtonType.Text,
                     size = ZenithButtonSize.Large,
@@ -278,12 +280,16 @@ fun LockdownToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit) {
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Lockdown",
+                    text = stringResource(R.string.about_lockdown),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = if (enabled) "Editing is restricted during lockdown hours" else "Currently disabled",
+                    text = if (enabled) {
+                        stringResource(R.string.about_lockdown_enabled_summary)
+                    } else {
+                        stringResource(R.string.about_currently_disabled)
+                    },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -330,6 +336,13 @@ fun LockdownToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit) {
     }
 }
 
+private data class LockdownCountdown(
+    val labelRes: Int,
+    val hours: Long,
+    val minutes: Long,
+    val progress: Float
+)
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LockdownStatus(
@@ -366,7 +379,7 @@ fun LockdownStatus(
         }
     }
 
-    val (label, remainingText, progressValue) = remember(currentTime, startTime, endTime, isLockdown) {
+    val countdown = remember(currentTime, startTime, endTime, isLockdown) {
         if (isLockdown) {
             val totalDuration = if (endTime.isAfter(startTime)) {
                 Duration.between(startTime, endTime)
@@ -379,12 +392,11 @@ fun LockdownStatus(
                 Duration.between(startTime, LocalTime.MAX).plus(Duration.between(LocalTime.MIDNIGHT, currentTime))
             }
             val remaining = totalDuration.minus(elapsed)
-            val hours = remaining.toHours()
-            val minutes = remaining.toMinutes() % 60
-            Triple(
-                "Lockdown ends in",
-                if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m",
-                (elapsed.toMinutes().toFloat() / totalDuration.toMinutes().toFloat()).coerceIn(0f, 1f)
+            LockdownCountdown(
+                labelRes = R.string.about_lockdown_ends_in,
+                hours = remaining.toHours(),
+                minutes = remaining.toMinutes() % 60,
+                progress = (elapsed.toMinutes().toFloat() / totalDuration.toMinutes().toFloat()).coerceIn(0f, 1f)
             )
         } else {
             val timeToStart = if (currentTime.isBefore(startTime)) {
@@ -392,18 +404,24 @@ fun LockdownStatus(
             } else {
                 Duration.between(currentTime, LocalTime.MAX).plus(Duration.between(LocalTime.MIDNIGHT, startTime))
             }
-            val hours = timeToStart.toHours()
-            val minutes = timeToStart.toMinutes() % 60
-            Triple(
-                "Lockdown starts in",
-                if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m",
-                1f - (timeToStart.toMinutes().toFloat() / (24 * 60).toFloat()).coerceIn(0f, 1f)
+            LockdownCountdown(
+                labelRes = R.string.about_lockdown_starts_in,
+                hours = timeToStart.toHours(),
+                minutes = timeToStart.toMinutes() % 60,
+                progress = 1f - (timeToStart.toMinutes().toFloat() / (24 * 60).toFloat()).coerceIn(0f, 1f)
             )
         }
     }
 
+    val label = stringResource(countdown.labelRes)
+    val remainingText = if (countdown.hours > 0) {
+        stringResource(R.string.about_duration_hours_minutes, countdown.hours, countdown.minutes)
+    } else {
+        stringResource(R.string.about_duration_minutes, countdown.minutes)
+    }
+
     val animatedProgress by animateFloatAsState(
-        targetValue = progressValue,
+        targetValue = countdown.progress,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
         label = "LockdownProgress"
     )

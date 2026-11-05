@@ -109,10 +109,10 @@ object CrashHandler {
             try {
                 val channel = NotificationChannel(
                     CRASH_CHANNEL_ID,
-                    "Crash reports",
+                    context.getString(R.string.small_crash_channel_name),
                     NotificationManager.IMPORTANCE_HIGH
                 ).apply {
-                    description = "Shown when Zenith stops unexpectedly"
+                    description = context.getString(R.string.small_crash_channel_description)
                 }
                 manager.createNotificationChannel(channel)
             } catch (_: Throwable) {
@@ -125,8 +125,8 @@ object CrashHandler {
             )
             val notification = NotificationCompat.Builder(context, CRASH_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_zenith)
-                .setContentTitle("Zenith stopped unexpectedly")
-                .setContentText("Tap to view the error details and send a report")
+                .setContentTitle(context.getString(R.string.small_zenith_stopped_unexpectedly))
+                .setContentText(context.getString(R.string.small_crash_notification_body))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
                 .setContentIntent(pending)

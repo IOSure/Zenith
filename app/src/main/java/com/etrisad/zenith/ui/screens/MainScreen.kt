@@ -414,9 +414,13 @@ fun MainScreen(
         else -> null
     }
     val questCompleted = focusUiState.activeShields.isNotEmpty() || focusUiState.activeGoals.isNotEmpty()
+    val targetMinutesLabel = stringResource(
+        R.string.general_minutes_suffix,
+        preferences.screenTimeTargetMinutes
+    )
     val masterySummary = stringResource(
         R.string.onboarding_mastery_summary,
-        "${preferences.screenTimeTargetMinutes} min",
+        targetMinutesLabel,
         focusUiState.activeShields.size,
         focusUiState.activeGoals.size,
         focusUiState.activeSchedules.size
@@ -614,6 +618,7 @@ fun MainScreen(
                     val currentDestination = navBackStackEntry?.destination
                     navItems.forEach { screen ->
                         val selected = activeTabRoute == screen.route
+                        val navTitle = screenTitle(screen)
                         NavigationRailItem(
                             icon = {
                                 Icon(
@@ -621,7 +626,7 @@ fun MainScreen(
                                     contentDescription = null
                                 )
                             },
-                            label = { Text(screen.title) },
+                            label = { Text(navTitle) },
                             selected = selected,
                             onClick = {
                                 if (currentDestination?.route != screen.route) {
@@ -652,7 +657,8 @@ fun MainScreen(
                     userName = preferences.userName,
                     categoryName = navBackStackEntry?.arguments?.getString("category"),
                     pausePointTypeName = navBackStackEntry?.arguments?.getString("type")
-                        ?.let { runCatching { PausePointTaskType.valueOf(it).displayName }.getOrNull() },
+                        ?.let { raw -> runCatching { PausePointTaskType.valueOf(raw) }.getOrNull() }
+                        ?.let { type -> stringResource(type.displayNameRes) },
                     onBack = {
                         val intercepted = when {
                             currentRoute?.startsWith("settings_category") == true ->
@@ -702,7 +708,7 @@ fun MainScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Outlined.Tune,
-                                        contentDescription = "Customize Home",
+                                        contentDescription = stringResource(R.string.general_customize_home),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(24.dp)
                                     )
@@ -728,7 +734,7 @@ fun MainScreen(
                                 ) {
                                     Icon(
                                         imageVector = if (isSelected) Icons.Outlined.Close else Icons.Outlined.Checklist,
-                                        contentDescription = "Select",
+                                        contentDescription = stringResource(R.string.general_select),
                                         tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(24.dp)
                                     )
@@ -773,7 +779,7 @@ fun MainScreen(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Outlined.PauseCircle,
-                                                    contentDescription = "Pause Selected",
+                                                    contentDescription = stringResource(R.string.general_pause_selected),
                                                     tint = if (focusUiState.selectedShields.isNotEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
                                                 )
                                             }
@@ -784,7 +790,7 @@ fun MainScreen(
                                             ) {
                                                 Icon(
                                                     imageVector = Icons.Outlined.Delete,
-                                                    contentDescription = "Delete Selected",
+                                                    contentDescription = stringResource(R.string.general_delete_selected),
                                                     tint = if (hasSelection) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.outline
                                                 )
                                             }
@@ -792,16 +798,17 @@ fun MainScreen(
                                     }
                                     "app_detail" -> {
                                         val detailLocked = preferences.isInLockdown()
+                                        val lockedMessage = stringResource(R.string.general_locked_during_lockdown)
                                         IconButton(
                                             onClick = {
                                                 if (!detailLocked) homeViewModel.openSettingsSheet()
-                                                else Toast.makeText(context, "Locked during lockdown hours", Toast.LENGTH_SHORT).show()
+                                                else Toast.makeText(context, lockedMessage, Toast.LENGTH_SHORT).show()
                                             },
                                             modifier = Modifier.padding(end = 12.dp).size(48.dp).clip(CircleShape)
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Outlined.Edit,
-                                                contentDescription = "Edit App Settings",
+                                                contentDescription = stringResource(R.string.general_edit_app_settings),
                                                 tint = if (detailLocked) MaterialTheme.colorScheme.outline else MaterialTheme.colorScheme.primary,
                                                 modifier = Modifier.size(24.dp)
                                             )
@@ -815,7 +822,7 @@ fun MainScreen(
                                             if (preferences.userAvatarUri.isEmpty()) {
                                                 Icon(
                                                     imageVector = Icons.Outlined.AccountCircle,
-                                                    contentDescription = "User Profile",
+                                                    contentDescription = stringResource(R.string.general_user_profile),
                                                     modifier = Modifier.size(24.dp)
                                                 )
                                             } else {
@@ -825,7 +832,7 @@ fun MainScreen(
                                                 if (headerImgError) {
                                                     Icon(
                                                         imageVector = Icons.Outlined.AccountCircle,
-                                                        contentDescription = "User Profile",
+                                                        contentDescription = stringResource(R.string.general_user_profile),
                                                         modifier = Modifier.size(24.dp)
                                                     )
                                                 } else {
@@ -833,7 +840,7 @@ fun MainScreen(
                                                         model = ImageRequest.Builder(context)
                                                             .data(preferences.userAvatarUri)
                                                             .crossfade(300).build(),
-                                                        contentDescription = "User Profile",
+                                                        contentDescription = stringResource(R.string.general_user_profile),
                                                         contentScale = ContentScale.Crop,
                                                         onError = { headerImgError = true },
                                                         modifier = Modifier
@@ -1503,6 +1510,7 @@ fun MainScreen(
                         })
                     ) { backStackEntry ->
                         val category = backStackEntry.arguments?.getString("category") ?: ""
+                        val guidedPathResetMessage = stringResource(R.string.general_guided_path_reset)
                         com.etrisad.zenith.ui.screens.settings.SettingsCategoryScreen(
                             category = category,
                             preferencesRepository = userPreferencesRepository,
@@ -1515,7 +1523,7 @@ fun MainScreen(
                                 scope.launch { userPreferencesRepository.resetOnboardingGuide() }
                                 showGuideCard = true
                                 showGuideResumeCard = false
-                                Toast.makeText(context, "Guided Path reset", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, guidedPathResetMessage, Toast.LENGTH_SHORT).show()
                             },
                             onTestAchievementBanner = {
                                 profileViewModel.testUnlockBanner()
@@ -1590,6 +1598,7 @@ fun MainScreen(
                                     ) {
                                         navItems.forEach { screen ->
                                             val selected = activeTabRoute == screen.route
+                                            val navTitle = screenTitle(screen)
                                             ShortNavigationBarItem(
                                                 selected = selected,
                                                 onClick = {
@@ -1618,7 +1627,7 @@ fun MainScreen(
                                                     ) {
                                                         Icon(
                                                             imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon,
-                                                            contentDescription = screen.title,
+                                                            contentDescription = navTitle,
                                                             modifier = Modifier.size(26.dp)
                                                         )
                                                     }
@@ -1639,7 +1648,7 @@ fun MainScreen(
                                                         )
                                                     ) {
                                                         Text(
-                                                            text = screen.title,
+                                                            text = navTitle,
                                                             style = MaterialTheme.typography.titleMedium,
                                                             fontWeight = FontWeight.ExtraBold,
                                                             maxLines = 1,
@@ -1668,6 +1677,7 @@ fun MainScreen(
                                 ) {
                                     navItems.forEach { screen ->
                                         val selected = activeTabRoute == screen.route
+                                        val navTitle = screenTitle(screen)
                                         NavigationBarItem(
                                             icon = {
                                                 Icon(
@@ -1675,7 +1685,7 @@ fun MainScreen(
                                                     contentDescription = null
                                                 )
                                             },
-                                            label = { Text(screen.title) },
+                                            label = { Text(navTitle) },
                                             selected = selected,
                                             onClick = {
                                                 if (currentDestination?.route != screen.route) {
@@ -1819,7 +1829,7 @@ private fun NotificationCenterSheet(
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Notifications",
+                    text = stringResource(R.string.general_notifications),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Black,
                     modifier = Modifier.weight(1f)
@@ -1827,11 +1837,11 @@ private fun NotificationCenterSheet(
                 TextButton(
                     onClick = onClearAll,
                     enabled = pending.isNotEmpty()
-                ) { Text("Clear all") }
+                ) { Text(stringResource(R.string.general_clear_all)) }
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text = "New",
+                text = stringResource(R.string.general_new),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -1839,7 +1849,7 @@ private fun NotificationCenterSheet(
             Spacer(modifier = Modifier.height(8.dp))
             if (pending.isEmpty()) {
                 Text(
-                    text = "You're all caught up",
+                    text = stringResource(R.string.general_all_caught_up),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1854,13 +1864,18 @@ private fun NotificationCenterSheet(
                         }?.def
                         val (title, subtitle) = when (event) {
                             is ProfileBannerEvent.Unlock -> {
+                                val fallbackName = stringResource(R.string.general_achievement_unlocked)
                                 val name = def?.let { tierDisplayName(it, event.tierLevel) }
-                                    ?: "Achievement unlocked"
-                                name to "Achievement unlocked - ${prettyProfileDate(event.date)}"
+                                    ?: fallbackName
+                                name to stringResource(
+                                    R.string.general_achievement_unlocked_at,
+                                    prettyProfileDate(event.date)
+                                )
                             }
                             is ProfileBannerEvent.Progress -> {
                                 val level = def?.let { tierCountFor(it, event.after) } ?: 0
-                                val name = def?.let { tierDisplayName(it, level) } ?: "Progress"
+                                val fallbackName = stringResource(R.string.general_progress)
+                                val name = def?.let { tierDisplayName(it, level) } ?: fallbackName
                                 name to "${formatProgressNumber(event.defId, event.before)} → ${
                                     formatProgressNumber(event.defId, event.after)
                                 }"
@@ -1913,7 +1928,7 @@ private fun NotificationCenterSheet(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Outlined.Close,
-                                        contentDescription = "Dismiss",
+                                        contentDescription = stringResource(R.string.general_dismiss),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(18.dp)
                                     )
@@ -1925,7 +1940,7 @@ private fun NotificationCenterSheet(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Earlier",
+                text = stringResource(R.string.general_earlier),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -1933,7 +1948,7 @@ private fun NotificationCenterSheet(
             Spacer(modifier = Modifier.height(8.dp))
             if (recent.isEmpty()) {
                 Text(
-                    text = "No earlier notifications",
+                    text = stringResource(R.string.general_no_earlier_notifications),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -2151,7 +2166,8 @@ private fun GlobalAchievementBanners(
                         tierSymbols = tierIconsForLevel(levelAfter)
                         isFull = true
                     } else {
-                        progressTitle = def?.let { tierDisplayName(it, levelAfter) } ?: "Progress"
+                        val progressFallback = stringResource(R.string.general_progress)
+                        progressTitle = def?.let { tierDisplayName(it, levelAfter) } ?: progressFallback
                         val nextReq = def?.let { nextThresholdFor(it, banner.after) }?.required
                         beforeFraction = if (nextReq != null && nextReq > 0) (banner.before.toFloat() / nextReq).coerceIn(0f, 1f) else 1f
                         afterFraction = if (nextReq != null && nextReq > 0) (banner.after.toFloat() / nextReq).coerceIn(0f, 1f) else 1f
@@ -2251,4 +2267,12 @@ private fun GuidePathCardHost(
             onDismiss = onDismiss
         )
     }
+}
+
+@Composable
+private fun screenTitle(screen: Screen): String = when (screen.route) {
+    Screen.Home.route -> stringResource(R.string.main2_nav_home)
+    Screen.Focus.route -> stringResource(R.string.main2_nav_focus)
+    Screen.Settings.route -> stringResource(R.string.main2_nav_settings)
+    else -> screen.title
 }

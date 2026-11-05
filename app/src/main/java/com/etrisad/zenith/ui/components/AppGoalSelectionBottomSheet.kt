@@ -18,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import kotlinx.coroutines.launch
@@ -72,12 +74,12 @@ fun AppGoalSelectionBottomSheet(
                 .navigationBarsPadding()
         ) {
             Text(
-                text = "Select App to Open",
+                text = stringResource(R.string.small_select_app_to_open),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold
             )
             Text(
-                text = "Choose which goal you want to work on right now.",
+                text = stringResource(R.string.small_choose_goal_description),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

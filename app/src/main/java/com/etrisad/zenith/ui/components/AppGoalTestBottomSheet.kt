@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.service.AppGoalOverlayActivity
@@ -64,12 +66,12 @@ fun AppGoalTestBottomSheet(
                 .navigationBarsPadding()
         ) {
             Text(
-                text = "Debug Goal Overlay",
+                text = stringResource(R.string.onboarding_debug_goal_title),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.ExtraBold
             )
             Text(
-                text = "Select a scenario to test the full screen goal caller UI.",
+                text = stringResource(R.string.onboarding_debug_goal_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -77,7 +79,11 @@ fun AppGoalTestBottomSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             val options = listOf(
-                Triple("Test with Zenith", "Single app scenario using the current app", Icons.Outlined.FilterCenterFocus) to {
+                Triple(
+                    stringResource(R.string.onboarding_debug_test_zenith),
+                    stringResource(R.string.onboarding_debug_test_zenith_desc),
+                    Icons.Outlined.FilterCenterFocus
+                ) to {
                     scope.launch {
                         AppGoalOverlayActivity.start(context, listOf(context.packageName))
                         sheetState.hide()
@@ -85,10 +91,18 @@ fun AppGoalTestBottomSheet(
                     }
                     Unit
                 },
-                Triple("Test with selected app", "Pick an app to test the overlay", Icons.Outlined.AppRegistration) to {
+                Triple(
+                    stringResource(R.string.onboarding_debug_test_selected_app),
+                    stringResource(R.string.onboarding_debug_test_selected_app_desc),
+                    Icons.Outlined.AppRegistration
+                ) to {
                     showAppPicker = true
                 },
-                Triple("Test more than 2 Apps", "Multiple apps scenario (Zenith, Settings, and Phone)", Icons.Outlined.Apps) to {
+                Triple(
+                    stringResource(R.string.onboarding_debug_test_multi_apps),
+                    stringResource(R.string.onboarding_debug_test_multi_apps_desc),
+                    Icons.Outlined.Apps
+                ) to {
                     scope.launch {
                         AppGoalOverlayActivity.start(
                             context, 
@@ -99,7 +113,11 @@ fun AppGoalTestBottomSheet(
                     }
                     Unit
                 },
-                Triple("Test with random app", "Picks a random installed launcher app", Icons.Outlined.BugReport) to {
+                Triple(
+                    stringResource(R.string.onboarding_debug_test_random_app),
+                    stringResource(R.string.onboarding_debug_test_random_app_desc),
+                    Icons.Outlined.BugReport
+                ) to {
                     scope.launch {
                         val randomPackage = getRandomInstalledApp(context)
                         AppGoalOverlayActivity.start(context, listOf(randomPackage))
@@ -137,7 +155,7 @@ fun AppGoalTestBottomSheet(
     if (showAppPicker) {
         AppPickerBottomSheet(
             uiState = focusUiState,
-            title = "Select App to Test",
+            title = stringResource(R.string.onboarding_debug_select_app),
             onDismiss = { showAppPicker = false },
             onAppSelected = { app ->
                 showAppPicker = false

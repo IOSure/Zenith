@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Snooze
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.pausepoint.PausePointTask
 import com.etrisad.zenith.ui.components.pausepoint.PausePointTaskContent
 import androidx.compose.material3.*
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -104,17 +106,26 @@ fun AlarmOverlayContent(
         val nowCal = java.util.Calendar.getInstance().apply { timeInMillis = currentTimeMillis }
         val diffMs = currentTimeMillis - alarmCal.timeInMillis
         val diffMinutes = (diffMs / 60000).toInt()
-        val diffHours = diffMinutes / 60
-        val remainMinutes = kotlin.math.abs(diffMinutes) % 60
-        val overdue = diffMinutes >= 0
-        val diffText = if (kotlin.math.abs(diffMinutes) < 1) "Now" else {
-            val sign = if (overdue) "Overdue by" else "In"
-            val absMin = kotlin.math.abs(diffMinutes)
-            if (absMin < 60) "$sign ${absMin}m"
-            else "$sign ${diffHours}h ${remainMinutes}m"
-        }
         val currentFormatted = String.format("%02d:%02d", nowCal.get(java.util.Calendar.HOUR_OF_DAY), nowCal.get(java.util.Calendar.MINUTE))
-        Triple(currentFormatted, alarmTime, diffText)
+        Triple(currentFormatted, alarmTime, diffMinutes)
+    }
+
+    val diffMinutes = timeInfo.third
+    val diffIsNow = kotlin.math.abs(diffMinutes) < 1
+    val diffIsOverdue = diffMinutes >= 0
+    val diffAbsMinutes = kotlin.math.abs(diffMinutes)
+    val diffHours = diffMinutes / 60
+    val diffRemainMinutes = diffAbsMinutes % 60
+    val diffText = when {
+        diffIsNow -> stringResource(R.string.alarm_overlay_now)
+        diffIsOverdue && diffAbsMinutes < 60 ->
+            stringResource(R.string.alarm_overlay_overdue_minutes, diffAbsMinutes)
+        diffIsOverdue ->
+            stringResource(R.string.alarm_overlay_overdue_hours_minutes, diffHours, diffRemainMinutes)
+        diffAbsMinutes < 60 ->
+            stringResource(R.string.alarm_overlay_in_minutes, diffAbsMinutes)
+        else ->
+            stringResource(R.string.alarm_overlay_in_hours_minutes, diffHours, diffRemainMinutes)
     }
 
     val configuration = LocalConfiguration.current
@@ -219,7 +230,7 @@ fun AlarmOverlayContent(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = if (alarmName == "Alarm") "It's Time!" else alarmName,
+                        text = if (alarmName == "Alarm") stringResource(R.string.alarm_overlay_its_time) else alarmName,
                         style = MaterialTheme.typography.displaySmall,
                         fontWeight = FontWeight.Black,
                         textAlign = TextAlign.Center,
@@ -227,7 +238,7 @@ fun AlarmOverlayContent(
                     )
 
                     Text(
-                        text = "Your scheduled alarm is active",
+                        text = stringResource(R.string.alarm_overlay_scheduled_alarm_active),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -237,7 +248,9 @@ fun AlarmOverlayContent(
                     AlarmInfoCard(
                         alarmTime = timeInfo.second,
                         currentTime = timeInfo.first,
-                        diffText = timeInfo.third
+                        diffText = diffText,
+                        isNow = diffIsNow,
+                        isOverdue = diffIsOverdue
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -288,7 +301,7 @@ fun AlarmOverlayContent(
                 Spacer(modifier = Modifier.height(32.dp))
 
                 Text(
-                    text = if (alarmName == "Alarm") "It's Time!" else alarmName,
+                    text = if (alarmName == "Alarm") stringResource(R.string.alarm_overlay_its_time) else alarmName,
                     style = MaterialTheme.typography.displaySmall,
                     fontWeight = FontWeight.Black,
                     textAlign = TextAlign.Center,
@@ -296,7 +309,7 @@ fun AlarmOverlayContent(
                 )
 
                 Text(
-                    text = "Your scheduled alarm is active",
+                    text = stringResource(R.string.alarm_overlay_scheduled_alarm_active),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -308,7 +321,9 @@ fun AlarmOverlayContent(
                 AlarmInfoCard(
                     alarmTime = timeInfo.second,
                     currentTime = timeInfo.first,
-                    diffText = timeInfo.third
+                    diffText = diffText,
+                    isNow = diffIsNow,
+                    isOverdue = diffIsOverdue
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -415,7 +430,7 @@ private fun WakeUpAppBottomSheet(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = if (isComplete) "Wake-Up Verified!" else "Wake-Up Verification",
+                text = if (isComplete) stringResource(R.string.alarm_overlay_wake_up_verified) else stringResource(R.string.alarm_overlay_wake_up_verification),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onSurface
@@ -424,8 +439,8 @@ private fun WakeUpAppBottomSheet(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = if (isComplete) "You proved you're awake!"
-                       else "Open the apps below to prove you're awake",
+                text = if (isComplete) stringResource(R.string.alarm_overlay_awake_verified_body)
+                       else stringResource(R.string.alarm_overlay_open_apps_to_prove_awake),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -441,21 +456,21 @@ private fun WakeUpAppBottomSheet(
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(
-                            text = "Usage Access required",
+                            text = stringResource(R.string.alarm_overlay_usage_access_required),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Zenith can't track usage without this permission. Progress stays at 0.",
+                            text = stringResource(R.string.alarm_overlay_usage_access_body),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onErrorContainer
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         ZenithButton(
                             onClick = onOpenUsageSettings,
-                            text = "Open Settings",
+                            text = stringResource(R.string.alarm_overlay_open_settings),
                             type = ZenithButtonType.Filled,
                             size = ZenithButtonSize.Medium,
                             fillMaxWidth = true
@@ -479,7 +494,7 @@ private fun WakeUpAppBottomSheet(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "$accumulatedSeconds / $requiredSeconds seconds",
+                    text = stringResource(R.string.alarm_overlay_progress_seconds, accumulatedSeconds, requiredSeconds),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -528,13 +543,13 @@ private fun WakeUpAppBottomSheet(
                         if (!isComplete) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = "Open",
+                                contentDescription = stringResource(R.string.alarm_overlay_cd_open),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         } else {
                             Icon(
                                 Icons.Default.Check,
-                                contentDescription = "Done",
+                                contentDescription = stringResource(R.string.alarm_overlay_cd_done),
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -548,7 +563,7 @@ private fun WakeUpAppBottomSheet(
                 ZenithButton(
                     onClick = { scope.launch { sheetState.hide(); onDone() } },
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Done, I'm Awake!",
+                    text = stringResource(R.string.alarm_overlay_done_im_awake),
                     type = ZenithButtonType.Filled,
                     size = ZenithButtonSize.ExtraLarge,
                     fillMaxWidth = true
@@ -557,7 +572,7 @@ private fun WakeUpAppBottomSheet(
                 ZenithButton(
                     onClick = { onBackToAlarm() },
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Back to Alarm",
+                    text = stringResource(R.string.alarm_overlay_back_to_alarm),
                     type = ZenithButtonType.Outlined,
                     size = ZenithButtonSize.ExtraLarge,
                     fillMaxWidth = true
@@ -661,7 +676,7 @@ private fun AlarmActionGroup(
                 Icon(Icons.Default.AlarmOff, contentDescription = null, tint = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "Stop Alarm",
+                    text = stringResource(R.string.alarm_overlay_stop_alarm),
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onErrorContainer
                 )
@@ -689,7 +704,7 @@ private fun AlarmActionGroup(
                 Icon(Icons.Default.Alarm, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimary)
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "I'm Awake!",
+                    text = stringResource(R.string.alarm_overlay_im_awake),
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
@@ -750,8 +765,8 @@ private fun SnoozeButton(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = if (canSnooze) "Snooze for $snoozeDurationMinutes minutes"
-                           else "Snooze Used Up",
+                    text = if (canSnooze) stringResource(R.string.alarm_overlay_snooze_for_minutes, snoozeDurationMinutes)
+                           else stringResource(R.string.alarm_overlay_snooze_used_up),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold,
                     color = if (canSnooze) MaterialTheme.colorScheme.onSurface
@@ -766,7 +781,9 @@ private fun SnoozeButton(
 private fun AlarmInfoCard(
     alarmTime: String,
     currentTime: String,
-    diffText: String
+    diffText: String,
+    isNow: Boolean,
+    isOverdue: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -789,7 +806,7 @@ private fun AlarmInfoCard(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Alarm",
+                        text = stringResource(R.string.alarm_overlay_label_alarm),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -812,7 +829,7 @@ private fun AlarmInfoCard(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Now",
+                        text = stringResource(R.string.alarm_overlay_now),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.tertiary
@@ -827,8 +844,7 @@ private fun AlarmInfoCard(
             }
         }
 
-        if (diffText != "Now") {
-            val isOverdue = diffText.startsWith("Overdue")
+        if (!isNow) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
                 color = if (isOverdue) MaterialTheme.colorScheme.errorContainer 
@@ -901,7 +917,7 @@ private fun DismissMissionSheet(
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = task.type.displayName,
+                text = stringResource(task.type.displayNameRes),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.onSurface
@@ -910,7 +926,7 @@ private fun DismissMissionSheet(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Complete the mission to dismiss the alarm",
+                text = stringResource(R.string.alarm_overlay_complete_mission_to_dismiss),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -928,7 +944,7 @@ private fun DismissMissionSheet(
             ZenithButton(
                 onClick = { closeThen(onBackToAlarm) },
                 modifier = Modifier.fillMaxWidth(),
-                text = "Back to Alarm",
+                text = stringResource(R.string.alarm_overlay_back_to_alarm),
                 type = ZenithButtonType.Outlined,
                 size = ZenithButtonSize.ExtraLarge,
                 fillMaxWidth = true

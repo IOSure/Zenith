@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.toPath
@@ -50,7 +51,7 @@ fun AboutSettings(
     val versionName = BuildConfig.VERSION_NAME
 
     Column {
-        PreferenceCategory(title = "About")
+        PreferenceCategory(title = stringResource(R.string.about_category_title))
 
         AppInfoCard(
             versionName = versionName,
@@ -63,7 +64,11 @@ fun AboutSettings(
         if (BuildConfig.SHOW_UPDATES) {
             Spacer(modifier = Modifier.height(4.dp))
             AboutActionCard(
-                title = if (isCheckingForUpdate) "Checking for update..." else "Check for Update",
+                title = if (isCheckingForUpdate) {
+                    stringResource(R.string.about_checking_for_update)
+                } else {
+                    stringResource(R.string.about_check_for_update)
+                },
                 icon = Icons.Outlined.Update,
                 shape = RoundedCornerShape(8.dp),
                 onClick = onCheckForUpdate
@@ -71,8 +76,8 @@ fun AboutSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             SettingsToggle(
-                title = "Check update on start",
-                description = "Automatically check for updates when the app starts",
+                title = stringResource(R.string.about_check_update_on_start),
+                description = stringResource(R.string.about_check_update_on_start_summary),
                 checked = checkUpdateOnStart,
                 onCheckedChange = onCheckUpdateOnStartChange,
                 icon = Icons.Outlined.SystemUpdate,
@@ -81,7 +86,7 @@ fun AboutSettings(
 
             Spacer(modifier = Modifier.height(4.dp))
             AboutActionCard(
-                title = "View Changelog",
+                title = stringResource(R.string.about_view_changelog),
                 icon = Icons.Outlined.History,
                 shape = RoundedCornerShape(8.dp),
                 onClick = onViewChangelog
@@ -108,7 +113,7 @@ fun AboutSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         AboutActionCard(
-            title = "Report a Bug",
+            title = stringResource(R.string.about_report_bug),
             icon = Icons.Outlined.BugReport,
             shape = RoundedCornerShape(8.dp),
             onClick = onExportDiagnostics
@@ -116,7 +121,7 @@ fun AboutSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         AboutActionCard(
-            title = "View Repository",
+            title = stringResource(R.string.about_view_repository),
             icon = Icons.Outlined.Code,
             shape = RoundedCornerShape(8.dp),
             onClick = {
@@ -127,7 +132,7 @@ fun AboutSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         AboutActionCard(
-            title = "GNU General Public Licence v3.0",
+            title = stringResource(R.string.about_license),
             icon = Icons.Outlined.Description,
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp),
             onClick = {
@@ -172,11 +177,11 @@ fun AppInfoCard(
                     if (clickCount >= 3) {
                         onDeveloperModeChange(true)
                         haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
-                        Toast.makeText(context, "Developer mode enabled!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.about_developer_mode_enabled), Toast.LENGTH_SHORT).show()
                         clickCount = 0
                     } else {
                         val remaining = 3 - clickCount
-                        Toast.makeText(context, "Tap $remaining more times for Developer Mode", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.about_developer_mode_tap_remaining, remaining), Toast.LENGTH_SHORT).show()
                     }
                 }
             },
@@ -297,7 +302,7 @@ fun DeveloperCard(
             Spacer(modifier = Modifier.width(16.dp))
             
             Text(
-                text = "Created by $name",
+                text = stringResource(R.string.about_created_by, name),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)

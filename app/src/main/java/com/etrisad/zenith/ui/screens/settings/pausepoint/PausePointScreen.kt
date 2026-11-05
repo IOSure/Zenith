@@ -1,5 +1,6 @@
 package com.etrisad.zenith.ui.screens.settings.pausepoint
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -29,9 +30,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.ZenithButton
@@ -87,7 +90,9 @@ fun PausePointScreen(
     }
 
     if (showExitWarning) {
-        val onlyTypeName = preferences.pausePointTaskTypes.firstOrNull()?.displayName ?: "Unknown"
+        val onlyTypeName = preferences.pausePointTaskTypes.firstOrNull()
+            ?.let { stringResource(it.displayNameRes) }
+            ?: stringResource(R.string.reels_settings_po_unknown_type)
         ModalBottomSheet(
             onDismissRequest = { hideWarningSheet() },
             sheetState = sheetState
@@ -117,7 +122,7 @@ fun PausePointScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Only one task type?",
+                    text = stringResource(R.string.reels_settings_po_only_one_type),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center
@@ -126,10 +131,7 @@ fun PausePointScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "\u201C$onlyTypeName\u201D is your only enabled type, " +
-                        "that can make Pause Point too hard if something unexpected happens, " +
-                        "like a lost tag, a missing code, or a failing sensor. " +
-                        "Add one more type as a backup plan before leaving.",
+                    text = stringResource(R.string.reels_settings_po_only_one_type_body, onlyTypeName),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -139,7 +141,7 @@ fun PausePointScreen(
 
                 ZenithButton(
                     onClick = { hideWarningSheet() },
-                    text = "Add another type",
+                    text = stringResource(R.string.reels_settings_po_add_another_type),
                     type = ZenithButtonType.Filled,
                     size = ZenithButtonSize.ExtraLarge,
                     fillMaxWidth = true,
@@ -150,7 +152,7 @@ fun PausePointScreen(
 
                 ZenithButton(
                     onClick = { hideWarningSheet { onBack() } },
-                    text = "Leave anyway",
+                    text = stringResource(R.string.reels_settings_po_leave_anyway),
                     type = ZenithButtonType.Text,
                     contentColor = MaterialTheme.colorScheme.error,
                     size = ZenithButtonSize.ExtraLarge,
@@ -190,7 +192,7 @@ fun PausePointScreen(
         }
 
         if (preferences.pausePointEnabled) {
-            PreferenceCategory(title = "Task Type")
+            PreferenceCategory(title = stringResource(R.string.reels_settings_po_task_type))
             val toastContext = androidx.compose.ui.platform.LocalContext.current
 
             PausePointTaskType.entries.forEachIndexed { index, taskType ->
@@ -205,12 +207,12 @@ fun PausePointScreen(
                         val blockReason = when (taskType) {
                             com.etrisad.zenith.ui.components.pausepoint.PausePointTaskType.QR_SCAN ->
                                 if (preferences.pausePointQrCodes.none { it.trim().isNotEmpty() })
-                                    "Register a QR code first" else null
+                                    toastContext.getString(R.string.reels_settings_po_register_qr_first) else null
                             com.etrisad.zenith.ui.components.pausepoint.PausePointTaskType.NFC_SCAN ->
                                 if (preferences.pausePointNfcTagIds.none {
                                         com.etrisad.zenith.ui.components.pausepoint.PausePointEngine.normalizeNfcId(it).isNotEmpty()
                                     }
-                                ) "Register an NFC tag first" else null
+                                ) toastContext.getString(R.string.reels_settings_po_register_nfc_first) else null
                             else -> null
                         }
                         if (blockReason != null) {
@@ -227,9 +229,9 @@ fun PausePointScreen(
                 }
 
                 SettingsToggleWithNavigation(
-                    title = taskType.displayName,
-                    description = taskType.description,
-                    summary = pausePointSummary(taskType, preferences),
+                    title = stringResource(taskType.displayNameRes),
+                    description = stringResource(taskType.descriptionRes),
+                    summary = pausePointSummary(toastContext, taskType, preferences),
                     checked = checked,
                     onCheckedChange = onCheckedChange,
                     icon = taskType.icon,
@@ -283,12 +285,13 @@ private fun PausePointToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit) 
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Pause Point",
+                    text = stringResource(R.string.reels_settings_po_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = if (enabled) "Require a task before a block overlay lets you through" else "Currently disabled",
+                    text = if (enabled) stringResource(R.string.reels_settings_po_enabled_desc)
+                    else stringResource(R.string.reels_settings_po_disabled_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -335,19 +338,26 @@ private fun PausePointToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit) 
     }
 }
 
-private fun pausePointSummary(taskType: PausePointTaskType, preferences: UserPreferences): String = when (taskType) {
-    PausePointTaskType.WAITING -> "${preferences.pausePointWaitingVariants.size} sub task${if (preferences.pausePointWaitingVariants.size == 1) "" else "s"}"
-    PausePointTaskType.BREATHING -> "${preferences.pausePointBreathingVariants.size} sub task${if (preferences.pausePointBreathingVariants.size == 1) "" else "s"}"
-    PausePointTaskType.WALK -> "${preferences.pausePointWalkVariants.size} sub task${if (preferences.pausePointWalkVariants.size == 1) "" else "s"}"
-    PausePointTaskType.QR_SCAN -> "${preferences.pausePointQrCodes.count { it.isNotBlank() }} saved code${if (preferences.pausePointQrCodes.count { it.isNotBlank() } == 1) "" else "s"}"
-    PausePointTaskType.NFC_SCAN -> "${preferences.pausePointNfcTagIds.count { com.etrisad.zenith.ui.components.pausepoint.PausePointEngine.normalizeNfcId(it).isNotEmpty() }} saved tag${if (preferences.pausePointNfcTagIds.count { com.etrisad.zenith.ui.components.pausepoint.PausePointEngine.normalizeNfcId(it).isNotEmpty() } == 1) "" else "s"}"
-    PausePointTaskType.NUMBER_SLIDE -> "${preferences.pausePointNumberSlideVariants.size} sub task${if (preferences.pausePointNumberSlideVariants.size == 1) "" else "s"}"
-    PausePointTaskType.SWITCH -> "${preferences.pausePointSwitchVariants.size} sub task${if (preferences.pausePointSwitchVariants.size == 1) "" else "s"}"
-    PausePointTaskType.MATH -> "${preferences.pausePointMathVariants.size} sub task${if (preferences.pausePointMathVariants.size == 1) "" else "s"}"
-    PausePointTaskType.COUNTING -> "${preferences.pausePointCountingVariants.size} sub task${if (preferences.pausePointCountingVariants.size == 1) "" else "s"}"
-    PausePointTaskType.TYPING -> "${preferences.pausePointTypingVariants.size} text${if (preferences.pausePointTypingVariants.size == 1) "" else "s"}"
-    PausePointTaskType.CHOOSE_APP -> "Uses goal apps automatically"
+private fun pausePointSummary(
+    context: Context,
+    taskType: PausePointTaskType,
+    preferences: UserPreferences
+): String = when (taskType) {
+    PausePointTaskType.WAITING -> countSummary(context, preferences.pausePointWaitingVariants.size, R.string.reels_settings_po_subtask_singular, R.string.reels_settings_po_subtask_plural)
+    PausePointTaskType.BREATHING -> countSummary(context, preferences.pausePointBreathingVariants.size, R.string.reels_settings_po_subtask_singular, R.string.reels_settings_po_subtask_plural)
+    PausePointTaskType.WALK -> countSummary(context, preferences.pausePointWalkVariants.size, R.string.reels_settings_po_subtask_singular, R.string.reels_settings_po_subtask_plural)
+    PausePointTaskType.QR_SCAN -> countSummary(context, preferences.pausePointQrCodes.count { it.isNotBlank() }, R.string.reels_settings_po_saved_code_singular, R.string.reels_settings_po_saved_code_plural)
+    PausePointTaskType.NFC_SCAN -> countSummary(context, preferences.pausePointNfcTagIds.count { com.etrisad.zenith.ui.components.pausepoint.PausePointEngine.normalizeNfcId(it).isNotEmpty() }, R.string.reels_settings_po_saved_tag_singular, R.string.reels_settings_po_saved_tag_plural)
+    PausePointTaskType.NUMBER_SLIDE -> countSummary(context, preferences.pausePointNumberSlideVariants.size, R.string.reels_settings_po_subtask_singular, R.string.reels_settings_po_subtask_plural)
+    PausePointTaskType.SWITCH -> countSummary(context, preferences.pausePointSwitchVariants.size, R.string.reels_settings_po_subtask_singular, R.string.reels_settings_po_subtask_plural)
+    PausePointTaskType.MATH -> countSummary(context, preferences.pausePointMathVariants.size, R.string.reels_settings_po_subtask_singular, R.string.reels_settings_po_subtask_plural)
+    PausePointTaskType.COUNTING -> countSummary(context, preferences.pausePointCountingVariants.size, R.string.reels_settings_po_subtask_singular, R.string.reels_settings_po_subtask_plural)
+    PausePointTaskType.TYPING -> countSummary(context, preferences.pausePointTypingVariants.size, R.string.reels_settings_po_text_singular, R.string.reels_settings_po_text_plural)
+    PausePointTaskType.CHOOSE_APP -> context.getString(R.string.reels_settings_po_uses_goal_apps)
 }
+
+private fun countSummary(context: Context, count: Int, singularRes: Int, pluralRes: Int): String =
+    context.getString(if (count == 1) singularRes else pluralRes, count)
 
 @Composable
 private fun SettingsToggleWithNavigation(

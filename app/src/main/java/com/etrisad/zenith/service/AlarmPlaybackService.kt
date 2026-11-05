@@ -121,9 +121,9 @@ class AlarmPlaybackService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (manager.getNotificationChannel(channelId) == null) {
                 val channel = NotificationChannel(
-                    channelId, "Alarm Playback", NotificationManager.IMPORTANCE_LOW
+                    channelId, getString(R.string.small_alarm_playback_channel_name), NotificationManager.IMPORTANCE_LOW
                 ).apply {
-                    description = "Keeps alarm sound running in the background"
+                    description = getString(R.string.small_alarm_playback_channel_description)
                     setSound(null, null)
                 }
                 manager.createNotificationChannel(channel)
@@ -142,8 +142,8 @@ class AlarmPlaybackService : Service() {
         )
 
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Alarm playing")
-            .setContentText("It's $alarmTime")
+            .setContentTitle(getString(R.string.small_alarm_playing))
+            .setContentText(getString(R.string.small_its_time, alarmTime))
             .setSmallIcon(R.drawable.ic_flag)
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
@@ -265,7 +265,8 @@ class AlarmPlaybackService : Service() {
             val minuteStr = minute.toString().padStart(2, '0')
             val amPm = if (hour < 12) "AM" else "PM"
             val timeText = if (minute == 0) "$hourFormatted $amPm" else "$hourFormatted:$minuteStr $amPm"
-            val text = customPhrase?.replace("{time}", timeText) ?: "Wake up, it's $timeText"
+            val text = customPhrase?.replace("{time}", timeText)
+                ?: getString(R.string.small_wake_up_its, timeText)
 
             val locale = language?.let { l ->
                 val parts = l.split("_")

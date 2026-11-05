@@ -176,7 +176,7 @@ class AppStreakWidget : GlanceAppWidget() {
                                 colorFilter = ColorFilter.tint(GlanceTheme.colors.surface)
                             )
                             Text(
-                                text = "Tap to select app",
+                                text = context.getString(R.string.small_tap_to_select_app),
                                 style = TextStyle(color = GlanceTheme.colors.secondary)
                             )
                         }

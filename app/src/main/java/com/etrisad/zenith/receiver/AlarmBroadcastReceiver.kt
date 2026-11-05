@@ -141,8 +141,11 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
             val builder = NotificationCompat.Builder(context, channelId)
-                .setContentTitle(if (snoozeCount > 0) "Snoozed Alarm" else "Alarm")
-                .setContentText("It's $alarmTime!")
+                .setContentTitle(
+                    if (snoozeCount > 0) context.getString(R.string.misc_alarm_title_snoozed)
+                    else context.getString(R.string.misc_alarm_title)
+                )
+                .setContentText(context.getString(R.string.misc_alarm_notification_text, alarmTime))
                 .setSmallIcon(R.drawable.ic_flag)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
@@ -169,12 +172,14 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                     app.userPreferencesRepository.getAlarmsSnapshot(), alarmId, alarmTime
                 )?.name
             } catch (_: Exception) { null }
-            val display = alarmName?.let { "$it at $alarmTime" } ?: alarmTime
+            val display = alarmName?.let {
+                context.getString(R.string.misc_alarm_name_at_time, it, alarmTime)
+            } ?: alarmTime
             ensureInfoChannel(context)
             val manager = context.getSystemService(NotificationManager::class.java)
             val builder = NotificationCompat.Builder(context, CHANNEL_ID_INFO)
-                .setContentTitle("Alarm auto-repeat stopped")
-                .setContentText("$display will not fire again today.")
+                .setContentTitle(context.getString(R.string.misc_alarm_auto_repeat_stopped))
+                .setContentText(context.getString(R.string.misc_alarm_auto_repeat_stopped_text, display))
                 .setSmallIcon(R.drawable.ic_alarm_off)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setCategory(NotificationCompat.CATEGORY_REMINDER)
@@ -682,8 +687,8 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 val existing = manager.getNotificationChannel(CHANNEL_ID_FIRING)
                 if (existing == null) {
                     manager.createNotificationChannel(
-                        NotificationChannel(CHANNEL_ID_FIRING, "Alarm", NotificationManager.IMPORTANCE_HIGH).apply {
-                            description = "Alarm alerts"
+                        NotificationChannel(CHANNEL_ID_FIRING, context.getString(R.string.misc_alarm_title), NotificationManager.IMPORTANCE_HIGH).apply {
+                            description = context.getString(R.string.misc_channel_alarm_description)
                             setBypassDnd(true)
                             lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
                         }
@@ -704,8 +709,8 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 val manager = context.getSystemService(NotificationManager::class.java) ?: return
                 if (manager.getNotificationChannel(CHANNEL_ID_INFO) == null) {
                     manager.createNotificationChannel(
-                        NotificationChannel(CHANNEL_ID_INFO, "Alarm Info", NotificationManager.IMPORTANCE_LOW).apply {
-                            description = "Silent alarm reminders"
+                        NotificationChannel(CHANNEL_ID_INFO, context.getString(R.string.misc_channel_alarm_info), NotificationManager.IMPORTANCE_LOW).apply {
+                            description = context.getString(R.string.misc_channel_alarm_info_description)
                             setSound(null, null)
                             enableVibration(false)
                         }
@@ -767,11 +772,16 @@ class AlarmBroadcastReceiver : BroadcastReceiver() {
                 )
 
                 val builder = NotificationCompat.Builder(context, CHANNEL_ID_INFO)
-                    .setContentTitle("Smart Wake Reminder")
-                    .setContentText("${namePart}Next alarm ~$nextTime. Wake up and use your phone!")
+                    .setContentTitle(context.getString(R.string.misc_smart_wake_title))
+                    .setContentText(
+                        context.getString(R.string.misc_smart_wake_text, namePart, nextTime)
+                    )
                     .setStyle(NotificationCompat.BigTextStyle()
-                        .bigText("${namePart}Alarm will ring again in ~5 minutes (~$nextTime).\n\n" +
-                                "Wake up now and use your phone so the alarm doesn't need to ring again!"))
+                        .bigText(
+                            context.getString(
+                                R.string.misc_smart_wake_big_text, namePart, nextTime
+                            )
+                        ))
                     .setSmallIcon(R.drawable.ic_alarm_smart_wake)
                     .setPriority(NotificationCompat.PRIORITY_LOW)
                     .setCategory(NotificationCompat.CATEGORY_REMINDER)

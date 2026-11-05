@@ -260,13 +260,18 @@ class DailyUsageWorker(context: Context, params: WorkerParameters) : CoroutineWo
         val channelId = "zenith_usage_sync"
         val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O && manager.getNotificationChannel(channelId) == null) {
-            val channel = NotificationChannel(channelId, "Usage Sync", NotificationManager.IMPORTANCE_LOW).apply {
+            val channel = NotificationChannel(
+                channelId,
+                applicationContext.getString(R.string.small_usage_sync_channel),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
                 setShowBadge(false)
             }
             manager.createNotificationChannel(channel)
         }
         manager.notify(999, NotificationCompat.Builder(applicationContext, channelId)
-            .setContentTitle("Daily Report Prepared").setContentText("Your usage has been safely saved.")
+            .setContentTitle(applicationContext.getString(R.string.small_daily_report_prepared))
+            .setContentText(applicationContext.getString(R.string.small_usage_saved))
             .setSmallIcon(R.drawable.ic_calendar).setPriority(NotificationCompat.PRIORITY_LOW).setAutoCancel(true).setGroup("zenith_system").build())
     }
 

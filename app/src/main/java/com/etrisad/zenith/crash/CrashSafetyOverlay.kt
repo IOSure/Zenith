@@ -40,11 +40,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.etrisad.zenith.R
 @Composable
 fun CrashSafetyOverlay(modifier: Modifier = Modifier) {
     val context = LocalContext.current
@@ -87,12 +89,12 @@ fun CrashSafetyOverlay(modifier: Modifier = Modifier) {
                     Spacer(Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "SAFE MODE",
+                            text = stringResource(R.string.winddown_safe_mode),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Your saved data is not loaded",
+                            text = stringResource(R.string.winddown_safe_mode_data_not_loaded),
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -102,12 +104,15 @@ fun CrashSafetyOverlay(modifier: Modifier = Modifier) {
                             SafeMode.restartApp(context)
                         }
                     ) {
-                        Text("Restart", color = MaterialTheme.colorScheme.onErrorContainer)
+                        Text(
+                            stringResource(R.string.winddown_restart),
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
                     }
                     IconButton(onClick = { safeBannerDismissed = true }) {
                         Icon(
                             Icons.Outlined.Close,
-                            contentDescription = "Dismiss",
+                            contentDescription = stringResource(R.string.winddown_dismiss),
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -149,7 +154,7 @@ fun CrashSafetyOverlay(modifier: Modifier = Modifier) {
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = "App crashed - view report",
+                        text = stringResource(R.string.winddown_app_crashed_view_report),
                         style = MaterialTheme.typography.labelLarge
                     )
                     Spacer(Modifier.width(6.dp))
@@ -162,7 +167,7 @@ fun CrashSafetyOverlay(modifier: Modifier = Modifier) {
                     ) {
                         Icon(
                             Icons.Outlined.Close,
-                            contentDescription = "Dismiss",
+                            contentDescription = stringResource(R.string.winddown_dismiss),
                             modifier = Modifier.size(16.dp)
                         )
                     }

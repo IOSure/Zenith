@@ -822,7 +822,7 @@ private fun Rect.isComfortablyVisibleIn(container: IntSize): Boolean {
 }
 
 private fun shareMastery(context: android.content.Context, summary: String) {
-    sendShare(context, "Zenith Guided Path — Zenith Master\n$summary")
+    sendShare(context, context.getString(R.string.onboarding_share_mastery_text, summary))
 }
 
 private fun sendShare(context: android.content.Context, text: String) {

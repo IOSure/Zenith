@@ -23,10 +23,12 @@ import androidx.compose.ui.layout.ContentScale
 import com.etrisad.zenith.ui.components.focus.appIconShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.website.WebsiteRepository
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
 import com.etrisad.zenith.ui.viewmodel.AppInfo
@@ -46,7 +48,7 @@ fun MultiAppPickerBottomSheet(
     onWebsiteSearchChange: ((String) -> Unit)? = null,
     onWebsiteToggled: ((String) -> Unit)? = null,
     showTabs: Boolean = true,
-    title: String = "Select Apps for Schedule",
+    title: String = stringResource(R.string.overlay_select_apps_for_schedule),
     maxSelection: Int? = null
 ) {
     val configuration = LocalConfiguration.current
@@ -106,12 +108,12 @@ fun MultiAppPickerBottomSheet(
                             Tab(
                                 selected = uiState.pickerTab == PickerTab.APPS,
                                 onClick = { onTabChange?.invoke(PickerTab.APPS) },
-                                text = { Text("Apps", fontWeight = FontWeight.Bold) }
+                                text = { Text(stringResource(R.string.overlay_tab_apps), fontWeight = FontWeight.Bold) }
                             )
                             Tab(
                                 selected = uiState.pickerTab == PickerTab.WEBSITES,
                                 onClick = { onTabChange?.invoke(PickerTab.WEBSITES) },
-                                text = { Text("Websites", fontWeight = FontWeight.Bold) }
+                                text = { Text(stringResource(R.string.overlay_tab_websites), fontWeight = FontWeight.Bold) }
                             )
                         }
                     }
@@ -132,12 +134,12 @@ fun MultiAppPickerBottomSheet(
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 shape = RoundedCornerShape(24.dp),
-                                placeholder = { Text("Search apps...") },
+                                placeholder = { Text(stringResource(R.string.overlay_search_apps)) },
                                 leadingIcon = { Icon(Icons.Outlined.Search, contentDescription = null) },
                                 trailingIcon = {
                                     if (uiState.searchQuery.isNotEmpty()) {
                                         IconButton(onClick = { onSearchQueryChange("") }) {
-                                            Icon(Icons.Outlined.Close, contentDescription = "Clear")
+                                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.overlay_clear))
                                         }
                                     }
                                 }
@@ -149,12 +151,12 @@ fun MultiAppPickerBottomSheet(
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 shape = RoundedCornerShape(24.dp),
-                                placeholder = { Text("Enter website URL...") },
+                                placeholder = { Text(stringResource(R.string.overlay_enter_website_url)) },
                                 leadingIcon = { Icon(Icons.Outlined.Language, contentDescription = null) },
                                 trailingIcon = {
                                     if (uiState.websiteSearchQuery.isNotEmpty()) {
                                         IconButton(onClick = { onWebsiteSearchChange?.invoke("") }) {
-                                            Icon(Icons.Outlined.Close, contentDescription = "Clear")
+                                            Icon(Icons.Outlined.Close, contentDescription = stringResource(R.string.overlay_clear))
                                         }
                                     }
                                 }
@@ -208,7 +210,7 @@ fun MultiAppPickerBottomSheet(
             ) {
                 Icon(
                     Icons.AutoMirrored.Outlined.ArrowForward,
-                    contentDescription = "Next",
+                    contentDescription = stringResource(R.string.overlay_next),
                     tint = if (hasSelection) MaterialTheme.colorScheme.onPrimary
                         else MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -259,7 +261,7 @@ private fun MultiAppsContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No apps found for \"${uiState.searchQuery.trim()}\"",
+                            text = stringResource(R.string.overlay_no_apps_found, uiState.searchQuery.trim()),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.outline
                         )
@@ -341,7 +343,7 @@ private fun MultiWebsitesContent(
         if (uiState.websiteSuggestions.isNotEmpty()) {
             item {
                 Text(
-                    text = "Suggestions",
+                    text = stringResource(R.string.overlay_suggestions),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -448,7 +450,7 @@ private fun MultiWebsitesContent(
             } else if (selectedWebsites.isNotEmpty()) {
             item {
                 Text(
-                    text = "Selected Websites",
+                    text = stringResource(R.string.overlay_selected_websites),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -515,7 +517,7 @@ private fun MultiWebsitesContent(
                         trailingContent = {
                             Icon(
                                 imageVector = Icons.Outlined.Close,
-                                contentDescription = "Remove",
+                                contentDescription = stringResource(R.string.overlay_remove),
                                 tint = MaterialTheme.colorScheme.error
                             )
                         },
@@ -541,7 +543,7 @@ private fun MultiWebsitesContent(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Type a website name to add more",
+                                text = stringResource(R.string.overlay_type_website_to_add_more),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.outline
                             )
@@ -563,7 +565,7 @@ private fun MultiWebsitesContent(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No suggestions found",
+                            text = stringResource(R.string.overlay_no_suggestions_found),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.outline
                         )
@@ -592,7 +594,7 @@ private fun MultiWebsitesContent(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
-                                text = "Type a website name to get suggestions",
+                                text = stringResource(R.string.overlay_type_website_for_suggestions),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.outline
                             )

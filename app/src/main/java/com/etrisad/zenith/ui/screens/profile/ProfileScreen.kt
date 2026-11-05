@@ -100,6 +100,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -111,6 +112,7 @@ import androidx.core.content.FileProvider
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.LongTermSection
@@ -197,7 +199,11 @@ fun ProfileScreen(
                 if (path != null) {
                     preferencesRepository.setUserAvatarUri(path)
                 } else {
-                    Toast.makeText(context, "Could not save photo", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.profile_could_not_save_photo),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -211,7 +217,11 @@ fun ProfileScreen(
                 if (path != null) {
                     preferencesRepository.setUserBannerUri(path)
                 } else {
-                    Toast.makeText(context, "Could not save banner", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.profile_could_not_save_banner),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -280,7 +290,7 @@ fun ProfileScreen(
                 avatarUri = preferences.userAvatarUri,
                 bannerUri = preferences.userBannerUri,
                 level = state.level,
-                equippedTitle = equippedTitle?.name ?: "",
+                equippedTitle = equippedTitle?.let { stringResource(it.nameRes) } ?: "",
                 equippedBorder = equippedBorder,
                 equippedShape = equippedShape,
                 isEditing = isEditing,
@@ -312,7 +322,7 @@ fun ProfileScreen(
                 state.achievements.count { it.earnedTier != null }
             }
             Column(modifier = Modifier.onboardingAnchor("profile.xp")) {
-                PreferenceCategory(title = "Progress")
+                PreferenceCategory(title = stringResource(R.string.profile_section_progress))
                 XpCard(
                     level = state.level,
                     levelProgress = state.levelProgress,
@@ -326,7 +336,7 @@ fun ProfileScreen(
 
         item(key = "stats_group") {
             Column {
-                PreferenceCategory(title = "Statistics")
+                PreferenceCategory(title = stringResource(R.string.profile_section_statistics))
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     LifetimeTopAppsCard(
                         topApps = state.topApps,
@@ -373,12 +383,12 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Guided Path Hub",
+                            text = stringResource(R.string.profile_guided_path_hub_title),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Explore chapters, review badges & mastery",
+                            text = stringResource(R.string.profile_guided_path_hub_subtitle),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -398,7 +408,7 @@ fun ProfileScreen(
                     modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                 ) {
                     Text(
-                        text = "Achievements",
+                        text = stringResource(R.string.profile_section_achievements),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.weight(1f)
@@ -409,7 +419,7 @@ fun ProfileScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.ChevronRight,
-                            contentDescription = "See all achievements",
+                            contentDescription = stringResource(R.string.profile_see_all_achievements),
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -460,6 +470,14 @@ fun ProfileScreen(
         }
 
         item(key = "share") {
+            val shareButtonText = if (isSharing) {
+                stringResource(R.string.profile_rendering_card)
+            } else {
+                stringResource(R.string.profile_share_your_profile)
+            }
+            // Resolved outside the coroutine: the share card is drawn from a non-composable scope.
+            val equippedTitleRes = LEVEL_TITLES.find { it.id == preferences.userTitle }
+                ?.takeIf { it.requiredLevel <= state.level }?.nameRes
             ZenithButton(
                 onClick = {
                     scope.launch {
@@ -467,11 +485,12 @@ fun ProfileScreen(
                         val ok = withContext(Dispatchers.IO) {
                             renderAndShareProfile(
                                 context = context,
-                                userName = preferences.userName.ifBlank { "User" },
+                                userName = preferences.userName.ifBlank {
+                                    context.getString(R.string.profile_default_user_name)
+                                },
                                 level = state.level,
                                 xpTotal = state.xpTotal,
-                                userTitle = LEVEL_TITLES.find { it.id == preferences.userTitle }
-                                    ?.takeIf { it.requiredLevel <= state.level }?.name ?: "",
+                                userTitle = equippedTitleRes?.let { context.getString(it) } ?: "",
                                 streakBest = state.streakBest,
                                 topApps = state.topApps,
                                 achievements = state.achievements
@@ -479,13 +498,17 @@ fun ProfileScreen(
                         }
                         isSharing = false
                         if (!ok) {
-                            Toast.makeText(context, "Could not share profile", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.profile_could_not_share_profile),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
                             preferencesRepository.setUserSharedProfile(true)
                         }
                     }
                 },
-                text = if (isSharing) "Rendering card..." else "Share Your Profile",
+                text = shareButtonText,
                 icon = Icons.Outlined.Share,
                 size = ZenithButtonSize.Large,
                 fillMaxWidth = true,
@@ -510,7 +533,11 @@ fun ProfileScreen(
     ) {
         Icon(
             imageVector = if (isEditing) Icons.Outlined.Close else Icons.Outlined.Edit,
-            contentDescription = if (isEditing) "Done editing" else "Edit profile"
+            contentDescription = if (isEditing) {
+                stringResource(R.string.profile_done_editing)
+            } else {
+                stringResource(R.string.profile_edit_profile)
+            }
         )
     }
 
@@ -522,25 +549,31 @@ fun ProfileScreen(
         }
         AlertDialog(
             onDismissRequest = { showNameDialog = false },
-            title = { Text("Display name") },
+            title = { Text(stringResource(R.string.profile_display_name_title)) },
             text = {
                 OutlinedTextField(
                     value = draft,
                     onValueChange = { draft = it.take(MAX_PROFILE_NAME_LENGTH) },
                     singleLine = true,
-                    placeholder = { Text("How should we call you?") },
+                    placeholder = { Text(stringResource(R.string.profile_name_placeholder)) },
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
             },
             confirmButton = {
                 TextButton(onClick = {
-                    scope.launch { preferencesRepository.setUserName(draft.trim().ifBlank { "User" }) }
+                    scope.launch {
+                        preferencesRepository.setUserName(
+                            draft.trim().ifBlank {
+                                context.getString(R.string.profile_default_user_name)
+                            }
+                        )
+                    }
                     showNameDialog = false
-                }) { Text("Save") }
+                }) { Text(stringResource(R.string.profile_save)) }
             },
             dismissButton = {
-                TextButton(onClick = { showNameDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showNameDialog = false }) { Text(stringResource(R.string.profile_cancel)) }
             }
         )
     }
@@ -551,12 +584,12 @@ fun ProfileScreen(
         }
         AlertDialog(
             onDismissRequest = { showBioDialog = false },
-            title = { Text("Bio") },
+            title = { Text(stringResource(R.string.profile_bio_title)) },
             text = {
                 OutlinedTextField(
                     value = draft,
                     onValueChange = { draft = it.take(MAX_PROFILE_BIO_LENGTH) },
-                    placeholder = { Text("A line about you (optional)") },
+                    placeholder = { Text(stringResource(R.string.profile_bio_placeholder)) },
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 2,
@@ -567,10 +600,10 @@ fun ProfileScreen(
                 TextButton(onClick = {
                     scope.launch { preferencesRepository.setUserBio(draft.trim()) }
                     showBioDialog = false
-                }) { Text("Save") }
+                }) { Text(stringResource(R.string.profile_save)) }
             },
             dismissButton = {
-                TextButton(onClick = { showBioDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showBioDialog = false }) { Text(stringResource(R.string.profile_cancel)) }
             }
         )
     }
@@ -625,14 +658,14 @@ fun AchievementUnlockBanner(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Achievement unlocked",
+                    text = stringResource(R.string.profile_achievement_unlocked),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = state?.def?.let { tierDisplayName(it, unlock.tierLevel) }
-                        ?: "New badge",
+                        ?: stringResource(R.string.profile_new_badge),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Black,
                     maxLines = 1,
@@ -652,7 +685,7 @@ fun AchievementUnlockBanner(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Close,
-                    contentDescription = "Dismiss",
+                    contentDescription = stringResource(R.string.profile_dismiss),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(18.dp)
                 )
@@ -740,6 +773,8 @@ private fun ProfileIdentityCard(
     onDeleteAvatar: () -> Unit,
     onDeleteBanner: () -> Unit
 ) {
+    val defaultUserName = stringResource(R.string.profile_default_user_name)
+    val addBioPlaceholder = stringResource(R.string.profile_add_bio_placeholder)
     Card(
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
@@ -779,7 +814,7 @@ private fun ProfileIdentityCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Delete,
-                                contentDescription = "Remove banner",
+                                contentDescription = stringResource(R.string.profile_remove_banner),
                                 tint = MaterialTheme.colorScheme.onErrorContainer,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -792,7 +827,7 @@ private fun ProfileIdentityCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Image,
-                                contentDescription = "Change banner",
+                                contentDescription = stringResource(R.string.profile_change_banner),
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -803,7 +838,7 @@ private fun ProfileIdentityCard(
                 Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = userName.ifBlank { "User" },
+                            text = userName.ifBlank { defaultUserName },
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Black,
                             modifier = Modifier.weight(1f, fill = false)
@@ -816,7 +851,7 @@ private fun ProfileIdentityCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Edit,
-                                contentDescription = "Edit name",
+                                contentDescription = stringResource(R.string.profile_edit_name),
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -832,7 +867,7 @@ private fun ProfileIdentityCard(
                             shape = CircleShape
                         ) {
                             Text(
-                                text = "Level $level",
+                                text = stringResource(R.string.profile_level_format, level),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -855,7 +890,7 @@ private fun ProfileIdentityCard(
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = userBio.ifBlank { "Add a bio..." },
+                            text = userBio.ifBlank { addBioPlaceholder },
                             style = MaterialTheme.typography.bodyMedium,
                             color = if (userBio.isBlank()) {
                                 MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
@@ -872,7 +907,7 @@ private fun ProfileIdentityCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Edit,
-                                contentDescription = "Edit bio",
+                                contentDescription = stringResource(R.string.profile_edit_bio),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -897,8 +932,8 @@ private fun ProfileIdentityCard(
                                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
                             )
                             SettingsToggle(
-                                title = "Show banner on Home",
-                                description = "Use your profile banner in the Daily Screen Time card",
+                                title = stringResource(R.string.profile_show_banner_on_home),
+                                description = stringResource(R.string.profile_show_banner_on_home_desc),
                                 checked = showBannerOnHome,
                                 onCheckedChange = onShowBannerOnHomeChange,
                                 icon = Icons.Outlined.Image,
@@ -959,7 +994,7 @@ private fun ProfileIdentityCard(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Edit,
-                    contentDescription = "Change photo",
+                    contentDescription = stringResource(R.string.profile_change_photo),
                     tint = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier.size(16.dp)
                 )
@@ -973,7 +1008,7 @@ private fun ProfileIdentityCard(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Remove photo",
+                    contentDescription = stringResource(R.string.profile_remove_photo),
                     tint = MaterialTheme.colorScheme.onErrorContainer,
                     modifier = Modifier.size(14.dp)
                 )
@@ -1000,7 +1035,7 @@ private fun LifetimeTopAppsCard(
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = "Most Used - Lifetime",
+                    text = stringResource(R.string.profile_most_used_lifetime),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
@@ -1012,9 +1047,13 @@ private fun LifetimeTopAppsCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = if (lifetimeAppCount > 0) {
-                    "$lifetimeAppCount apps - ${formatDuration(lifetimeTotal)} total"
+                    stringResource(
+                        R.string.profile_lifetime_apps_summary,
+                        lifetimeAppCount,
+                        formatDuration(lifetimeTotal)
+                    )
                 } else {
-                    "Cumulative totals build up as you use your phone"
+                    stringResource(R.string.profile_lifetime_cumulative_hint)
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1022,7 +1061,7 @@ private fun LifetimeTopAppsCard(
             Spacer(modifier = Modifier.height(12.dp))
             if (topApps.isEmpty() && !isLoading) {
                 Text(
-                    text = "No lifetime data yet",
+                    text = stringResource(R.string.profile_no_lifetime_data),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1201,7 +1240,7 @@ private fun ProfileHeatmapCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         LongTermSection(
-            title = "Activity Heatmap",
+            title = stringResource(R.string.profile_activity_heatmap),
             accentColor = MaterialTheme.colorScheme.primary,
             highlightColor = MaterialTheme.colorScheme.tertiary,
             selectedRange = selectedRange,
@@ -1213,7 +1252,7 @@ private fun ProfileHeatmapCard(
             totalMillis = totalPeriod,
             prevTotal = prevTotal,
             dailyHistory = dailyHistory,
-            heatmapEmptyText = "No daily data",
+            heatmapEmptyText = stringResource(R.string.profile_no_daily_data),
             formatDuration = homeViewModel::formatLongDuration,
             periodDays = periodDays,
             dayAppLoader = homeViewModel::getDayAppBreakdown,
@@ -1235,6 +1274,15 @@ private fun XpCard(
 ) {
     val xpToNext = xpToNextLevel(xpTotal)
     val nextReward = remember(level) { nextLevelReward(level) }
+    val nextRewardText = if (nextReward != null) {
+        stringResource(
+            R.string.profile_next_reward_format,
+            nextReward.label(),
+            nextReward.requiredLevel
+        )
+    } else {
+        stringResource(R.string.profile_all_level_rewards_unlocked)
+    }
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(24.dp),
@@ -1258,7 +1306,7 @@ private fun XpCard(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                         Text(
-                            text = "LEVEL",
+                            text = stringResource(R.string.profile_level_label),
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
@@ -1268,19 +1316,23 @@ private fun XpCard(
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "$xpTotal XP",
+                        text = stringResource(R.string.profile_xp_total_format, xpTotal),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Black
                     )
                     Text(
-                        text = "$unlockedBadges/$totalBadges badges",
+                        text = stringResource(
+                            R.string.profile_badges_count,
+                            unlockedBadges,
+                            totalBadges
+                        ),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = "XP details",
+                    contentDescription = stringResource(R.string.profile_xp_details),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.size(24.dp)
                 )
@@ -1298,15 +1350,17 @@ private fun XpCard(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "$xpToNext XP to Level ${level + 1} - tap to open Level",
+                text = stringResource(
+                    R.string.profile_xp_to_next_level,
+                    xpToNext,
+                    level + 1
+                ),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = nextReward?.let { (req, name) ->
-                    "Next reward: $name at Level $req"
-                } ?: "All level rewards unlocked",
+                text = nextRewardText,
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.tertiary
             )
@@ -1373,7 +1427,7 @@ private fun AchievementSquareCard(
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = if (earned) tierDisplayName(achievement.def, achievement.earnedLevel)
-                else achievement.def.title,
+                else stringResource(achievement.def.title),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
@@ -1396,7 +1450,7 @@ private fun AchievementSquareCard(
                 }
             } else {
                 Text(
-                    text = "Locked",
+                    text = stringResource(R.string.profile_locked),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                     textAlign = TextAlign.Center,
@@ -1465,7 +1519,7 @@ fun AchievementDetailSheet(
                         fontWeight = FontWeight.Black
                     )
                     Text(
-                        text = achievement.def.desc,
+                        text = stringResource(achievement.def.desc),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1482,7 +1536,7 @@ fun AchievementDetailSheet(
                 ) {
                     Icon(Icons.Outlined.Explore, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Open Guided Path Hub")
+                    Text(stringResource(R.string.profile_open_guided_path_hub))
                 }
             }
             Spacer(modifier = Modifier.height(20.dp))
@@ -1513,7 +1567,7 @@ fun AchievementDetailSheet(
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Tiers",
+                text = stringResource(R.string.profile_tiers),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -1527,7 +1581,7 @@ fun AchievementDetailSheet(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 TierMiniCard(
-                    label = "Before",
+                    label = stringResource(R.string.profile_tier_before),
                     threshold = thresholdAtOrNull(achievement.def, beforeLevel),
                     tierLevel = beforeLevel,
                     tierName = tierDisplayName(achievement.def, beforeLevel)
@@ -1539,7 +1593,7 @@ fun AchievementDetailSheet(
                     modifier = Modifier.weight(1f).fillMaxHeight()
                 )
                 TierMiniCard(
-                    label = "Current",
+                    label = stringResource(R.string.profile_tier_current),
                     threshold = thresholdAtOrNull(achievement.def, level),
                     tierLevel = level,
                     tierName = tierDisplayName(achievement.def, level)
@@ -1551,7 +1605,7 @@ fun AchievementDetailSheet(
                     modifier = Modifier.weight(1f).fillMaxHeight()
                 )
                 TierMiniCard(
-                    label = "Next",
+                    label = stringResource(R.string.profile_tier_next),
                     threshold = thresholdAtOrNull(achievement.def, nextLevel),
                     tierLevel = nextLevel,
                     tierName = tierDisplayName(achievement.def, nextLevel),
@@ -1564,7 +1618,7 @@ fun AchievementDetailSheet(
             }
             Spacer(modifier = Modifier.height(20.dp))
             Text(
-                text = "Unlock history",
+                text = stringResource(R.string.profile_unlock_history),
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -1576,7 +1630,7 @@ fun AchievementDetailSheet(
             }.sortedBy { it.first }
             if (history.isEmpty()) {
                 Text(
-                    text = "No tier unlocked yet",
+                    text = stringResource(R.string.profile_no_tier_unlocked),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1697,7 +1751,7 @@ fun TierCountStrip(
                     ) {
                         Icon(
                             imageVector = tier.icon,
-                            contentDescription = tier.title,
+                            contentDescription = stringResource(tier.titleRes),
                             tint = if (active) MaterialTheme.colorScheme.onTertiaryContainer
                             else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
                             modifier = Modifier.size(20.dp)
@@ -1705,7 +1759,7 @@ fun TierCountStrip(
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = tier.title,
+                        text = stringResource(tier.titleRes),
                         style = MaterialTheme.typography.labelSmall,
                         color = if (active) MaterialTheme.colorScheme.onSurfaceVariant
                         else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
@@ -1939,7 +1993,11 @@ private fun TierMiniCard(
                 )
                 Text(
                     text = date?.let { prettyProfileDate(it) }
-                        ?: if (highlighted) "In progress" else "Locked",
+                        ?: if (highlighted) {
+                            stringResource(R.string.profile_in_progress)
+                        } else {
+                            stringResource(R.string.profile_locked)
+                        },
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     maxLines = 1
@@ -1951,9 +2009,10 @@ private fun TierMiniCard(
 
 fun prettyProfileDate(raw: String): String {
     return try {
-        val parsed = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.ENGLISH).parse(raw)
+        val parsed = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US).parse(raw)
             ?: return raw
-        java.text.SimpleDateFormat("d MMM yyyy", java.util.Locale.ENGLISH).format(parsed)
+        // Locale-aware output so dates follow the app language instead of forcing English months.
+        java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(parsed)
     } catch (_: Exception) {
         raw
     }
@@ -2011,7 +2070,7 @@ private fun renderAndShareProfile(
         canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), bg)
         canvas.drawRect(0f, 0f, width.toFloat(), 300f, banner)
         var y = 140f
-        canvas.drawText("ZENITH PROFILE", 64f, y, accent)
+        canvas.drawText(context.getString(R.string.profile_share_card_title), 64f, y, accent)
         y += 100f
         canvas.drawText(userName.take(24), 64f, y, title)
         y += 70f
@@ -2019,13 +2078,21 @@ private fun renderAndShareProfile(
             canvas.drawText(userTitle, 64f, y, accent)
             y += 70f
         }
-        canvas.drawText("Level $level  -  $xpTotal XP  -  Best streak $streakBest days", 64f, y, sub)
+        canvas.drawText(
+            context.getString(
+                R.string.profile_share_card_stats,
+                level,
+                xpTotal,
+                streakBest
+            ),
+            64f, y, sub
+        )
 
         y += 120f
-        canvas.drawText("TOP APPS (LIFETIME)", 64f, y, section)
+        canvas.drawText(context.getString(R.string.profile_share_card_top_apps), 64f, y, section)
         y += 70f
         if (topApps.isEmpty()) {
-            canvas.drawText("No data yet", 64f, y, faint)
+            canvas.drawText(context.getString(R.string.profile_no_data_yet), 64f, y, faint)
             y += rowH
         } else {
             topApps.forEachIndexed { i, app ->
@@ -2038,16 +2105,22 @@ private fun renderAndShareProfile(
         }
         y += 40f
         val unlocked = achievements.count { it.earnedTier != null }
-        canvas.drawText("ACHIEVEMENTS  $unlocked/${achievements.size}", 64f, y, section)
+        canvas.drawText(
+            context.getString(R.string.profile_share_card_achievements, unlocked, achievements.size),
+            64f, y, section
+        )
         y += 70f
         achievements.filter { it.earnedTier != null }.take(6).forEach { ach ->
             canvas.drawText(
-                tierDisplayName(ach.def, ach.earnedLevel).take(40),
+                tierDisplayName(context, ach.def, ach.earnedLevel).take(40),
                 64f, y, body
             )
             y += rowH.toFloat()
         }
-        canvas.drawText("Tracked 100% offline with Zenith", 64f, height - 64f, faint)
+        canvas.drawText(
+            context.getString(R.string.profile_share_card_footer),
+            64f, height - 64f, faint
+        )
 
         val file = File(context.cacheDir, "zenith-profile.png")
         file.outputStream().use { out -> bitmap.compress(Bitmap.CompressFormat.PNG, 100, out) }
@@ -2059,11 +2132,22 @@ private fun renderAndShareProfile(
             putExtra(Intent.EXTRA_STREAM, uri)
             putExtra(
                 Intent.EXTRA_TEXT,
-                "$userName${if (userTitle.isNotBlank()) " ($userTitle)" else ""} - Zenith Level $level ($xpTotal XP), best streak $streakBest days"
+                context.getString(
+                    R.string.profile_share_text_format,
+                    userName,
+                    if (userTitle.isNotBlank()) " ($userTitle)" else "",
+                    level,
+                    xpTotal,
+                    streakBest
+                )
             )
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(intent, "Share Your Profile").apply {
+        context.startActivity(
+            Intent.createChooser(
+                intent,
+                context.getString(R.string.profile_share_your_profile)
+            ).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         })
         true

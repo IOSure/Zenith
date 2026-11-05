@@ -28,11 +28,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.ConfirmBottomSheet
 import com.etrisad.zenith.ui.components.ZenithButton
@@ -76,7 +78,7 @@ fun PomodoroScreen(
     fun startWithPreflight() {
         when {
             !Settings.canDrawOverlays(pomoContext) -> {
-                Toast.makeText(pomoContext, "Display over other apps is required for blocking", Toast.LENGTH_LONG).show()
+                Toast.makeText(pomoContext, pomoContext.getString(R.string.pomodoro_toast_overlay_required), Toast.LENGTH_LONG).show()
                 pomoContext.startActivity(
                     Intent(
                         Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -85,13 +87,13 @@ fun PomodoroScreen(
                 )
             }
             !isAccessibilityServiceEnabled(pomoContext) -> {
-                Toast.makeText(pomoContext, "Accessibility service is required to detect apps", Toast.LENGTH_LONG).show()
+                Toast.makeText(pomoContext, pomoContext.getString(R.string.pomodoro_toast_accessibility_required), Toast.LENGTH_LONG).show()
                 pomoContext.startActivity(
                     Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
             }
             !isNotificationListenerEnabled(pomoContext) -> {
-                Toast.makeText(pomoContext, "Notification access is required to block notifications", Toast.LENGTH_LONG).show()
+                Toast.makeText(pomoContext, pomoContext.getString(R.string.pomodoro_toast_notification_required), Toast.LENGTH_LONG).show()
                 pomoContext.startActivity(
                     Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
@@ -203,7 +205,7 @@ fun PomodoroScreen(
 
                 item(key = "stats") {
                     Column {
-                        PreferenceCategory(title = "Statistics")
+                        PreferenceCategory(title = stringResource(R.string.pomodoro_statistics))
                         PomodoroStatsSection(viewModel = viewModel)
                     }
                 }
@@ -258,7 +260,7 @@ fun PomodoroScreen(
                 if (!sessionActive) {
                     ZenithButton(
                         onClick = { startWithPreflight() },
-                        text = "Start Focus",
+                        text = stringResource(R.string.pomodoro_start_focus),
                         icon = Icons.Outlined.PlayArrow,
                         size = ZenithButtonSize.ExtraLarge,
                         fillMaxWidth = true
@@ -279,7 +281,7 @@ fun PomodoroScreen(
                                         if (paused) viewModel.resumeSession()
                                         else viewModel.pauseSession()
                                     },
-                                    text = if (paused) "Resume Session" else "Pause Session",
+                                    text = if (paused) stringResource(R.string.pomodoro_resume_session) else stringResource(R.string.pomodoro_pause_session),
                                     icon = if (paused) Icons.Outlined.PlayArrow else Icons.Outlined.Pause,
                                     type = if (paused) ZenithButtonType.Filled else ZenithButtonType.Outlined,
                                     containerColor = if (paused) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.tertiaryContainer,
@@ -293,7 +295,7 @@ fun PomodoroScreen(
                     if (uiState.isBreakActive) {
                         ZenithButton(
                             onClick = { viewModel.skipToNextSession() },
-                            text = if (uiState.currentSessionNumber >= uiState.sessionCount) "Skip to End" else "Skip Break",
+                            text = if (uiState.currentSessionNumber >= uiState.sessionCount) stringResource(R.string.pomodoro_skip_to_end) else stringResource(R.string.pomodoro_skip_break),
                             icon = Icons.Outlined.SkipNext,
                             type = ZenithButtonType.Text,
                             size = ZenithButtonSize.Large,
@@ -303,7 +305,7 @@ fun PomodoroScreen(
 
                     ZenithButton(
                         onClick = { showDisableSheet = true },
-                        text = if (uiState.currentSessionNumber >= uiState.sessionCount) "End Pomodoro Session" else "End Session",
+                        text = if (uiState.currentSessionNumber >= uiState.sessionCount) stringResource(R.string.pomodoro_end_pomodoro_session) else stringResource(R.string.pomodoro_end_session),
                         icon = Icons.Outlined.Stop,
                         type = ZenithButtonType.Text,
                         size = ZenithButtonSize.Large,
@@ -366,7 +368,7 @@ fun PomodoroScreen(
             },
             onSearchQueryChange = { searchQuery = it },
             showTabs = false,
-            title = "Select Allowed Apps",
+            title = stringResource(R.string.pomodoro_select_allowed_apps),
             maxSelection = uiState.maxSelection
         )
     }
@@ -409,12 +411,12 @@ fun PomodoroScreen(
                     .navigationBarsPadding()
             ) {
                 Text(
-                    text = "Save App Selection",
+                    text = stringResource(R.string.pomodoro_save_app_selection),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Name this app selection preset to easily apply it later.",
+                    text = stringResource(R.string.pomodoro_save_selection_desc),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -422,7 +424,7 @@ fun PomodoroScreen(
                 OutlinedTextField(
                     value = presetNameInput,
                     onValueChange = { presetNameInput = it },
-                    placeholder = { Text("e.g., Work, Study, Focus") },
+                    placeholder = { Text(stringResource(R.string.pomodoro_preset_name_placeholder)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -439,7 +441,7 @@ fun PomodoroScreen(
                             showPresetSaveSheet = false
                         }
                     },
-                    text = "Save Preset",
+                    text = stringResource(R.string.pomodoro_save_preset),
                     icon = Icons.Outlined.Save,
                     fillMaxWidth = true,
                     enabled = presetNameInput.isNotBlank()
@@ -447,7 +449,7 @@ fun PomodoroScreen(
                 Spacer(modifier = Modifier.height(8.dp))
                 ZenithButton(
                     onClick = { showPresetSaveSheet = false },
-                    text = "Cancel",
+                    text = stringResource(R.string.pomodoro_cancel),
                     type = ZenithButtonType.Text,
                     fillMaxWidth = true
                 )
@@ -470,14 +472,14 @@ fun PomodoroScreen(
                     .navigationBarsPadding()
             ) {
                 Text(
-                    text = "Apply Preset",
+                    text = stringResource(R.string.pomodoro_apply_preset),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 
                 if (presetList.isEmpty()) {
-                    Text("No presets saved yet.", modifier = Modifier.padding(vertical = 32.dp))
+                    Text(stringResource(R.string.pomodoro_no_presets), modifier = Modifier.padding(vertical = 32.dp))
                 } else {
                     presetList.forEachIndexed { index, pair ->
                         val name = pair.first
@@ -509,7 +511,7 @@ fun PomodoroScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                    Text("${packages.size} apps", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(stringResource(R.string.pomodoro_apps_count, packages.size), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                                 Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
@@ -555,7 +557,7 @@ fun TimeSettingsCard(
         ) {
             TimeAdjustmentCard(
                 modifier = Modifier.weight(1f),
-                title = "Focus",
+                title = stringResource(R.string.pomodoro_focus),
                 value = focusText,
                 onValueChange = { focusText = it; it.toIntOrNull()?.let(onSessionDurationChange) },
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 8.dp, bottomStart = 8.dp, bottomEnd = 8.dp),
@@ -563,7 +565,7 @@ fun TimeSettingsCard(
             )
             TimeAdjustmentCard(
                 modifier = Modifier.weight(1f),
-                title = "Break",
+                title = stringResource(R.string.pomodoro_break),
                 value = breakText,
                 onValueChange = { breakText = it; it.toIntOrNull()?.let(onBreakDurationChange) },
                 shape = middleShape,
@@ -571,7 +573,7 @@ fun TimeSettingsCard(
             )
             TimeAdjustmentCard(
                 modifier = Modifier.weight(1f),
-                title = "Long",
+                title = stringResource(R.string.pomodoro_long),
                 value = longBreakText,
                 onValueChange = { longBreakText = it; it.toIntOrNull()?.let(onLongBreakDurationChange) },
                 shape = RoundedCornerShape(topEnd = 24.dp, topStart = 8.dp, bottomStart = 8.dp, bottomEnd = 8.dp),
@@ -583,8 +585,8 @@ fun TimeSettingsCard(
         CardGroup(shape = middleShape, containerColor = containerColor) {
             ToggleOptionRow(
                 icon = Icons.Outlined.Repeat,
-                title = "Sessions",
-                subtitle = "Total sessions to complete",
+                title = stringResource(R.string.pomodoro_sessions),
+                subtitle = stringResource(R.string.pomodoro_sessions_total_desc),
                 options = listOf(2, 3, 4, 6, 8, 10),
                 selected = sessionCount,
                 onSelect = onSessionCountChange
@@ -594,8 +596,8 @@ fun TimeSettingsCard(
         CardGroup(shape = bottomShape, containerColor = containerColor) {
             ToggleOptionRow(
                 icon = Icons.Outlined.HourglassEmpty,
-                title = "Long Break Every",
-                subtitle = "Sessions before a long break",
+                title = stringResource(R.string.pomodoro_long_break_every),
+                subtitle = stringResource(R.string.pomodoro_long_break_every_desc),
                 options = listOf(2, 3, 4, 6, 8),
                 selected = sessionsBeforeLongBreak,
                 onSelect = onSessionsBeforeLongBreakChange
@@ -722,12 +724,15 @@ fun AppSelectionCard(
     val middleShape = RoundedCornerShape(8.dp)
     val bottomShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
 
+    val appsCountFormat = stringResource(R.string.pomodoro_apps_count)
+    val moreSelectedLabel = if (allowedPackages.size > 2) stringResource(R.string.pomodoro_more_selected, allowedPackages.size - 2) else ""
+
     Column {
-        PreferenceCategory(title = "App Protection")
+        PreferenceCategory(title = stringResource(R.string.pomodoro_app_protection))
         CardGroup(shape = topShape, containerColor = containerColor) {
             SettingsToggle(
-                title = "Block apps behind puzzle",
-                description = "Selected apps require a puzzle to access",
+                title = stringResource(R.string.pomodoro_block_apps_puzzle),
+                description = stringResource(R.string.pomodoro_block_apps_puzzle_desc),
                 checked = blockAllowedApps,
                 onCheckedChange = onBlockAllowedAppsChange,
                 icon = Icons.Outlined.Lock,
@@ -737,8 +742,8 @@ fun AppSelectionCard(
         Spacer(modifier = Modifier.height(4.dp))
         CardGroup(shape = bottomShape, containerColor = containerColor) {
             SettingsToggle(
-                title = "Pauseable Session",
-                description = "Allow pausing to access apps freely",
+                title = stringResource(R.string.pomodoro_pauseable_session),
+                description = stringResource(R.string.pomodoro_pauseable_session_desc),
                 checked = pauseable,
                 onCheckedChange = onPauseableChange,
                 icon = Icons.Outlined.PauseCircle,
@@ -748,7 +753,7 @@ fun AppSelectionCard(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        PreferenceCategory(title = "App Selection")
+        PreferenceCategory(title = stringResource(R.string.pomodoro_app_selection))
         CardGroup(shape = topShape, containerColor = containerColor) {
             val context = LocalContext.current
             val selectedCount = allowedPackages.size
@@ -777,18 +782,18 @@ fun AppSelectionCard(
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            "Allowed Apps",
+                            stringResource(R.string.pomodoro_allowed_apps),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            "All apps will be blocked",
+                            stringResource(R.string.pomodoro_all_apps_blocked),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     val maxOptions = remember { listOf(3, 5, 7, 10, 15) }
-                    val maxDropdownOptions = remember { maxOptions.map { "$it apps" to it } }
+                    val maxDropdownOptions = remember(appsCountFormat) { maxOptions.map { appsCountFormat.format(it) to it } }
                     ZenithDropdown(
                         options = maxDropdownOptions,
                         selectedOption = maxSelection,
@@ -821,7 +826,7 @@ fun AppSelectionCard(
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "$selectedCount Apps Selected",
+                            text = stringResource(R.string.pomodoro_apps_selected, selectedCount),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -831,14 +836,14 @@ fun AppSelectionCard(
                                     if (index > 0) append(", ")
                                     append(name)
                                 }
-                                if (selectedCount > 2) append(" +${selectedCount - 2} more")
+                                if (selectedCount > 2) append(" $moreSelectedLabel")
                             },
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     val maxOptions = remember { listOf(3, 5, 7, 10, 15) }
-                    val maxDropdownOptions = remember { maxOptions.map { "$it apps" to it } }
+                    val maxDropdownOptions = remember(appsCountFormat) { maxOptions.map { appsCountFormat.format(it) to it } }
                     ZenithDropdown(
                         options = maxDropdownOptions,
                         selectedOption = maxSelection,
@@ -853,7 +858,7 @@ fun AppSelectionCard(
             Box(modifier = Modifier.padding(16.dp)) {
                 ZenithButton(
                     onClick = onAppPickerClick,
-                    text = if (allowedPackages.isEmpty()) "Select apps" else "Change selection",
+                    text = if (allowedPackages.isEmpty()) stringResource(R.string.pomodoro_select_apps) else stringResource(R.string.pomodoro_change_selection),
                     icon = Icons.Outlined.Edit,
                     type = ZenithButtonType.Outlined,
                     size = ZenithButtonSize.Large,
@@ -865,7 +870,7 @@ fun AppSelectionCard(
         val presets = remember(presetsJson) { viewModel.getPresets() }
         if (presets.isNotEmpty() || allowedPackages.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
-            PreferenceCategory(title = "Presets")
+            PreferenceCategory(title = stringResource(R.string.pomodoro_presets))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -874,7 +879,7 @@ fun AppSelectionCard(
             ) {
                 ZenithButton(
                     onClick = onSavePreset,
-                    text = "Save current",
+                    text = stringResource(R.string.pomodoro_save_current),
                     icon = Icons.Outlined.Save,
                     type = ZenithButtonType.Tonal,
                     size = ZenithButtonSize.Medium,
@@ -883,7 +888,7 @@ fun AppSelectionCard(
                 if (presets.isNotEmpty()) {
                     ZenithButton(
                         onClick = onApplyPreset,
-                        text = "Load preset",
+                        text = stringResource(R.string.pomodoro_load_preset),
                         icon = Icons.Outlined.Download,
                         type = ZenithButtonType.Tonal,
                         size = ZenithButtonSize.Medium,
@@ -921,11 +926,11 @@ fun AppSelectionCard(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                                Text("${packages.size} apps", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(stringResource(R.string.pomodoro_apps_count, packages.size), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                             Icon(Icons.Outlined.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                             IconButton(onClick = { onDeletePreset(name) }) {
-                                Icon(Icons.Outlined.Delete, contentDescription = "Delete", modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.error)
+                                Icon(Icons.Outlined.Delete, contentDescription = stringResource(R.string.pomodoro_delete), modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.error)
                             }
                         }
                     }
@@ -1045,16 +1050,16 @@ fun PomodoroStatusProgress(
                 val minutes = (remaining / 60000).toInt()
                 val seconds = ((remaining % 60000) / 1000).toInt()
                 Text(
-                    text = if (isPreview) "${minutes}m" else "${minutes}m ${seconds}s",
+                    text = if (isPreview) stringResource(R.string.pomodoro_duration_minutes, minutes) else stringResource(R.string.pomodoro_duration_minutes_seconds, minutes, seconds),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Black
                 )
                 Text(
                     text = when {
-                        isPreview -> "Ready to Focus"
-                        isBreakActive -> if (isLongBreak) "Long Break $currentSession/$totalSessions" else "Break $currentSession/$totalSessions"
-                        isPaused -> "Paused - Session $currentSession/$totalSessions"
-                        else -> "Session $currentSession/$totalSessions"
+                        isPreview -> stringResource(R.string.pomodoro_ready_to_focus)
+                        isBreakActive -> if (isLongBreak) stringResource(R.string.pomodoro_long_break_status, currentSession, totalSessions) else stringResource(R.string.pomodoro_break_status, currentSession, totalSessions)
+                        isPaused -> stringResource(R.string.pomodoro_paused_status, currentSession, totalSessions)
+                        else -> stringResource(R.string.pomodoro_session_status, currentSession, totalSessions)
                     },
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

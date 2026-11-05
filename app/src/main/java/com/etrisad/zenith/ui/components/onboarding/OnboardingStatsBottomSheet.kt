@@ -10,9 +10,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.ZenithButton
 import com.etrisad.zenith.ui.components.ZenithButtonType
@@ -74,13 +76,13 @@ fun OnboardingStatsContent(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Statistic Experience",
+            text = stringResource(R.string.winddown_stats_title),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
         Text(
-            text = "Choose how you want to see your usage history starting from today.",
+            text = stringResource(R.string.winddown_stats_description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -89,10 +91,16 @@ fun OnboardingStatsContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         OptionCard(
-            title = "Start Fresh (Recommended)",
-            description = "Only show data recorded by Zenith. Previous days will appear empty.",
-            pros = listOf("Accurate Zenith tracking", "Clean visualization"),
-            cons = listOf("No history for past days", "Needs more usage for better stats"),
+            title = stringResource(R.string.winddown_stats_start_fresh_title),
+            description = stringResource(R.string.winddown_stats_start_fresh_description),
+            pros = listOf(
+                stringResource(R.string.winddown_stats_start_fresh_pro_accurate),
+                stringResource(R.string.winddown_stats_start_fresh_pro_clean)
+            ),
+            cons = listOf(
+                stringResource(R.string.winddown_stats_start_fresh_con_no_history),
+                stringResource(R.string.winddown_stats_start_fresh_con_needs_usage)
+            ),
             icon = Icons.Outlined.AutoAwesome,
             isHighlighted = true,
             onClick = { onSelection(false) },
@@ -102,10 +110,17 @@ fun OnboardingStatsContent(
         Spacer(modifier = Modifier.height(4.dp))
 
         OptionCard(
-            title = "Populate with System Data",
-            description = "Use Android system usage to fill history for previous days.",
-            pros = listOf("Instant historical data", "Complete overview"),
-            cons = listOf("Might not be accurate", "May include background usage", "Less precise than Zenith"),
+            title = stringResource(R.string.winddown_stats_system_title),
+            description = stringResource(R.string.winddown_stats_system_description),
+            pros = listOf(
+                stringResource(R.string.winddown_stats_system_pro_instant),
+                stringResource(R.string.winddown_stats_system_pro_overview)
+            ),
+            cons = listOf(
+                stringResource(R.string.winddown_stats_system_con_inaccurate),
+                stringResource(R.string.winddown_stats_system_con_background),
+                stringResource(R.string.winddown_stats_system_con_less_precise)
+            ),
             icon = Icons.Outlined.History,
             isHighlighted = false,
             onClick = { onSelection(true) },
@@ -117,7 +132,7 @@ fun OnboardingStatsContent(
         ZenithButton(
             onClick = {},
             onHoldComplete = onSkip,
-            text = "Hold to Skip",
+            text = stringResource(R.string.winddown_hold_to_skip),
             type = ZenithButtonType.Hold,
             fillMaxWidth = true,
             holdDuration = 2000L

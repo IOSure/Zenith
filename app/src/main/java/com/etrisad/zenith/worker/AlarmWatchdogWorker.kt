@@ -83,9 +83,9 @@ class AlarmWatchdogWorker(
                 val existing = manager.getNotificationChannel(channelId)
                 if (existing == null) {
                     val channel = NotificationChannel(
-                        channelId, "Alarm", NotificationManager.IMPORTANCE_HIGH
+                        channelId, applicationContext.getString(R.string.small_alarm_channel_name), NotificationManager.IMPORTANCE_HIGH
                     ).apply {
-                        description = "Alarm alerts"
+                        description = applicationContext.getString(R.string.small_alarm_channel_description)
                         setBypassDnd(true)
                         lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
                     }
@@ -112,8 +112,8 @@ class AlarmWatchdogWorker(
             )
 
             val builder = NotificationCompat.Builder(applicationContext, channelId)
-                .setContentTitle("Missed Alarm")
-                .setContentText("It's $alarmTime!")
+                .setContentTitle(applicationContext.getString(R.string.small_missed_alarm))
+                .setContentText(applicationContext.getString(R.string.small_its_time_exclaim, alarmTime))
                 .setSmallIcon(R.drawable.ic_flag)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)

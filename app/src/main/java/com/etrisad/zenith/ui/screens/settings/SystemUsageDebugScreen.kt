@@ -9,8 +9,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.UsageHistoryCard
 import com.etrisad.zenith.ui.components.ZenithContainedLoadingIndicator
 import com.etrisad.zenith.ui.viewmodel.HomeViewModel
@@ -45,7 +47,7 @@ fun SystemUsageDebugScreen(
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Text(
-                        "Fetching system usage events...",
+                        stringResource(R.string.misc_sys_debug_loading),
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -63,13 +65,13 @@ fun SystemUsageDebugScreen(
             ) {
                 item {
                     Text(
-                        text = "System Usage Fetch (Debug)",
+                        text = stringResource(R.string.misc_sys_debug_title),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.ExtraBold,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = "This screen shows usage history data fetched directly from Android's UsageStatsManager events, specifically processed to match Digital Wellbeing's screen-time calculation logic.",
+                        text = stringResource(R.string.misc_sys_debug_description),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -81,7 +83,7 @@ fun SystemUsageDebugScreen(
                         history = historyData,
                         targetMillis = 0L,
                         formatDuration = { viewModel.formatDuration(it) },
-                        title = "System Usage (21 Days)",
+                        title = stringResource(R.string.misc_sys_debug_card_title),
                         containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.3f)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -105,7 +107,7 @@ fun SystemUsageDebugScreen(
                             )
                             Spacer(modifier = Modifier.width(16.dp))
                             Text(
-                                text = "Zenith's regular history uses a combination of database records and system snapshots. This debug view is 'stateless' and re-processes system events every time.",
+                                text = stringResource(R.string.misc_sys_debug_info),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )

@@ -54,11 +54,9 @@ import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -67,6 +65,7 @@ import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.ui.components.UninstalledAppCard
 import com.etrisad.zenith.ui.components.focus.AppTypeTab
@@ -229,6 +228,10 @@ fun HomeScreenContent(
         }
     }
     val isAccessibilityEnabled = rememberAccessibilityServiceEnabled()
+
+    val activeGoalsTitle = stringResource(R.string.home_active_goals)
+    val activeShieldsTitle = stringResource(R.string.home_active_shields)
+    val shieldsSectionTitle = stringResource(R.string.home_shields_section)
 
     val listState = rememberLazyListState()
     val guideScrollHub = LocalOnboardingScroll.current
@@ -433,29 +436,9 @@ fun HomeScreenContent(
                     val icon = if (showFreshInstallWarning) Icons.Outlined.Analytics else Icons.Outlined.Info
                     
                     val message = if (showFreshInstallWarning) {
-                        buildAnnotatedString {
-                            append("Today's data may be ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("inaccurate")
-                            }
-                            append(" because Zenith is still collecting your usage patterns. We recommend using Zenith for at least ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("3 days")
-                            }
-                            append(" for more accurate tracking and insights.")
-                        }
+                        stringResource(R.string.home_data_warning_fresh_install)
                     } else {
-                        buildAnnotatedString {
-                            append("The data for the selected day is taken directly from the usage system and may ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("not be entirely accurate")
-                            }
-                            append(". So take it with a ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("grain of salt")
-                            }
-                            append(".")
-                        }
+                        stringResource(R.string.home_data_warning_system_data)
                     }
 
                     Card(
@@ -575,7 +558,7 @@ fun HomeScreenContent(
 
             activeShieldSection(
                 key = "goals",
-                title = "Active Goals",
+                title = activeGoalsTitle,
                 shields = uiState.activeGoals,
                 sortType = uiState.goalSortType,
                 onSortTypeChange = onGoalSortTypeChange,
@@ -593,7 +576,7 @@ fun HomeScreenContent(
 
             item(key = "shields_header") {
                 ShieldSortHeader(
-                    title = "Active Shields",
+                    title = activeShieldsTitle,
                     currentSortType = uiState.shieldSortType,
                     onSortTypeChange = onShieldSortTypeChange
                 )
@@ -612,10 +595,10 @@ fun HomeScreenContent(
                         )
                     ) {
                         val tierLabel = when {
-                            uiState.incentiveProgress < 0.25f -> "Locked"
-                            uiState.incentiveProgress < 0.5f -> "Limited Access"
-                            uiState.incentiveProgress < 0.75f -> "Moderate Access"
-                            else -> "Almost Unlocked"
+                            uiState.incentiveProgress < 0.25f -> stringResource(R.string.home_incentive_tier_locked)
+                            uiState.incentiveProgress < 0.5f -> stringResource(R.string.home_incentive_tier_limited)
+                            uiState.incentiveProgress < 0.75f -> stringResource(R.string.home_incentive_tier_moderate)
+                            else -> stringResource(R.string.home_incentive_tier_almost_unlocked)
                         }
                         val animatedProgress by animateFloatAsState(
                             targetValue = uiState.incentiveProgress,
@@ -659,7 +642,7 @@ fun HomeScreenContent(
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Outlined.Timer,
-                                                contentDescription = "Bonus",
+                                                contentDescription = stringResource(R.string.home_incentive_bonus_content_description),
                                                 modifier = Modifier.size(10.dp),
                                                 tint = if (uiState.bonusUsesLeft > 0) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
@@ -678,13 +661,13 @@ fun HomeScreenContent(
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "Shields: $tierLabel",
+                                        text = stringResource(R.string.home_incentive_shields_status, tierLabel),
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = "Complete your app goals to earn shield access.",
+                                        text = stringResource(R.string.home_incentive_goal_hint),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
@@ -720,7 +703,7 @@ fun HomeScreenContent(
 
             activeShieldSection(
                 key = "shields",
-                title = "Shields",
+                title = shieldsSectionTitle,
                 shields = uiState.activeShields,
                 sortType = uiState.shieldSortType,
                 onSortTypeChange = onShieldSortTypeChange,
@@ -882,7 +865,7 @@ fun UsageDashboard(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.LocalFireDepartment,
-                            contentDescription = "Streak",
+                            contentDescription = stringResource(R.string.home_streak_content_description),
                             tint = if (globalCurrentStreak > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                             modifier = Modifier.size(18.dp)
                         )
@@ -906,7 +889,7 @@ fun UsageDashboard(
                 }
 
                 Text(
-                    text = "Daily Screen Time",
+                    text = stringResource(R.string.home_daily_screen_time),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -933,7 +916,7 @@ fun UsageDashboard(
                 ) {
                     Row(verticalAlignment = Alignment.Bottom) {
                         DigitTicker(hours.toString(), MaterialTheme.typography.displayLarge, MaterialTheme.colorScheme.onSurface, prefix = "h")
-                        TickerUnit("h")
+                        TickerUnit(stringResource(R.string.home_duration_unit_hours))
                         Spacer(modifier = Modifier.width(12.dp))
                     }
                 }
@@ -945,7 +928,7 @@ fun UsageDashboard(
                 ) {
                     Row(verticalAlignment = Alignment.Bottom) {
                         DigitTicker(minutes.toString(), MaterialTheme.typography.displayLarge, MaterialTheme.colorScheme.onSurface, prefix = "m")
-                        TickerUnit("m")
+                        TickerUnit(stringResource(R.string.home_duration_unit_minutes))
                     }
                 }
 
@@ -956,7 +939,7 @@ fun UsageDashboard(
                 ) {
                     Row(verticalAlignment = Alignment.Bottom) {
                         DigitTicker(seconds.toString(), MaterialTheme.typography.displayLarge, MaterialTheme.colorScheme.onSurface, prefix = "s")
-                        TickerUnit("s")
+                        TickerUnit(stringResource(R.string.home_duration_unit_seconds))
                     }
                 }
             }
@@ -975,9 +958,13 @@ fun UsageDashboard(
                 ) { (exceeded, remaining) ->
                     Text(
                         text = if (exceeded)
-                            "Limit exceeded! Time to rest and reset for tomorrow."
+                            stringResource(R.string.home_limit_exceeded)
                         else
-                            "Target: ${formatDuration(targetMillis)} (${formatDuration(remaining)} left)",
+                            stringResource(
+                                R.string.home_target_remaining,
+                                formatDuration(targetMillis),
+                                formatDuration(remaining)
+                            ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = if (exceeded) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
@@ -1059,13 +1046,13 @@ fun ScreenTimeTargetBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Daily Screen Time Target",
+                        text = stringResource(R.string.home_target_sheet_title),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Set a goal to help you stay mindful of your device usage",
+                        text = stringResource(R.string.home_target_sheet_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                         textAlign = TextAlign.Center
@@ -1088,7 +1075,7 @@ fun ScreenTimeTargetBottomSheet(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Hours",
+                                text = stringResource(R.string.home_target_hours),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
@@ -1124,7 +1111,7 @@ fun ScreenTimeTargetBottomSheet(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Minutes",
+                                text = stringResource(R.string.home_target_minutes),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold
@@ -1160,7 +1147,7 @@ fun ScreenTimeTargetBottomSheet(
                     presets.forEachIndexed { index, preset ->
                         val currentMinutes = (hourText.toIntOrNull() ?: 0) * 60 + (minuteText.toIntOrNull() ?: 0)
                         val isSelected = currentMinutes == preset
-                        val label = "${preset / 60}h"
+                        val label = stringResource(R.string.home2_target_preset_hours, preset / 60)
                         val pShape = when (index) {
                             0 -> RoundedCornerShape(bottomStart = 28.dp, topStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp)
                             presets.lastIndex -> RoundedCornerShape(bottomEnd = 28.dp, topEnd = 8.dp, topStart = 8.dp, bottomStart = 8.dp)
@@ -1200,7 +1187,7 @@ fun ScreenTimeTargetBottomSheet(
                                     onSave(0)
                                 }
                             },
-                            text = "Remove",
+                            text = stringResource(R.string.home_target_remove),
                             type = ZenithButtonType.Tonal,
                             containerColor = MaterialTheme.colorScheme.errorContainer,
                             contentColor = MaterialTheme.colorScheme.onErrorContainer,
@@ -1216,7 +1203,7 @@ fun ScreenTimeTargetBottomSheet(
                                 onSave((hourText.toIntOrNull() ?: 0) * 60 + (minuteText.toIntOrNull() ?: 0))
                             }
                         },
-                        text = "Save Target",
+                        text = stringResource(R.string.home_target_save),
                         weight = 1.5f,
                         isFirst = initialMinutes <= 0,
                         isLast = true
@@ -1246,7 +1233,7 @@ fun UsageTrendsRow(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "Yesterday",
+                    stringResource(R.string.home_yesterday),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1268,7 +1255,7 @@ fun UsageTrendsRow(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    "Trend",
+                    stringResource(R.string.home_trend),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1343,7 +1330,7 @@ fun TopAppsSection(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Top Used Apps",
+                    text = stringResource(R.string.home_top_used_apps),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
@@ -1382,7 +1369,7 @@ fun TopAppsSection(
 
                 Icon(
                     imageVector = if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
-                    contentDescription = if (expanded) "Collapse" else "Expand"
+                    contentDescription = if (expanded) stringResource(R.string.home_collapse) else stringResource(R.string.home_expand)
                 )
             }
 
@@ -1489,7 +1476,7 @@ fun TopAppsSection(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "See Full List",
+                                text = stringResource(R.string.home_see_full_list),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -1547,6 +1534,7 @@ fun rememberPomodoroStatus(prefs: UserPreferences): PomodoroStatus {
 
 @Composable
 fun rememberBedtimeStatus(prefs: UserPreferences): BedtimeStatus {
+    val context = LocalContext.current
     var status by remember { mutableStateOf(BedtimeStatus(false, "", 1f)) }
     var tick by remember { mutableStateOf(0L) }
     
@@ -1601,7 +1589,11 @@ fun rememberBedtimeStatus(prefs: UserPreferences): BedtimeStatus {
             val remainingMinutes = (endAdj - nowAdj).coerceAtLeast(0)
             val h = remainingMinutes / 60
             val m = remainingMinutes % 60
-            val timeStr = if (h > 0) "${h}h ${m}m" else "${m}m"
+            val timeStr = if (h > 0) {
+                context.getString(R.string.home_bedtime_time_hours_minutes, h, m)
+            } else {
+                context.getString(R.string.home_bedtime_time_minutes, m)
+            }
             
             status = BedtimeStatus(true, timeStr, progress)
         } else {
@@ -1751,8 +1743,6 @@ fun ShieldItem(
                     )
                 },
                 supportingContent = {
-                    val timeLabel = if (shield.type == FocusType.GOAL) "To Go" else "Left"
-                    
                     AnimatedContent(
                         targetState = Triple(usesExhausted, remainingMillis, remainingResetMillis),
                         transitionSpec = {
@@ -1761,9 +1751,20 @@ fun ShieldItem(
                         label = "ShieldRemainingTimeAnimation"
                     ) { (isExhausted, remaining, resetMillis) ->
                         val mainText = if (isExhausted && resetMillis > 0) {
-                            "Uses Exhausted • Reset in ${formatDuration(resetMillis)}"
+                            stringResource(
+                                R.string.home_shield_uses_exhausted_reset,
+                                formatDuration(resetMillis)
+                            )
+                        } else if (shield.type == FocusType.GOAL) {
+                            stringResource(
+                                R.string.home_shield_time_to_go,
+                                formatDuration(remaining)
+                            )
                         } else {
-                            "${formatDuration(remaining)} $timeLabel"
+                            stringResource(
+                                R.string.home_shield_time_left,
+                                formatDuration(remaining)
+                            )
                         }
                         Text(
                             text = mainText,
@@ -1834,7 +1835,7 @@ fun ShieldItem(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Outlined.LocalFireDepartment,
-                                        contentDescription = "Streak",
+                                        contentDescription = stringResource(R.string.home_streak_content_description),
                                         modifier = Modifier.size(10.dp),
                                         tint = MaterialTheme.colorScheme.onTertiary
                                     )

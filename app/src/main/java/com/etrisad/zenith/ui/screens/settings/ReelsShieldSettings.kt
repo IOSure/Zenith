@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,6 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.MAX_REELS_SHIELD_DAILY_LIMIT
 import com.etrisad.zenith.data.preferences.ReelsShieldDefaults
 import com.etrisad.zenith.data.preferences.UserPreferences
@@ -113,7 +115,7 @@ fun ReelsShieldPoolCard(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Reels per day",
+                    text = stringResource(R.string.reels_settings_reels_per_day),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
@@ -192,7 +194,7 @@ fun ReelsShieldPoolCard(
 
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Each app can be capped below this limit. The stricter limit is the one enforced.",
+            text = stringResource(R.string.reels_settings_pool_hint),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 8.dp)
@@ -251,13 +253,13 @@ fun ReelsShieldAppsCard(
                     Spacer(modifier = Modifier.width(16.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Per-app limits",
+                            text = stringResource(R.string.reels_settings_per_app_limits),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Today by app · tap an app to set its cap",
+                            text = stringResource(R.string.reels_settings_today_by_app_hint),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -267,7 +269,11 @@ fun ReelsShieldAppsCard(
                         color = MaterialTheme.colorScheme.surfaceContainerHighest
                     ) {
                         Text(
-                            text = if (customCaps == 0) "Limit only" else "$customCaps custom",
+                            text = if (customCaps == 0) {
+                                stringResource(R.string.reels_settings_limit_only)
+                            } else {
+                                stringResource(R.string.reels_settings_custom_count, customCaps)
+                            },
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -278,7 +284,7 @@ fun ReelsShieldAppsCard(
 
                 if (packages.isEmpty()) {
                     Text(
-                        text = "No installed tracked apps yet. Pick apps under Tracked Apps first.",
+                        text = stringResource(R.string.reels_settings_no_tracked_apps),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
@@ -311,7 +317,8 @@ fun ReelsShieldAppsCard(
                     },
                     supportingContent = {
                         Text(
-                            text = if (used == 1) "1 reel today" else "$used reels today",
+                            text = if (used == 1) stringResource(R.string.reels_settings_reel_today_one)
+                            else stringResource(R.string.reels_settings_reels_today, used),
                             style = MaterialTheme.typography.bodySmall,
                             color = if (used >= cap) MaterialTheme.colorScheme.error
                             else MaterialTheme.colorScheme.onSurfaceVariant
@@ -333,7 +340,8 @@ fun ReelsShieldAppsCard(
                                     else MaterialTheme.colorScheme.surfaceContainerHighest
                                 ) {
                                     Text(
-                                        text = if (capped) "$cap / day" else "Limit only",
+                                        text = if (capped) stringResource(R.string.reels_settings_cap_per_day, cap)
+                                        else stringResource(R.string.reels_settings_limit_only),
                                         style = MaterialTheme.typography.labelSmall,
                                         fontWeight = FontWeight.Bold,
                                         color = if (capped) MaterialTheme.colorScheme.onPrimaryContainer
@@ -348,7 +356,7 @@ fun ReelsShieldAppsCard(
                                         color = MaterialTheme.colorScheme.surfaceContainerHighest.copy(alpha = 0.7f)
                                     ) {
                                         Text(
-                                            text = "Untested",
+                                            text = stringResource(R.string.reels_settings_untested),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
@@ -361,7 +369,7 @@ fun ReelsShieldAppsCard(
                                         color = MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)
                                     ) {
                                         Text(
-                                            text = "Partial",
+                                            text = stringResource(R.string.reels_settings_partial),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onTertiaryContainer,
                                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 1.dp)
@@ -477,12 +485,13 @@ fun ReelsShieldAppLimitSheet(
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "Reels Shield limit",
+                    text = stringResource(R.string.reels_settings_app_limit_title),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = if (usedToday == 1) "1 reel today" else "$usedToday reels today",
+                    text = if (usedToday == 1) stringResource(R.string.reels_settings_reel_today_one)
+                    else stringResource(R.string.reels_settings_reels_today, usedToday),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Medium
@@ -506,7 +515,7 @@ fun ReelsShieldAppLimitSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Reels per day",
+                        text = stringResource(R.string.reels_settings_reels_per_day),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
@@ -583,7 +592,7 @@ fun ReelsShieldAppLimitSheet(
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Shared limit: $pool per day. Set $pool to use only the shared limit; values are clamped to 1–$pool.",
+                text = stringResource(R.string.reels_settings_shared_limit_hint, pool, pool, pool),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(horizontal = 4.dp)
@@ -598,7 +607,7 @@ fun ReelsShieldAppLimitSheet(
                     onDismiss()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                text = "Save Limit",
+                text = stringResource(R.string.reels_settings_save_limit),
                 enabled = parsed != null
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -689,20 +698,22 @@ fun ReelsShieldHistoryCard(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow
 ) {
+    val context = LocalContext.current
     UsageHistoryCard(
         history = history,
         targetMillis = limit.coerceAtLeast(1).toLong() * 60_000L,
         selectedDateMillis = selectedDateMillis ?: Long.MIN_VALUE,
         formatDuration = { millis ->
             val count = millis / 60_000L
-            if (count == 1L) "1 reel" else "$count reels"
+            if (count == 1L) context.getString(R.string.reels_settings_reel_one)
+            else context.getString(R.string.reels_settings_reel_count, count)
         },
         onDaySelected = { usage -> onDaySelected(usage?.date) },
         axisLabelFormatter = { millis -> (millis / 60_000L).toString() },
         showGoalMarkers = false,
         shape = shape,
         containerColor = containerColor,
-        title = "Reels History",
+        title = stringResource(R.string.reels_settings_reels_history),
         modifier = modifier
     )
 }
@@ -715,8 +726,9 @@ fun ReelsShieldHistoryDetailHeader(
     modifier: Modifier = Modifier
 ) {
     val accentColor = MaterialTheme.colorScheme.primary
-    val dateLabel = remember(detail.date, detail.isToday) {
-        if (detail.isToday) "Today"
+    val todayLabel = stringResource(R.string.reels_settings_today)
+    val dateLabel = remember(detail.date, detail.isToday, todayLabel) {
+        if (detail.isToday) todayLabel
         else SimpleDateFormat("d MMM", Locale.getDefault()).format(Date(detail.date))
     }
 
@@ -740,14 +752,15 @@ fun ReelsShieldHistoryDetailHeader(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Apps scrolled · $dateLabel",
+                text = stringResource(R.string.reels_settings_apps_scrolled, dateLabel),
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Bold,
                 color = accentColor,
                 modifier = Modifier.weight(1f)
             )
             Text(
-                text = if (detail.dayCount == 1) "1 reel" else "${detail.dayCount} reels",
+                text = if (detail.dayCount == 1) stringResource(R.string.reels_settings_reel_one)
+                else stringResource(R.string.reels_settings_reel_count, detail.dayCount),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -770,9 +783,9 @@ fun ReelsShieldHistoryEmptyDetail(
     ) {
         Text(
             text = if (detail.dayCount > 0) {
-                "Per-app detail wasn't recorded for this day."
+                stringResource(R.string.reels_settings_no_per_app_detail)
             } else {
-                "No reels on this day."
+                stringResource(R.string.reels_settings_no_reels_day)
             },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -811,7 +824,8 @@ fun ReelsShieldHistoryAppRow(
             trailingContent = {
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = if (count == 1) "1 reel" else "$count reels",
+                        text = if (count == 1) stringResource(R.string.reels_settings_reel_one)
+                        else stringResource(R.string.reels_settings_reel_count, count),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = accentColor
@@ -824,7 +838,7 @@ fun ReelsShieldHistoryAppRow(
                             shape = CircleShape
                         ) {
                             Text(
-                                text = "Untested",
+                                text = stringResource(R.string.reels_settings_untested),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -838,7 +852,7 @@ fun ReelsShieldHistoryAppRow(
                             shape = CircleShape
                         ) {
                             Text(
-                                text = "Partial",
+                                text = stringResource(R.string.reels_settings_partial),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)

@@ -1,5 +1,6 @@
 package com.etrisad.zenith.ui.screens.pomodoro
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,9 +16,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.LongTermSection
 import com.etrisad.zenith.ui.viewmodel.DailyUsage
 import com.etrisad.zenith.ui.viewmodel.PomodoroViewModel
@@ -28,6 +32,7 @@ import java.util.Date
 import java.util.Locale
 @Composable
 fun PomodoroStatsSection(viewModel: PomodoroViewModel) {
+    val context = LocalContext.current
     val selectedRange by viewModel.pomodoroStatsRange.collectAsState()
     val offset by viewModel.pomodoroPeriodOffset.collectAsState()
     val prefs by viewModel.userPreferences.collectAsState()
@@ -58,7 +63,11 @@ fun PomodoroStatsSection(viewModel: PomodoroViewModel) {
     val countsLine = remember(statByKey, offset, prefs) {
         if (offset != 0) {
             val sessions = dailyStats.sumOf { it.sessions }
-            "This period: $sessions ${if (sessions == 1) "session" else "sessions"}"
+            context.getString(
+                if (sessions == 1) R.string.small_this_period_sessions_one
+                else R.string.small_this_period_sessions_other,
+                sessions
+            )
         } else {
             val todayKey = com.etrisad.zenith.util.DateTimeUtils.getDayStartDateString(
                 System.currentTimeMillis(), prefs.dayStartHour, prefs.dayStartMinute
@@ -69,9 +78,17 @@ fun PomodoroStatsSection(viewModel: PomodoroViewModel) {
             val todaySessions = today?.sessions ?: 0
             val weekSessions = weekStats.sumOf { it.sessions }
             val weekMillis = weekStats.sumOf { it.focusMillis }
-            "Today: $todaySessions ${if (todaySessions == 1) "session" else "sessions"} • " +
-                "This week: $weekSessions ${if (weekSessions == 1) "session" else "sessions"} • " +
-                formatPomodoroDuration(weekMillis)
+            context.getString(
+                if (todaySessions == 1) R.string.small_today_sessions_one
+                else R.string.small_today_sessions_other,
+                todaySessions
+            ) + " • " +
+                context.getString(
+                    if (weekSessions == 1) R.string.small_this_week_sessions_one
+                    else R.string.small_this_week_sessions_other,
+                    weekSessions
+                ) + " • " +
+                formatPomodoroDuration(context, weekMillis)
         }
     }
 
@@ -82,7 +99,7 @@ fun PomodoroStatsSection(viewModel: PomodoroViewModel) {
             modifier = Modifier.fillMaxWidth()
         ) {
             LongTermSection(
-                title = "Session History",
+                title = stringResource(R.string.small_session_history),
                 accentColor = MaterialTheme.colorScheme.tertiary,
                 highlightColor = MaterialTheme.colorScheme.primary,
                 selectedRange = selectedRange,
@@ -94,14 +111,18 @@ fun PomodoroStatsSection(viewModel: PomodoroViewModel) {
                 totalMillis = totalForPeriod,
                 prevTotal = prevTotal,
                 dailyHistory = dailyHistory,
-                heatmapEmptyText = "No sessions yet - complete a focus session",
-                formatDuration = ::formatPomodoroDuration,
+                heatmapEmptyText = stringResource(R.string.small_no_sessions_yet),
+                formatDuration = { millis -> formatPomodoroDuration(context, millis) },
                 higherIsBetter = true,
                 periodDays = periodDays,
                 detailExtraLine = { dayMillis ->
                     val count = dayCountByMillis[dayMillis] ?: 0
                     Text(
-                        text = if (count == 1) "1 session" else "$count sessions",
+                        text = if (count == 1) {
+                            stringResource(R.string.small_session_count_one, count)
+                        } else {
+                            stringResource(R.string.small_session_count_other, count)
+                        },
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.tertiary
@@ -136,9 +157,13 @@ private fun mondayWeekKeys(keyFmt: SimpleDateFormat): Set<String> {
     }
 }
 
-private fun formatPomodoroDuration(millis: Long): String {
-    if (millis <= 0L) return "0m"
+private fun formatPomodoroDuration(context: Context, millis: Long): String {
+    if (millis <= 0L) return context.getString(R.string.small_duration_minutes, 0L)
     val mins = millis / 60000L
     val hrs = mins / 60
-    return if (hrs > 0) "${hrs}h ${mins % 60}m" else "${mins}m"
+    return if (hrs > 0) {
+        context.getString(R.string.small_duration_hours_minutes, hrs, mins % 60)
+    } else {
+        context.getString(R.string.small_duration_minutes, mins)
+    }
 }

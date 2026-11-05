@@ -25,10 +25,12 @@ import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.toPath
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.database.UsageGraphLogBuffer
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.ui.viewmodel.DailyUsage
@@ -55,7 +57,7 @@ fun UsageHistoryCard(
     showGoalMarkers: Boolean = true,
     shape: Shape = RoundedCornerShape(24.dp),
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
-    title: String = "History",
+    title: String = stringResource(R.string.usage_history_history_title),
     modifier: Modifier = Modifier
 ) {
     var internalSelectedDate by rememberSaveable { mutableStateOf<Long?>(null) }
@@ -198,7 +200,7 @@ fun WeekStepperIndicator(
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "Previous week",
+                            contentDescription = stringResource(R.string.usage_history_previous_week),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -255,7 +257,7 @@ fun WeekStepperIndicator(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Next week",
+                        contentDescription = stringResource(R.string.usage_history_next_week),
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -730,7 +732,7 @@ fun UsageGraph(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Today,
-                                contentDescription = "Today",
+                                contentDescription = stringResource(R.string.usage_history_today),
                                 modifier = Modifier.size(16.dp)
                             )
                             Icon(

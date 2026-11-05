@@ -55,11 +55,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.ZenithButton
@@ -82,6 +84,7 @@ fun PausePointNfcManagerContent(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    val tagAlreadyRegisteredMessage = stringResource(R.string.pomodoro_block_tag_already_registered)
     var tags by remember(preferences.pausePointNfcTagIds) {
         mutableStateOf(preferences.pausePointNfcTagIds.map { normalizeNfcTagId(it) }.filter { it.isNotEmpty() }.distinct())
     }
@@ -116,7 +119,7 @@ fun PausePointNfcManagerContent(
             if (normalized.isEmpty()) return@EnableNfcReaderMode
             lastScanned = normalized
             if (normalized in tags) {
-                scanError = "Tag already registered"
+                scanError = tagAlreadyRegisteredMessage
             } else {
                 scanError = null
                 tags = tags + normalized
@@ -135,7 +138,7 @@ fun PausePointNfcManagerContent(
             scanError = null
             manualInput = ""
         } else if (normalized in tags) {
-            scanError = "Tag already registered"
+            scanError = tagAlreadyRegisteredMessage
         }
     }
 
@@ -178,12 +181,12 @@ fun PausePointNfcManagerContent(
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
-                    text = "Add tag manually",
+                    text = stringResource(R.string.pomodoro_block_add_tag_manually),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Paste a tag ID (e.g. 04A13B8C5D80) if you already know it.",
+                    text = stringResource(R.string.pomodoro_block_add_tag_manually_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -195,8 +198,8 @@ fun PausePointNfcManagerContent(
                         if (scanError != null) scanError = null
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Tag ID") },
-                    placeholder = { Text("e.g. 04A13B8C5D80") },
+                    label = { Text(stringResource(R.string.pomodoro_block_tag_id_label)) },
+                    placeholder = { Text(stringResource(R.string.pomodoro_block_tag_id_placeholder)) },
                     singleLine = true,
                     shape = RoundedCornerShape(16.dp),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -209,7 +212,7 @@ fun PausePointNfcManagerContent(
                 Spacer(modifier = Modifier.height(12.dp))
                 ZenithButton(
                     onClick = addManual,
-                    text = "Add Tag",
+                    text = stringResource(R.string.pomodoro_block_add_tag),
                     icon = Icons.Outlined.TouchApp,
                     type = ZenithButtonType.Filled,
                     size = ZenithButtonSize.Large,
@@ -240,7 +243,7 @@ fun PausePointNfcManagerContent(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Tag saved!",
+                        text = stringResource(R.string.pomodoro_block_tag_saved),
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -252,7 +255,7 @@ fun PausePointNfcManagerContent(
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        PreferenceCategory(title = "Saved Tags (${tags.size})")
+        PreferenceCategory(title = stringResource(R.string.pomodoro_block_saved_tags, tags.size))
 
         if (tags.isEmpty()) {
             EmptyNfcCard()
@@ -310,19 +313,19 @@ private fun NfcStatusCard(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = when {
-                            !supported -> "NFC not supported"
-                            !enabled -> "NFC is turned off"
-                            else -> "Ready to scan"
+                            !supported -> stringResource(R.string.pomodoro_block_nfc_not_supported)
+                            !enabled -> stringResource(R.string.pomodoro_block_nfc_turned_off)
+                            else -> stringResource(R.string.pomodoro_block_ready_to_scan)
                         },
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = when {
-                            !supported -> "This device has no NFC hardware. You can still add tag IDs manually."
-                            !enabled -> "Turn on NFC to scan tags directly."
-                            scanningEnabled -> "Hold an NFC tag near your phone to register it."
-                            else -> "Scanning paused. Turn it on to register tags."
+                            !supported -> stringResource(R.string.pomodoro_block_nfc_not_supported_desc)
+                            !enabled -> stringResource(R.string.pomodoro_block_nfc_turned_off_desc)
+                            scanningEnabled -> stringResource(R.string.pomodoro_block_scanning_desc)
+                            else -> stringResource(R.string.pomodoro_block_scanning_paused_desc)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -332,7 +335,7 @@ private fun NfcStatusCard(
             if (!supported || !enabled) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = onOpenSettings, modifier = Modifier.fillMaxWidth()) {
-                    Text(if (!supported) "Open Wireless Settings" else "Turn On NFC")
+                    Text(if (!supported) stringResource(R.string.pomodoro_block_open_wireless_settings) else stringResource(R.string.pomodoro_block_turn_on_nfc))
                 }
             }
             if (supported && enabled) {
@@ -343,12 +346,12 @@ private fun NfcStatusCard(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Scan to register",
+                            text = stringResource(R.string.pomodoro_block_scan_to_register),
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "Listen for NFC tags on this screen",
+                            text = stringResource(R.string.pomodoro_block_scan_to_register_desc),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -402,7 +405,7 @@ private fun NfcStatusCard(
             if (lastScanned != null) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Last read: $lastScanned",
+                    text = stringResource(R.string.pomodoro_block_last_read, lastScanned),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -479,14 +482,14 @@ private fun NfcTagRow(
             }) {
                 Icon(
                     imageVector = Icons.Outlined.ContentCopy,
-                    contentDescription = "Copy",
+                    contentDescription = stringResource(R.string.pomodoro_block_copy),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             IconButton(onClick = onRemove) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(R.string.pomodoro_block_delete),
                     tint = MaterialTheme.colorScheme.error
                 )
             }
@@ -517,14 +520,14 @@ private fun EmptyNfcCard() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "No tags saved yet",
+                text = stringResource(R.string.pomodoro_block_no_tags_saved),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Hold a tag near your phone or add its ID manually.",
+                text = stringResource(R.string.pomodoro_block_no_tags_saved_desc),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center

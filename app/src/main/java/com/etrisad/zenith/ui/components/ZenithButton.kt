@@ -28,11 +28,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.theme.ZenithTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -685,71 +687,75 @@ fun ZenithButtonGallery() {
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            Text("Zenith Button Gallery", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.home_button_gallery_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Button Types", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.home_button_gallery_types), style = MaterialTheme.typography.titleMedium)
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ZenithButton(onClick = {}, type = ZenithButtonType.Filled, text = "Filled", modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
-                    ZenithButton(onClick = {}, type = ZenithButtonType.Tonal, text = "Tonal", modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
+                    ZenithButton(onClick = {}, type = ZenithButtonType.Filled, text = stringResource(R.string.home_button_gallery_type_filled), modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
+                    ZenithButton(onClick = {}, type = ZenithButtonType.Tonal, text = stringResource(R.string.home_button_gallery_type_tonal), modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ZenithButton(onClick = {}, type = ZenithButtonType.Elevated, text = "Elevated", modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
-                    ZenithButton(onClick = {}, type = ZenithButtonType.Outlined, text = "Outlined", modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
+                    ZenithButton(onClick = {}, type = ZenithButtonType.Elevated, text = stringResource(R.string.home_button_gallery_type_elevated), modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
+                    ZenithButton(onClick = {}, type = ZenithButtonType.Outlined, text = stringResource(R.string.home_button_gallery_type_outlined), modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ZenithButton(onClick = {}, type = ZenithButtonType.Text, text = "Text", modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
-                    ZenithButton(onClick = {}, type = ZenithButtonType.Hold, text = "Hold", modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
+                    ZenithButton(onClick = {}, type = ZenithButtonType.Text, text = stringResource(R.string.home_button_gallery_type_text), modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
+                    ZenithButton(onClick = {}, type = ZenithButtonType.Hold, text = stringResource(R.string.home_button_gallery_type_hold), modifier = Modifier.weight(1f), size = ZenithButtonSize.Medium)
                 }
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Button Sizes", style = MaterialTheme.typography.titleMedium)
-                ZenithButton(onClick = {}, size = ZenithButtonSize.ExtraLarge, text = "Extra Large", fillMaxWidth = true)
-                ZenithButton(onClick = {}, size = ZenithButtonSize.Large, text = "Large", fillMaxWidth = true)
-                ZenithButton(onClick = {}, size = ZenithButtonSize.Medium, text = "Medium", fillMaxWidth = true)
-                ZenithButton(onClick = {}, size = ZenithButtonSize.Small, text = "Small", fillMaxWidth = true)
+                Text(stringResource(R.string.home_button_gallery_sizes), style = MaterialTheme.typography.titleMedium)
+                ZenithButton(onClick = {}, size = ZenithButtonSize.ExtraLarge, text = stringResource(R.string.home_button_gallery_size_extra_large), fillMaxWidth = true)
+                ZenithButton(onClick = {}, size = ZenithButtonSize.Large, text = stringResource(R.string.home_button_gallery_size_large), fillMaxWidth = true)
+                ZenithButton(onClick = {}, size = ZenithButtonSize.Medium, text = stringResource(R.string.home_button_gallery_size_medium), fillMaxWidth = true)
+                ZenithButton(onClick = {}, size = ZenithButtonSize.Small, text = stringResource(R.string.home_button_gallery_size_small), fillMaxWidth = true)
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("With Icons", style = MaterialTheme.typography.titleMedium)
-                ZenithButton(onClick = {}, icon = Icons.Default.Add, text = "Add Item", fillMaxWidth = true)
-                ZenithButton(onClick = {}, icon = Icons.Default.Settings, text = "Settings", type = ZenithButtonType.Outlined, fillMaxWidth = true)
+                Text(stringResource(R.string.home_button_gallery_with_icons), style = MaterialTheme.typography.titleMedium)
+                ZenithButton(onClick = {}, icon = Icons.Default.Add, text = stringResource(R.string.home_button_gallery_add_item), fillMaxWidth = true)
+                ZenithButton(onClick = {}, icon = Icons.Default.Settings, text = stringResource(R.string.home_button_gallery_settings), type = ZenithButtonType.Outlined, fillMaxWidth = true)
                 ZenithButton(onClick = {}, icon = Icons.Default.Delete, type = ZenithButtonType.Tonal, contentColor = MaterialTheme.colorScheme.error)
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("States", style = MaterialTheme.typography.titleMedium)
-                ZenithButton(onClick = {}, text = "Loading Indeterminate", isLoading = true, fillMaxWidth = true)
-                ZenithButton(onClick = {}, text = "Loading Progress 60%", isLoading = true, loadingProgress = 0.6f, fillMaxWidth = true)
-                ZenithButton(onClick = {}, text = "Background Progress 40%", backgroundProgress = 0.4f, fillMaxWidth = true)
-                ZenithButton(onClick = {}, text = "Disabled", enabled = false, fillMaxWidth = true)
+                Text(stringResource(R.string.home_button_gallery_states), style = MaterialTheme.typography.titleMedium)
+                ZenithButton(onClick = {}, text = stringResource(R.string.home_button_gallery_loading_indeterminate), isLoading = true, fillMaxWidth = true)
+                ZenithButton(onClick = {}, text = stringResource(R.string.home_button_gallery_loading_progress), isLoading = true, loadingProgress = 0.6f, fillMaxWidth = true)
+                ZenithButton(onClick = {}, text = stringResource(R.string.home_button_gallery_background_progress), backgroundProgress = 0.4f, fillMaxWidth = true)
+                ZenithButton(onClick = {}, text = stringResource(R.string.home_button_gallery_disabled), enabled = false, fillMaxWidth = true)
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Grouped Buttons", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.home_button_gallery_grouped), style = MaterialTheme.typography.titleMedium)
                 ZenithGroupedButton {
-                    ZenithButtonWeighted(onClick = {}, text = "Left", isLast = false)
-                    ZenithButtonWeighted(onClick = {}, text = "Center", isFirst = false, isLast = false, type = ZenithButtonType.Tonal)
-                    ZenithButtonWeighted(onClick = {}, text = "Right", isFirst = false)
+                    ZenithButtonWeighted(onClick = {}, text = stringResource(R.string.home_button_gallery_left), isLast = false)
+                    ZenithButtonWeighted(onClick = {}, text = stringResource(R.string.home_button_gallery_center), isFirst = false, isLast = false, type = ZenithButtonType.Tonal)
+                    ZenithButtonWeighted(onClick = {}, text = stringResource(R.string.home_button_gallery_right), isFirst = false)
                 }
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Toggle Groups", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.home_button_gallery_toggle_groups), style = MaterialTheme.typography.titleMedium)
                 var selectedSingle by remember { mutableStateOf(setOf(0)) }
                 ZenithToggleButtonGroup(
-                    options = listOf(ZenithToggleOption("Morning"), ZenithToggleOption("Noon"), ZenithToggleOption("Night")),
+                    options = listOf(
+                        ZenithToggleOption(stringResource(R.string.home_button_gallery_morning)),
+                        ZenithToggleOption(stringResource(R.string.home_button_gallery_noon)),
+                        ZenithToggleOption(stringResource(R.string.home_button_gallery_night))
+                    ),
                     selectedIndices = selectedSingle,
                     onToggle = { selectedSingle = setOf(it) }
                 )
             }
 
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text("Custom Overrides", style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.home_button_gallery_custom_overrides), style = MaterialTheme.typography.titleMedium)
                 ZenithButton(
                     onClick = {},
-                    text = "Custom Colors & Radius",
+                    text = stringResource(R.string.home_button_gallery_custom_colors_radius),
                     containerColor = Color(0xFF6200EE),
                     contentColor = Color.White,
                     pillCornerRadius = 8.dp,
@@ -757,7 +763,7 @@ fun ZenithButtonGallery() {
                 )
                 ZenithButton(
                     onClick = {},
-                    text = "Delayed Enable (3s)",
+                    text = stringResource(R.string.home_button_gallery_delayed_enable),
                     enableAfterDelayMillis = 3000L,
                     fillMaxWidth = true
                 )

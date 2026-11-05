@@ -15,12 +15,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.etrisad.zenith.BuildConfig
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ZenithApplication
 import com.etrisad.zenith.data.manager.GitHubUpdateManager
 import com.etrisad.zenith.data.preferences.PerformanceConfig
@@ -101,10 +103,10 @@ fun SettingsScreen(
                         showUpdateSheet = true
                     }
                     is GitHubUpdateManager.UpdateResult.NoUpdate -> {
-                        Toast.makeText(context, "Zenith is up to date!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.data_repair_toast_up_to_date), Toast.LENGTH_SHORT).show()
                     }
                     is GitHubUpdateManager.UpdateResult.Error -> {
-                        Toast.makeText(context, "Update check failed: ${result.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.data_repair_toast_update_check_failed, result.message), Toast.LENGTH_SHORT).show()
                     }
                 }
                 checkingForUpdate = false
@@ -119,7 +121,7 @@ fun SettingsScreen(
                 allReleases = releases
                 showChangelogSheet = true
             } else {
-                Toast.makeText(context, "Failed to fetch changelog", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.data_repair_toast_changelog_failed), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -215,11 +217,11 @@ fun SettingsScreen(
 
             item {
                 Spacer(modifier = Modifier.height(16.dp))
-                PreferenceCategory(title = "Categories")
+                PreferenceCategory(title = stringResource(R.string.data_repair_categories))
 
                 SettingsActionItem(
-                    title = "Features",
-                    summary = "Mindful Gateway, Session Overlay, Early Kick, and more",
+                    title = stringResource(R.string.data_repair_cat_features),
+                    summary = stringResource(R.string.data_repair_cat_features_summary),
                     onClick = { navController.navigate(Screen.SettingsCategory.createRoute("Features")) },
                     icon = Icons.Outlined.AutoFixHigh,
                     shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
@@ -227,8 +229,8 @@ fun SettingsScreen(
                 
                 Spacer(modifier = Modifier.height(4.dp))
                 SettingsActionItem(
-                    title = "Appearance",
-                    summary = "Theme, Fonts, Dynamic Colors, and Layout",
+                    title = stringResource(R.string.data_repair_cat_appearance),
+                    summary = stringResource(R.string.data_repair_cat_appearance_summary),
                     onClick = { navController.navigate(Screen.SettingsCategory.createRoute("Appearance")) },
                     icon = Icons.Outlined.Palette,
                     shape = RoundedCornerShape(8.dp)
@@ -237,8 +239,8 @@ fun SettingsScreen(
                 Spacer(modifier = Modifier.height(4.dp))
                 val perfPreset = preferences.buildPerformanceConfig().detectPreset()
                 SettingsActionItem(
-                    title = "Performance",
-                    summary = "Responsiveness & battery balance",
+                    title = stringResource(R.string.data_repair_cat_performance),
+                    summary = stringResource(R.string.data_repair_cat_performance_summary),
                     onClick = { navController.navigate(Screen.SettingsCategory.createRoute("Performance")) },
                     icon = Icons.Outlined.Timer,
                     shape = RoundedCornerShape(8.dp),
@@ -248,7 +250,7 @@ fun SettingsScreen(
                             shape = CircleShape
                         ) {
                             Text(
-                                text = perfPreset.labelRes,
+                                text = stringResource(perfPreset.labelRes),
                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 2.dp),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onTertiary,
@@ -260,8 +262,8 @@ fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(4.dp))
                 SettingsActionItem(
-                    title = "Privacy & Data",
-                    summary = "Private & hidden apps, accessibility mode, notification privacy",
+                    title = stringResource(R.string.data_repair_cat_privacy),
+                    summary = stringResource(R.string.data_repair_cat_privacy_summary),
                     onClick = { navController.navigate(Screen.SettingsCategory.createRoute("Privacy")) },
                     icon = Icons.Outlined.Security,
                     shape = RoundedCornerShape(8.dp)
@@ -269,8 +271,8 @@ fun SettingsScreen(
 
                 Spacer(modifier = Modifier.height(4.dp))
                 SettingsActionItem(
-                    title = "Data Management",
-                    summary = "Backup, Restore, and Usage Sync",
+                    title = stringResource(R.string.data_repair_cat_data_management),
+                    summary = stringResource(R.string.data_repair_cat_data_management_summary),
                     onClick = { navController.navigate(Screen.SettingsCategory.createRoute("Data Management")) },
                     icon = Icons.Outlined.Storage,
                     shape = RoundedCornerShape(
@@ -283,8 +285,8 @@ fun SettingsScreen(
                 if (preferences.developerModeEnabled) {
                     Spacer(modifier = Modifier.height(4.dp))
                     SettingsActionItem(
-                        title = "Developer",
-                        summary = "Database Editor, Logs, Testing, and more",
+                        title = stringResource(R.string.data_repair_cat_developer),
+                        summary = stringResource(R.string.data_repair_cat_developer_summary),
                         onClick = { navController.navigate(Screen.SettingsCategory.createRoute("developer")) },
                         icon = Icons.Outlined.Build,
                         shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
@@ -324,8 +326,8 @@ fun SettingsScreen(
             releases = majorReleases,
             useExpressiveColors = preferences.expressiveColors,
             isDark = isDark,
-            title = "Gleam Changelog",
-            subtitle = "Updates & Improvements in v1.6",
+            title = stringResource(R.string.data_repair_changelog_gleam_title),
+            subtitle = stringResource(R.string.data_repair_changelog_gleam_subtitle),
             onDismiss = { showMajorChangelogSheet = false }
         )
     }
@@ -359,8 +361,8 @@ fun SettingsScreen(
             releases = allReleases,
             useExpressiveColors = preferences.expressiveColors,
             isDark = isDark,
-            title = "Changelog History",
-            subtitle = "All release versions and updates",
+            title = stringResource(R.string.data_repair_changelog_history_title),
+            subtitle = stringResource(R.string.data_repair_changelog_history_subtitle),
             onDismiss = { showChangelogSheet = false }
         )
     }
@@ -420,12 +422,12 @@ fun SettingsScreen(
                             }
                             .onFailure { e ->
                                 diagnosticExporting = false
-                                diagnosticError = e.message ?: "Export failed"
-                                Toast.makeText(context, "Export failed. Please try again.", Toast.LENGTH_LONG).show()
+                                diagnosticError = e.message ?: context.getString(R.string.data_repair_export_failed)
+                                Toast.makeText(context, context.getString(R.string.data_repair_toast_export_failed), Toast.LENGTH_LONG).show()
                             }
                     } catch (e: Exception) {
                         diagnosticExporting = false
-                        diagnosticError = e.message ?: "Export failed"
+                        diagnosticError = e.message ?: context.getString(R.string.data_repair_export_failed)
                     }
                 }
             },

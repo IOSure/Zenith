@@ -30,10 +30,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.ZenithButtonType
 import com.etrisad.zenith.ui.components.ZenithButtonWeighted
 import com.etrisad.zenith.ui.components.ZenithGroupedButton
@@ -55,6 +58,7 @@ fun WebsiteBlockerKeywordsBottomSheet(
     onSave: (List<String>) -> Unit
 ) {
     val configuration = LocalConfiguration.current
+    val context = LocalContext.current
     val screenHeight = configuration.screenHeightDp.dp
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -74,29 +78,43 @@ fun WebsiteBlockerKeywordsBottomSheet(
     val bottomShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 28.dp, bottomEnd = 28.dp)
     val singleShape = RoundedCornerShape(24.dp)
 
-    val presetCategories = remember {
+    val presetShortsTitle = stringResource(R.string.alarm_keywords_preset_shorts_title)
+    val presetShortsDescription = stringResource(R.string.alarm_keywords_preset_shorts_description)
+    val presetGamblingTitle = stringResource(R.string.alarm_keywords_preset_gambling_title)
+    val presetGamblingDescription = stringResource(R.string.alarm_keywords_preset_gambling_description)
+    val presetAdultTitle = stringResource(R.string.alarm_keywords_preset_adult_title)
+    val presetAdultDescription = stringResource(R.string.alarm_keywords_preset_adult_description)
+    val presetLiveTitle = stringResource(R.string.alarm_keywords_preset_live_title)
+    val presetLiveDescription = stringResource(R.string.alarm_keywords_preset_live_description)
+
+    val presetCategories = remember(
+        presetShortsTitle, presetShortsDescription,
+        presetGamblingTitle, presetGamblingDescription,
+        presetAdultTitle, presetAdultDescription,
+        presetLiveTitle, presetLiveDescription
+    ) {
         listOf(
             KeywordPresetCategory(
-                title = "Shorts & Reels",
-                description = "Block short-form video feeds",
+                title = presetShortsTitle,
+                description = presetShortsDescription,
                 icon = Icons.Outlined.Videocam,
                 keywords = listOf("shorts", "reels", "clips")
             ),
             KeywordPresetCategory(
-                title = "Gambling & Casino",
-                description = "Block online gambling and betting",
+                title = presetGamblingTitle,
+                description = presetGamblingDescription,
                 icon = Icons.Outlined.Casino,
                 keywords = listOf("casino", "bet", "poker", "slot", "gambling", "betting")
             ),
             KeywordPresetCategory(
-                title = "Adult & Dating",
-                description = "Block explicit adult content and dating",
+                title = presetAdultTitle,
+                description = presetAdultDescription,
                 icon = Icons.Outlined.Security,
                 keywords = listOf("adult", "porn", "nsfw", "dating", "xxx")
             ),
             KeywordPresetCategory(
-                title = "Live Streams",
-                description = "Block live streaming platforms",
+                title = presetLiveTitle,
+                description = presetLiveDescription,
                 icon = Icons.Outlined.LocalFireDepartment,
                 keywords = listOf("live", "stream", "twitch", "kick")
             )
@@ -107,7 +125,7 @@ fun WebsiteBlockerKeywordsBottomSheet(
         val trimmed = raw.trim().lowercase()
         if (trimmed.isEmpty()) return
         if (keywords.contains(trimmed)) {
-            errorMessage = "Keyword already added."
+            errorMessage = context.getString(R.string.alarm_keywords_error_already_added)
             return
         }
         keywords.add(trimmed)
@@ -178,18 +196,18 @@ fun WebsiteBlockerKeywordsBottomSheet(
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Website Blocker",
+                            text = stringResource(R.string.alarm_keywords_website_blocker),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Rules & Keywords",
+                            text = stringResource(R.string.alarm_keywords_rules_keywords),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.primary
                         )
                         Text(
-                            text = "Toggle quick categories or add custom plain-text words",
+                            text = stringResource(R.string.alarm_keywords_subtitle),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
@@ -206,7 +224,7 @@ fun WebsiteBlockerKeywordsBottomSheet(
                     ) {
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        PreferenceCategory(title = "Quick Categories")
+                        PreferenceCategory(title = stringResource(R.string.alarm_keywords_quick_categories))
                         Spacer(modifier = Modifier.height(8.dp))
 
                         presetCategories.forEachIndexed { index, preset ->
@@ -230,7 +248,7 @@ fun WebsiteBlockerKeywordsBottomSheet(
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))
-                        PreferenceCategory(title = "Custom Keywords")
+                        PreferenceCategory(title = stringResource(R.string.alarm_keywords_custom_keywords))
                         Spacer(modifier = Modifier.height(8.dp))
 
                         CardGroup(shape = singleShape, containerColor = containerColor) {
@@ -272,7 +290,7 @@ fun WebsiteBlockerKeywordsBottomSheet(
                                                 ) {
                                                     if (customInput.isEmpty()) {
                                                         Text(
-                                                            text = "Type word (e.g. distraction)",
+                                                            text = stringResource(R.string.alarm_keywords_input_placeholder),
                                                             style = MaterialTheme.typography.bodyLarge,
                                                             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                                                         )
@@ -292,7 +310,7 @@ fun WebsiteBlockerKeywordsBottomSheet(
                                         ) {
                                             Icon(
                                                 Icons.Default.Add,
-                                                contentDescription = "Add keyword",
+                                                contentDescription = stringResource(R.string.alarm_keywords_add_keyword),
                                                 tint = MaterialTheme.colorScheme.onPrimary,
                                                 modifier = Modifier.size(20.dp)
                                             )
@@ -315,7 +333,10 @@ fun WebsiteBlockerKeywordsBottomSheet(
                                     Spacer(modifier = Modifier.height(12.dp))
 
                                     Text(
-                                        text = "Active Keywords (${keywords.size})",
+                                        text = stringResource(
+                                            R.string.alarm_keywords_active_keywords,
+                                            keywords.size
+                                        ),
                                         style = MaterialTheme.typography.labelMedium,
                                         color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.Bold
@@ -357,7 +378,7 @@ fun WebsiteBlockerKeywordsBottomSheet(
                                                 ) {
                                                     Icon(
                                                         Icons.Outlined.Delete,
-                                                        contentDescription = "Remove",
+                                                        contentDescription = stringResource(R.string.alarm_keywords_remove),
                                                         tint = MaterialTheme.colorScheme.error,
                                                         modifier = Modifier.size(18.dp)
                                                     )
@@ -409,7 +430,7 @@ fun WebsiteBlockerKeywordsBottomSheet(
                                 onDismiss()
                             }
                         },
-                        text = "Done",
+                        text = stringResource(R.string.alarm_keywords_done),
                         type = ZenithButtonType.Filled,
                         weight = 1f,
                         isFirst = true,

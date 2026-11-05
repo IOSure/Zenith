@@ -67,8 +67,8 @@ class OnboardingChaptersTest {
     fun `achievement ladder is seven tiers of pathfinder`() {
         val def = buildAchievementDefs().first { it.id == "onboarding_path" }
         assertEquals(7, def.thresholds.size)
-        assertEquals(7, def.tierNames.size)
-        assertEquals("Zenith Master", def.tierNames.last())
+        assertEquals(7, def.tierNameRes.size)
+        assertEquals(com.etrisad.zenith.R.string.ach_onboarding_path_tier_7, def.tierNameRes.last())
     }
 
     @Test

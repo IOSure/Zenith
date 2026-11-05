@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +35,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.FontOption
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
@@ -819,7 +821,7 @@ fun SessionUsageHUD(
         val animationBuffer = 24.dp
 
         ZenithTooltipBox(
-            tooltipText = "Double click to\nhide for 30s",
+            tooltipText = stringResource(R.string.onboarding_hud_hide_tooltip),
             state = tooltipState,
             arrowPosition = TooltipArrowPosition.StartCenter
         ) {

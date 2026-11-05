@@ -8,8 +8,10 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.ui.components.focus.CardGroup
 import com.etrisad.zenith.ui.components.focus.PreferenceCategory
@@ -32,10 +34,10 @@ fun PrivacySettings(
     )
 
     Column {
-        PreferenceCategory(title = "Privacy & Data")
+        PreferenceCategory(title = stringResource(R.string.grace_privacy_and_data))
 
         SettingsActionItem(
-            title = "Private & Hidden Apps",
+            title = stringResource(R.string.grace_private_hidden_apps),
             summary = exclusionSummary,
             onClick = { showAppExclusionsSheet = true },
             icon = Icons.Outlined.Security,
@@ -45,19 +47,19 @@ fun PrivacySettings(
         Spacer(modifier = Modifier.height(4.dp))
 
         SettingsActionItem(
-            title = "Privacy & Data Guarantees",
-            summary = "How Zenith handles access, storage, and backups",
+            title = stringResource(R.string.grace_privacy_guarantees_title),
+            summary = stringResource(R.string.grace_privacy_guarantees_summary),
             onClick = { showPrivacyInfoSheet = true },
             icon = Icons.Outlined.Info,
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Accessibility Mode")
+        PreferenceCategory(title = stringResource(R.string.grace_accessibility_mode))
 
         SettingsToggle(
-            title = "Limited Accessibility Mode",
-            description = "Uses Accessibility ONLY for detecting app switches/launches (for mindful messages and shields). Disables reading screen content, node trees, text changes, and web URL tracking.",
+            title = stringResource(R.string.grace_limited_accessibility_title),
+            description = stringResource(R.string.grace_limited_accessibility_desc),
             checked = preferences.accessibilityLimitedMode,
             onCheckedChange = onAccessibilityLimitedModeChange,
             icon = Icons.Outlined.AccessibilityNew,
@@ -65,11 +67,11 @@ fun PrivacySettings(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Notification Privacy")
+        PreferenceCategory(title = stringResource(R.string.grace_notification_privacy))
 
         SettingsToggle(
-            title = "Notification Interception",
-            description = "Allow Zenith to pause distracting notifications during active schedules or focus sessions.",
+            title = stringResource(R.string.grace_notification_interception_title),
+            description = stringResource(R.string.grace_notification_interception_desc),
             checked = preferences.notificationInterceptionEnabled,
             onCheckedChange = onNotificationInterceptionEnabledChange,
             icon = Icons.Outlined.NotificationsActive,
@@ -82,9 +84,12 @@ fun PrivacySettings(
             Spacer(modifier = Modifier.height(4.dp))
 
             SettingsActionItem(
-                title = "Excluded Notification Apps",
-                summary = if (preferences.notificationExcludedPackages.isEmpty()) "No apps excluded"
-                          else "${preferences.notificationExcludedPackages.size} apps never intercepted",
+                title = stringResource(R.string.grace_excluded_notification_apps),
+                summary = if (preferences.notificationExcludedPackages.isEmpty()) stringResource(R.string.grace_no_apps_excluded)
+                          else stringResource(
+                              R.string.grace_apps_never_intercepted,
+                              preferences.notificationExcludedPackages.size
+                          ),
                 onClick = { showNotifExcludedSheet = true },
                 icon = Icons.Outlined.NotificationsOff,
                 shape = RoundedCornerShape(8.dp)
@@ -93,8 +98,8 @@ fun PrivacySettings(
             Spacer(modifier = Modifier.height(4.dp))
 
             SettingsToggle(
-                title = "Store Notification Contents",
-                description = "Saves message title and body for restoring after focus sessions. When disabled, only app package names are logged.",
+                title = stringResource(R.string.grace_store_notification_contents_title),
+                description = stringResource(R.string.grace_store_notification_contents_desc),
                 checked = preferences.storeInterceptedNotificationContent,
                 onCheckedChange = onStoreInterceptedNotificationContentChange,
                 icon = Icons.AutoMirrored.Outlined.Notes,
@@ -103,14 +108,14 @@ fun PrivacySettings(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        PreferenceCategory(title = "Local Storage & Cloud Backup")
+        PreferenceCategory(title = stringResource(R.string.grace_local_storage_cloud_backup))
 
         CardGroup(
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 8.dp, bottomEnd = 8.dp)
         ) {
             BackupInfoRow(
-                title = "Android Cloud Backup",
-                description = "If Android backup is enabled, it can only restore preferences and light state such as streaks and timers. Usage history and notification logs are never included."
+                title = stringResource(R.string.grace_android_cloud_backup_title),
+                description = stringResource(R.string.grace_android_cloud_backup_desc)
             )
         }
 
@@ -120,8 +125,8 @@ fun PrivacySettings(
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
         ) {
             BackupInfoRow(
-                title = "Local Backups",
-                description = "Auto Backup and Manual Backup in Data Management copy the full database, including usage history. Keep those files private."
+                title = stringResource(R.string.grace_local_backups_title),
+                description = stringResource(R.string.grace_local_backups_desc)
             )
         }
     }

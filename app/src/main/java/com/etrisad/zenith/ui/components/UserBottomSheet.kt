@@ -21,9 +21,11 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.asComposePath
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.toPath
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import kotlinx.coroutines.launch
@@ -63,7 +65,7 @@ fun UserBottomSheet(
                     .padding(bottom = 100.dp)
             ) {
                 Text(
-                    text = "Profile Identity",
+                    text = stringResource(R.string.warn_profile_identity_title),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -112,7 +114,7 @@ fun UserBottomSheet(
                     .padding(24.dp),
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = "Save Changes")
+                Icon(Icons.AutoMirrored.Outlined.ArrowForward, contentDescription = stringResource(R.string.warn_save_changes))
             }
         }
     }
@@ -160,7 +162,7 @@ fun StreakCard(
         ) {
             Column {
                 Text(
-                    text = "Screen Time Streak",
+                    text = stringResource(R.string.warn_streak_screen_time),
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.ExtraBold
@@ -173,7 +175,7 @@ fun StreakCard(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Best Personal Streak",
+                    text = stringResource(R.string.warn_streak_best),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                     fontWeight = FontWeight.Medium
@@ -207,7 +209,7 @@ fun StreakCard(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "days today",
+                    text = stringResource(R.string.warn_streak_days_today),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.secondary
@@ -259,7 +261,7 @@ fun NameEditCard(
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
-                    text = "User Identity",
+                    text = stringResource(R.string.warn_user_identity_title),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -272,7 +274,7 @@ fun NameEditCard(
                 value = name,
                 onValueChange = onNameChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("How should we call you?") },
+                placeholder = { Text(stringResource(R.string.warn_name_placeholder)) },
                 singleLine = true,
                 shape = RoundedCornerShape(16.dp),
                 colors = OutlinedTextFieldDefaults.colors(

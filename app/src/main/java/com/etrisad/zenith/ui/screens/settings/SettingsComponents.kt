@@ -26,8 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.FontOption
 import com.etrisad.zenith.data.preferences.ThemeConfig
 import com.etrisad.zenith.ui.components.ZenithButton
@@ -274,7 +276,7 @@ fun ThemeSelector(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "Theme Mode",
+                    text = stringResource(R.string.notifications_theme_mode),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                     modifier = Modifier.weight(1f)
@@ -284,9 +286,9 @@ fun ThemeSelector(
             Spacer(modifier = Modifier.height(16.dp))
             
             val themeOptions = listOf(
-                ThemeConfig.FOLLOW_SYSTEM to "System",
-                ThemeConfig.LIGHT to "Light",
-                ThemeConfig.DARK to "Dark"
+                ThemeConfig.FOLLOW_SYSTEM to stringResource(R.string.notifications_system),
+                ThemeConfig.LIGHT to stringResource(R.string.notifications_light),
+                ThemeConfig.DARK to stringResource(R.string.notifications_dark)
             )
 
             ZenithToggleButtonGroup(
@@ -337,7 +339,7 @@ fun FontSelector(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = "Font Style",
+                    text = stringResource(R.string.notifications_font_style),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
                     modifier = Modifier.weight(1f)
@@ -347,9 +349,9 @@ fun FontSelector(
             Spacer(modifier = Modifier.height(16.dp))
             
             val fontOptions = listOf(
-                FontOption.SYSTEM to "System",
-                FontOption.GOOGLE_SANS_FLEX to "GS Flex",
-                FontOption.NUNITO to "Nunito"
+                FontOption.SYSTEM to stringResource(R.string.notifications_system),
+                FontOption.GOOGLE_SANS_FLEX to stringResource(R.string.notifications_gs_flex_font),
+                FontOption.NUNITO to stringResource(R.string.notifications_nunito_font)
             )
 
             ZenithToggleButtonGroup(
@@ -365,7 +367,7 @@ fun FontSelector(
                 ZenithButton(
                     onClick = onCustomizeGSFlex,
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Customize GS Flex Variations",
+                    text = stringResource(R.string.notifications_customize_gs_flex),
                     icon = Icons.Outlined.SettingsSuggest,
                     type = ZenithButtonType.Outlined,
                     size = ZenithButtonSize.Large

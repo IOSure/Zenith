@@ -75,8 +75,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.ReelsShieldDefaults
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
@@ -158,8 +160,8 @@ fun ReelsShieldScreen(
                 }
                 showAppsSheet = false
             },
-            title = "Short Video Apps",
-            subtitle = "Apps are categorized as fully supported, partial support, or untested based on detection accuracy. Only apps capable of short video detection are listed.",
+            title = stringResource(R.string.reels_short_video_apps_title),
+            subtitle = stringResource(R.string.reels_short_video_apps_subtitle),
             allowedPackages = ReelsShieldDefaults.SUPPORTED_PACKAGES,
             priorityPackages = ReelsShieldDefaults.PRIORITY_PACKAGES
         )
@@ -254,8 +256,8 @@ fun ReelsShieldScreen(
                         Column {
                             if (!accessibilityEnabled) {
                                 SettingsActionItem(
-                                    title = "Accessibility Service Off",
-                                    summary = "Turn on Zenith's accessibility service so short-video reels can be detected",
+                                    title = stringResource(R.string.reels_accessibility_off_title),
+                                    summary = stringResource(R.string.reels_accessibility_off_summary),
                                     onClick = {
                                         context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
                                     },
@@ -273,7 +275,7 @@ fun ReelsShieldScreen(
                                     )
                                 ) {
                                     Text(
-                                        text = "Zenith's limited accessibility mode hides scroll events, so reels cannot be counted. Turn it off in Privacy for this feature to work.",
+                                        text = stringResource(R.string.reels_limited_accessibility_warning),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onErrorContainer,
                                         modifier = Modifier.padding(16.dp)
@@ -288,7 +290,7 @@ fun ReelsShieldScreen(
 
             item(key = "reels_limits_header") {
                 Column(modifier = Modifier.animateItem()) {
-                    ReelsSectionHeader(title = "Limits")
+                    ReelsSectionHeader(title = stringResource(R.string.reels_section_limits))
                 }
             }
 
@@ -322,8 +324,11 @@ fun ReelsShieldScreen(
             item(key = "reels_apps") {
                 Column(modifier = Modifier.animateItem()) {
                     SettingsActionItem(
-                        title = "Tracked Apps",
-                        summary = "${preferences.reelsShieldPackages.size} tracked short-video apps",
+                        title = stringResource(R.string.reels_tracked_apps_title),
+                        summary = stringResource(
+                            R.string.reels_tracked_apps_summary,
+                            preferences.reelsShieldPackages.size
+                        ),
                         onClick = { showAppsSheet = true },
                         icon = Icons.Outlined.Apps,
                         shape = RoundedCornerShape(24.dp)
@@ -334,7 +339,7 @@ fun ReelsShieldScreen(
 
             item(key = "reels_insights_header") {
                 Column(modifier = Modifier.animateItem()) {
-                    ReelsSectionHeader(title = "Insights")
+                    ReelsSectionHeader(title = stringResource(R.string.reels_section_insights))
                 }
             }
             val detail = selectedHistoryDetail
@@ -467,16 +472,16 @@ private fun ReelsShieldToggleCard(enabled: Boolean, onToggle: (Boolean) -> Unit)
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Reels Shield",
+                    text = stringResource(R.string.reels_shield),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = if (enabled) {
-                        "Counting short-video reels"
+                        stringResource(R.string.reels_status_counting)
                     } else {
-                        "Currently disabled · turn on to count Reels and Shorts"
+                        stringResource(R.string.reels_status_disabled)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -622,7 +627,11 @@ private fun ReelsShieldHero(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = if (poolEmpty) "limit reached" else "reels left",
+                    text = if (poolEmpty) {
+                        stringResource(R.string.reels_hero_limit_reached)
+                    } else {
+                        stringResource(R.string.reels_hero_reels_left)
+                    },
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -658,17 +667,21 @@ private fun ReelsShieldStatsGrid(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             ReelsHeroStatCard(
-                label = "Used today",
+                label = stringResource(R.string.reels_stat_used_today),
                 value = "$todayCount / $limit",
-                subtitle = "Reels watched",
+                subtitle = stringResource(R.string.reels_stat_reels_watched),
                 icon = Icons.Outlined.SwapVert,
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 8.dp, bottomStart = 8.dp, bottomEnd = 8.dp),
                 modifier = Modifier.weight(1f)
             )
             ReelsHeroStatCard(
-                label = "Apps today",
+                label = stringResource(R.string.reels_stat_apps_today),
                 value = "$todayByAppCount",
-                subtitle = if (todayByAppCount == 1) "Active app" else "Active apps",
+                subtitle = if (todayByAppCount == 1) {
+                    stringResource(R.string.reels_stat_active_app)
+                } else {
+                    stringResource(R.string.reels_stat_active_apps)
+                },
                 icon = Icons.Outlined.Apps,
                 shape = RoundedCornerShape(topEnd = 24.dp, topStart = 8.dp, bottomStart = 8.dp, bottomEnd = 8.dp),
                 modifier = Modifier.weight(1f)
@@ -679,18 +692,22 @@ private fun ReelsShieldStatsGrid(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             ReelsHeroStatCard(
-                label = "Reels left",
+                label = stringResource(R.string.reels_stat_reels_left),
                 value = "$remaining",
-                subtitle = if (poolEmpty) "Limit reached" else "Remaining limit",
+                subtitle = if (poolEmpty) {
+                    stringResource(R.string.reels_stat_limit_reached)
+                } else {
+                    stringResource(R.string.reels_stat_remaining_limit)
+                },
                 icon = if (poolEmpty) Icons.Outlined.HourglassEmpty else Icons.Outlined.Shield,
                 shape = RoundedCornerShape(bottomStart = 24.dp, topStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp),
                 modifier = Modifier.weight(1f),
                 iconTint = if (poolEmpty) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             )
             ReelsHeroStatCard(
-                label = "Lifetime",
+                label = stringResource(R.string.reels_stat_lifetime),
                 value = formatCompactCount(totalCount),
-                subtitle = "Total reels",
+                subtitle = stringResource(R.string.reels_stat_total_reels),
                 icon = Icons.Outlined.History,
                 shape = RoundedCornerShape(bottomEnd = 24.dp, topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp),
                 modifier = Modifier.weight(1f),

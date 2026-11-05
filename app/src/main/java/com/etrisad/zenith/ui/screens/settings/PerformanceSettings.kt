@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import com.etrisad.zenith.ui.components.focus.TimePickerDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.PerformanceConfig
 import com.etrisad.zenith.data.preferences.PerformanceLevel
 import com.etrisad.zenith.data.preferences.UserPreferences
@@ -71,7 +73,7 @@ fun PerformanceSettings(
     val allLevels = PerformanceLevel.values()
     var pendingBatteryLevel by remember { mutableStateOf<PerformanceLevel?>(null) }
 
-    PreferenceCategory(title = "Performance Profile")
+    PreferenceCategory(title = stringResource(R.string.performance_profile))
 
     allLevels.forEachIndexed { index, level ->
         val isSelected = preferences.performanceLevel == level
@@ -144,15 +146,16 @@ fun PerformanceSettings(
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = level.labelRes,
+                    Text(text = stringResource(level.labelRes),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold)
                     if (isCustom && isSelected) {
-                        Text(text = activeConfigSummary(preferences.buildPerformanceConfig()),
+                        val configSummary = activeConfigSummary(preferences.buildPerformanceConfig())
+                        Text(text = configSummary,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
-                        Text(text = level.descriptionRes,
+                        Text(text = stringResource(level.descriptionRes),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
@@ -176,16 +179,16 @@ fun PerformanceSettings(
     }
 
     Spacer(modifier = Modifier.height(8.dp))
-    Text(text = "Custom profile lets you tune every parameter manually",
+    Text(text = stringResource(R.string.performance_custom_profile_hint),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(horizontal = 4.dp))
 
     Spacer(modifier = Modifier.height(16.dp))
-    PreferenceCategory(title = "Unused Hours")
+    PreferenceCategory(title = stringResource(R.string.performance_unused_hours))
     SettingsToggle(
-        title = "Disable Tracking at Unused Hours",
-        description = "Pause monitoring during hours you never use your phone. Works with screen-off to save battery overnight.",
+        title = stringResource(R.string.performance_disable_tracking_unused_hours),
+        description = stringResource(R.string.performance_disable_tracking_unused_hours_desc),
         checked = preferences.disableTrackingAtUnusedHours,
         onCheckedChange = onDisableTrackingAtUnusedHoursChange,
         icon = Icons.Outlined.Nightlight,
@@ -222,7 +225,7 @@ fun PerformanceSettings(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("Start Time", style = MaterialTheme.typography.labelLarge,
+                        Text(stringResource(R.string.performance_start_time), style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -241,7 +244,7 @@ fun PerformanceSettings(
                         modifier = Modifier.padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text("End Time", style = MaterialTheme.typography.labelLarge,
+                        Text(stringResource(R.string.performance_end_time), style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
@@ -506,11 +509,11 @@ fun PerformanceTuningPanel(
         }
     }
 
-    PreferenceCategory(title = "Instant Detection")
+    PreferenceCategory(title = stringResource(R.string.performance_instant_detection))
     TuningPermissionItemRow(
-        title = "Accessibility Service",
-        description = if (hasAccessibility) "Service is active and detecting launches instantly" 
-                      else "Detect app launches instantly for peak performance",
+        title = stringResource(R.string.performance_accessibility_service),
+        description = if (hasAccessibility) stringResource(R.string.performance_accessibility_service_active_desc)
+                      else stringResource(R.string.performance_accessibility_service_inactive_desc),
         isGranted = hasAccessibility,
         onClick = {
             showBankingWarning = true
@@ -521,8 +524,8 @@ fun PerformanceTuningPanel(
     )
     Spacer(modifier = Modifier.height(4.dp))
     SettingsToggle(
-        title = "Make as Requirement",
-        description = "Require Accessibility Service to be granted for permission checks",
+        title = stringResource(R.string.performance_make_as_requirement),
+        description = stringResource(R.string.performance_make_as_requirement_desc),
         checked = preferences.accessibilityRequired,
         onCheckedChange = onAccessibilityRequiredChange,
         icon = Icons.Outlined.Lock,
@@ -530,8 +533,8 @@ fun PerformanceTuningPanel(
     )
     Spacer(modifier = Modifier.height(4.dp))
     SettingsToggle(
-        title = "Accessibility Active Notification",
-        description = "Show a persistent warning notification when accessibility service is active",
+        title = stringResource(R.string.performance_accessibility_active_notification),
+        description = stringResource(R.string.performance_accessibility_active_notification_desc),
         checked = preferences.accessibilityActiveNotificationEnabled,
         onCheckedChange = { checked ->
             scope.launch {
@@ -561,7 +564,7 @@ fun PerformanceTuningPanel(
         )
     }
 
-    PreferenceCategory(title = "Custom Tuning")
+    PreferenceCategory(title = stringResource(R.string.performance_custom_tuning))
 
     val tuningChevronRotation by animateFloatAsState(
         targetValue = if (tuningExpanded) 180f else 0f,
@@ -595,20 +598,20 @@ fun PerformanceTuningPanel(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Parameter Details",
+                    text = stringResource(R.string.performance_parameter_details),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = if (tuningExpanded) "Drag any slider then tap Apply to save"
-                    else "Tap to expand custom tuning",
+                    text = if (tuningExpanded) stringResource(R.string.performance_parameter_details_expanded_hint)
+                    else stringResource(R.string.performance_parameter_details_collapsed_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Icon(
                 Icons.Outlined.ExpandMore,
-                contentDescription = if (tuningExpanded) "Collapse" else "Expand",
+                contentDescription = if (tuningExpanded) stringResource(R.string.performance_collapse) else stringResource(R.string.performance_expand),
                 modifier = Modifier.rotate(tuningChevronRotation),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -628,12 +631,12 @@ fun PerformanceTuningPanel(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    GroupHeader("Check Interval", Icons.Outlined.Timer)
+                    GroupHeader(stringResource(R.string.performance_check_interval), Icons.Outlined.Timer)
                     Spacer(modifier = Modifier.height(8.dp))
-                    SliderItem("Overlay Active", "How often to check when overlay is visible",
+                    SliderItem(stringResource(R.string.performance_overlay_active), stringResource(R.string.performance_overlay_active_desc),
                         a11yActive / 1000f, 30f..600f, "s", Icons.Outlined.Visibility,
                         onChange = { a11yActive = (it * 1000).toLong(); autoSwitch() })
-                    SliderItem("Overlay Hidden", "How often to check when overlay is hidden",
+                    SliderItem(stringResource(R.string.performance_overlay_hidden), stringResource(R.string.performance_overlay_hidden_desc),
                         a11yInactive / 1000f, 1f..10f, "s", Icons.Outlined.VisibilityOff, 9,
                         onChange = { a11yInactive = (it * 1000).toLong(); autoSwitch() })
                 }
@@ -646,12 +649,12 @@ fun PerformanceTuningPanel(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    GroupHeader("Power Saving", Icons.Outlined.BatteryChargingFull)
+                    GroupHeader(stringResource(R.string.performance_power_saving), Icons.Outlined.BatteryChargingFull)
                     Spacer(modifier = Modifier.height(8.dp))
-                    SliderItem("Screen Off", "How often to check when screen is off",
+                    SliderItem(stringResource(R.string.performance_screen_off), stringResource(R.string.performance_screen_off_desc),
                         screenOff / 60000f, 1f..30f, "min", Icons.Outlined.ScreenLockPortrait, 29,
                         onChange = { screenOff = (it * 60000).toLong(); autoSwitch() })
-                    SliderItem("Battery Saver", "How often to check during power saving",
+                    SliderItem(stringResource(R.string.performance_battery_saver), stringResource(R.string.performance_battery_saver_desc),
                         powerSave / 60000f, 1f..30f, "min", Icons.Outlined.BatteryStd, 29,
                         onChange = { powerSave = (it * 60000).toLong(); autoSwitch() })
                 }
@@ -664,12 +667,12 @@ fun PerformanceTuningPanel(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    GroupHeader("Data Refresh", Icons.Outlined.Storage)
+                    GroupHeader(stringResource(R.string.performance_data_refresh), Icons.Outlined.Storage)
                     Spacer(modifier = Modifier.height(8.dp))
-                    SliderItem("Usage Stats", "Refresh app usage from system",
+                    SliderItem(stringResource(R.string.performance_usage_stats), stringResource(R.string.performance_usage_stats_desc),
                         usageCache / 60000f, 0.17f..60f, "min", Icons.Outlined.Refresh,
                         onChange = { usageCache = (it * 60000).toLong(); autoSwitch() })
-                    SliderItem("App List", "Refresh list of installed apps",
+                    SliderItem(stringResource(R.string.performance_app_list), stringResource(R.string.performance_app_list_desc),
                         launcherCache / 60000f, 5f..240f, "min", Icons.Outlined.Apps,
                         onChange = { launcherCache = (it * 60000).toLong(); autoSwitch() })
                 }
@@ -682,12 +685,12 @@ fun PerformanceTuningPanel(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    GroupHeader("Storage", Icons.Outlined.Save)
+                    GroupHeader(stringResource(R.string.performance_storage), Icons.Outlined.Save)
                     Spacer(modifier = Modifier.height(8.dp))
-                    SliderItem("Save Data", "Write usage data to storage",
+                    SliderItem(stringResource(R.string.performance_save_data), stringResource(R.string.performance_save_data_desc),
                         dbWrite / 60000f, 1f..30f, "min", Icons.Outlined.Storage, 29,
                         onChange = { dbWrite = (it * 60000).toLong(); autoSwitch() })
-                    SliderItem("Save Data (Near)", "More frequent saves near daily limit",
+                    SliderItem(stringResource(R.string.performance_save_data_near), stringResource(R.string.performance_save_data_near_desc),
                         dbWriteNear / 60000f, 0.5f..10f, "min", Icons.Outlined.TimerOff,
                         onChange = { dbWriteNear = (it * 60000).toLong(); autoSwitch() })
                 }
@@ -724,16 +727,16 @@ fun PerformanceTuningPanel(
             }
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text("Scan Timing", style = MaterialTheme.typography.titleMedium,
+                Text(stringResource(R.string.performance_scan_timing), style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold)
-                Text("Fine-tune monitoring frequency for each scenario",
+                Text(stringResource(R.string.performance_scan_timing_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2)
             }
             Icon(
                 Icons.Outlined.ExpandMore,
-                contentDescription = if (delayExpanded) "Collapse" else "Expand",
+                contentDescription = if (delayExpanded) stringResource(R.string.performance_collapse) else stringResource(R.string.performance_expand),
                 modifier = Modifier.rotate(delayChevronRotation),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -752,10 +755,10 @@ fun PerformanceTuningPanel(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    GroupHeader("Power & Overlay", Icons.Outlined.BatteryChargingFull)
+                    GroupHeader(stringResource(R.string.performance_power_overlay), Icons.Outlined.BatteryChargingFull)
                     Spacer(modifier = Modifier.height(8.dp))
-                    DelaySliderItem(label = "Power Save Mode", description = "Checks less often when your battery is low", icon = Icons.Outlined.BatteryChargingFull, value = delayPowerSave, onValueChange = { v -> delayPowerSave = v; autoSwitch() }, onReset = { delayPowerSave = 5000L; autoSwitch() }, range = 500f..15000f)
-                    DelaySliderItem(label = "Overlay Showing", description = "How often it checks while the overlay is visible", icon = Icons.Outlined.Visibility, value = delayOverlayShowing, onValueChange = { v -> delayOverlayShowing = v; autoSwitch() }, onReset = { delayOverlayShowing = 8000L; autoSwitch() }, range = 500f..15000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_power_save_mode), description = stringResource(R.string.performance_power_save_mode_desc), icon = Icons.Outlined.BatteryChargingFull, value = delayPowerSave, onValueChange = { v -> delayPowerSave = v; autoSwitch() }, onReset = { delayPowerSave = 5000L; autoSwitch() }, range = 500f..15000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_overlay_showing), description = stringResource(R.string.performance_overlay_showing_desc), icon = Icons.Outlined.Visibility, value = delayOverlayShowing, onValueChange = { v -> delayOverlayShowing = v; autoSwitch() }, onReset = { delayOverlayShowing = 8000L; autoSwitch() }, range = 500f..15000f)
                 }
             }
 
@@ -766,11 +769,11 @@ fun PerformanceTuningPanel(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    GroupHeader("Goal Shield", Icons.Outlined.Flag)
+                    GroupHeader(stringResource(R.string.performance_goal_shield), Icons.Outlined.Flag)
                     Spacer(modifier = Modifier.height(8.dp))
-                    DelaySliderItem(label = "Near (<1m)", description = "Time is almost up, check more often", icon = Icons.Outlined.Flag, value = delayGoalNear, onValueChange = { v -> delayGoalNear = v; autoSwitch() }, onReset = { delayGoalNear = 600L; autoSwitch() }, range = 100f..10000f)
-                    DelaySliderItem(label = "Mid (<5m)", description = "A few minutes left, moderate checking", icon = Icons.Outlined.Flag, value = delayGoalMid, onValueChange = { v -> delayGoalMid = v; autoSwitch() }, onReset = { delayGoalMid = 1200L; autoSwitch() }, range = 100f..10000f)
-                    DelaySliderItem(label = "Far (>5m)", description = "Plenty of time left, can take it easy", icon = Icons.Outlined.Flag, value = delayGoalFar, onValueChange = { v -> delayGoalFar = v; autoSwitch() }, onReset = { delayGoalFar = 1800L; autoSwitch() }, range = 100f..10000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_delay_near_label), description = stringResource(R.string.performance_delay_goal_near_desc), icon = Icons.Outlined.Flag, value = delayGoalNear, onValueChange = { v -> delayGoalNear = v; autoSwitch() }, onReset = { delayGoalNear = 600L; autoSwitch() }, range = 100f..10000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_delay_goal_mid_label), description = stringResource(R.string.performance_delay_goal_mid_desc), icon = Icons.Outlined.Flag, value = delayGoalMid, onValueChange = { v -> delayGoalMid = v; autoSwitch() }, onReset = { delayGoalMid = 1200L; autoSwitch() }, range = 100f..10000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_delay_goal_far_label), description = stringResource(R.string.performance_delay_goal_far_desc), icon = Icons.Outlined.Flag, value = delayGoalFar, onValueChange = { v -> delayGoalFar = v; autoSwitch() }, onReset = { delayGoalFar = 1800L; autoSwitch() }, range = 100f..10000f)
                 }
             }
 
@@ -781,12 +784,12 @@ fun PerformanceTuningPanel(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    GroupHeader("Regular Shield", Icons.Outlined.Security)
+                    GroupHeader(stringResource(R.string.performance_regular_shield), Icons.Outlined.Security)
                     Spacer(modifier = Modifier.height(8.dp))
-                    DelaySliderItem(label = "Near (<1m)", description = "Almost done, keep a close eye", icon = Icons.Outlined.Security, value = delayShieldNear, onValueChange = { v -> delayShieldNear = v; autoSwitch() }, onReset = { delayShieldNear = 600L; autoSwitch() }, range = 100f..10000f)
-                    DelaySliderItem(label = "Mid (>1m)", description = "Still going, check at a normal pace", icon = Icons.Outlined.Security, value = delayShieldMid, onValueChange = { v -> delayShieldMid = v; autoSwitch() }, onReset = { delayShieldMid = 1500L; autoSwitch() }, range = 100f..10000f)
-                    DelaySliderItem(label = "Far (>10m)", description = "Long session ahead, no rush to check", icon = Icons.Outlined.Security, value = delayShieldFar, onValueChange = { v -> delayShieldFar = v; autoSwitch() }, onReset = { delayShieldFar = 3000L; autoSwitch() }, range = 100f..15000f)
-                    DelaySliderItem(label = "Very Far (>1h)", description = "Hours left, barely needs checking", icon = Icons.Outlined.Security, value = delayShieldVeryFar, onValueChange = { v -> delayShieldVeryFar = v; autoSwitch() }, onReset = { delayShieldVeryFar = 5000L; autoSwitch() }, range = 100f..15000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_delay_near_label), description = stringResource(R.string.performance_delay_shield_near_desc), icon = Icons.Outlined.Security, value = delayShieldNear, onValueChange = { v -> delayShieldNear = v; autoSwitch() }, onReset = { delayShieldNear = 600L; autoSwitch() }, range = 100f..10000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_delay_shield_mid_label), description = stringResource(R.string.performance_delay_shield_mid_desc), icon = Icons.Outlined.Security, value = delayShieldMid, onValueChange = { v -> delayShieldMid = v; autoSwitch() }, onReset = { delayShieldMid = 1500L; autoSwitch() }, range = 100f..10000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_delay_shield_far_label), description = stringResource(R.string.performance_delay_shield_far_desc), icon = Icons.Outlined.Security, value = delayShieldFar, onValueChange = { v -> delayShieldFar = v; autoSwitch() }, onReset = { delayShieldFar = 3000L; autoSwitch() }, range = 100f..15000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_delay_shield_very_far_label), description = stringResource(R.string.performance_delay_shield_very_far_desc), icon = Icons.Outlined.Security, value = delayShieldVeryFar, onValueChange = { v -> delayShieldVeryFar = v; autoSwitch() }, onReset = { delayShieldVeryFar = 5000L; autoSwitch() }, range = 100f..15000f)
                 }
             }
 
@@ -797,9 +800,9 @@ fun PerformanceTuningPanel(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    GroupHeader("Default", Icons.Outlined.TouchApp)
+                    GroupHeader(stringResource(R.string.performance_default), Icons.Outlined.TouchApp)
                     Spacer(modifier = Modifier.height(8.dp))
-                    DelaySliderItem(label = "Default Interval", description = "Used when nothing else is active", icon = Icons.Outlined.TouchApp, value = delayDefault, onValueChange = { v -> delayDefault = v; autoSwitch() }, onReset = { delayDefault = 1200L; autoSwitch() }, range = 100f..10000f)
+                    DelaySliderItem(label = stringResource(R.string.performance_default_interval), description = stringResource(R.string.performance_default_interval_desc), icon = Icons.Outlined.TouchApp, value = delayDefault, onValueChange = { v -> delayDefault = v; autoSwitch() }, onReset = { delayDefault = 1200L; autoSwitch() }, range = 100f..10000f)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End
@@ -817,7 +820,7 @@ fun PerformanceTuningPanel(
                         ) {
                             Icon(Icons.Outlined.RestartAlt, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(Modifier.width(4.dp))
-                            Text("Reset All", style = MaterialTheme.typography.labelMedium)
+                            Text(stringResource(R.string.performance_reset_all), style = MaterialTheme.typography.labelMedium)
                         }
                     }
                 }
@@ -868,7 +871,7 @@ fun DelaySliderItem(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.RestartAlt,
-                            contentDescription = "Reset",
+                            contentDescription = stringResource(R.string.performance_reset),
                             tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
                             modifier = Modifier.size(12.dp)
                         )
@@ -977,7 +980,7 @@ private fun BatteryWarningBottomSheet(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = level.labelRes,
+                text = stringResource(level.labelRes),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.graphicsLayer(alpha = contentAlpha.value)
@@ -986,9 +989,7 @@ private fun BatteryWarningBottomSheet(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "This preset reduces background checking frequency to save battery. " +
-                        "Consider enabling Accessibility Service for instant app detection " +
-                        "without polling.",
+                text = stringResource(R.string.performance_battery_preset_warning),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -1000,14 +1001,14 @@ private fun BatteryWarningBottomSheet(
             ZenithGroupedButton(size = ZenithButtonSize.Large) {
                 ZenithButtonWeighted(
                     onClick = onDismiss,
-                    text = "Cancel",
+                    text = stringResource(R.string.performance_cancel),
                     type = ZenithButtonType.Outlined,
                     isLast = false,
                     size = ZenithButtonSize.ExtraLarge
                 )
                 ZenithButtonWeighted(
                     onClick = onConfirm,
-                    text = "Use Anyway",
+                    text = stringResource(R.string.performance_use_anyway),
                     type = ZenithButtonType.Filled,
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -1021,19 +1022,24 @@ private fun BatteryWarningBottomSheet(
     }
 }
 
-private fun fmtDur(ms: Long): String = when {
-    ms >= 3600000 -> {
-        val h = ms / 3600000
-        val m = (ms % 3600000) / 60000
-        if (m > 0) "${h}h ${m}m" else "${h}h"
+@Composable
+private fun fmtDur(ms: Long): String {
+    return when {
+        ms >= 3600000 -> {
+            val h = ms / 3600000
+            val m = (ms % 3600000) / 60000
+            if (m > 0) stringResource(R.string.general_duration_hours_minutes_short, h, m)
+            else stringResource(R.string.general_duration_hours_short, h)
+        }
+        ms >= 60000 -> {
+            val m = ms / 60000
+            val s = (ms % 60000) / 1000
+            if (s > 0) stringResource(R.string.general_duration_minutes_seconds_short, m, s)
+            else stringResource(R.string.general_duration_minutes_short, m)
+        }
+        ms >= 1000 -> stringResource(R.string.general_duration_seconds_short, ms / 1000)
+        else -> stringResource(R.string.main2_perf_duration_ms, ms)
     }
-    ms >= 60000 -> {
-        val m = ms / 60000
-        val s = (ms % 60000) / 1000
-        if (s > 0) "${m}m ${s}s" else "${m}m"
-    }
-    ms >= 1000 -> "${ms / 1000}s"
-    else -> "${ms}ms"
 }
 
 @Composable
@@ -1100,24 +1106,31 @@ private fun SliderItem(
     }
 }
 
-private fun fmtVal(value: Float, unit: String): String = when {
-    unit == "min" && value >= 60 -> "${(value / 60).toInt()}h"
-    unit == "min" && value >= 1 -> "${value.toInt()}m"
-    unit == "min" && value < 1 -> "${(value * 60).toInt()}s"
-    unit == "s" && value >= 60 -> {
-        val m = (value / 60).toInt()
-        val s = (value % 60).toInt()
-        if (s > 0) "${m}m ${s}s" else "${m}m"
+@Composable
+private fun fmtVal(value: Float, unit: String): String {
+    return when {
+        unit == "min" && value >= 60 -> stringResource(R.string.general_duration_hours_short, (value / 60).toInt())
+        unit == "min" && value >= 1 -> stringResource(R.string.general_duration_minutes_short, value.toInt())
+        unit == "min" && value < 1 -> stringResource(R.string.general_duration_seconds_short, (value * 60).toInt())
+        unit == "s" && value >= 60 -> {
+            val m = (value / 60).toInt()
+            val s = (value % 60).toInt()
+            if (s > 0) stringResource(R.string.general_duration_minutes_seconds_short, m, s)
+            else stringResource(R.string.general_duration_minutes_short, m)
+        }
+        else -> stringResource(R.string.general_duration_seconds_short, value.toInt())
     }
-    else -> "${value.toInt()}s"
 }
 
+@Composable
 private fun activeConfigSummary(cfg: PerformanceConfig): String {
-    val parts = mutableListOf<String>()
-    parts.add("Active: ${fmtDur(cfg.a11yActiveDelay)}")
-    parts.add("Hidden: ${fmtDur(cfg.a11yInactiveDelay)}")
-    parts.add("Save: ${fmtDur(cfg.shieldDbWriteMs)}")
-    return parts.joinToString(" · ")
+    val activeDuration = fmtDur(cfg.a11yActiveDelay)
+    val hiddenDuration = fmtDur(cfg.a11yInactiveDelay)
+    val saveDuration = fmtDur(cfg.shieldDbWriteMs)
+    val active = stringResource(R.string.main2_perf_summary_active, activeDuration)
+    val hidden = stringResource(R.string.main2_perf_summary_hidden, hiddenDuration)
+    val save = stringResource(R.string.main2_perf_summary_save, saveDuration)
+    return listOf(active, hidden, save).joinToString(" · ")
 }
 
 private enum class TuningGroupPosition {
@@ -1205,7 +1218,7 @@ private fun TuningPermissionItemRow(
             if (isGranted) {
                 Icon(
                     Icons.Outlined.CheckCircle,
-                    "Granted",
+                    stringResource(R.string.performance_granted),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
@@ -1218,7 +1231,7 @@ private fun TuningPermissionItemRow(
                         ) {
                             Icon(
                                 Icons.Outlined.Info,
-                                contentDescription = "Info",
+                                contentDescription = stringResource(R.string.performance_info),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -1230,7 +1243,7 @@ private fun TuningPermissionItemRow(
                         shape = CircleShape
                     ) {
                         Text(
-                            text = "Grant",
+                            text = stringResource(R.string.performance_grant),
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                             color = MaterialTheme.colorScheme.onPrimary,
                             fontWeight = FontWeight.Bold,

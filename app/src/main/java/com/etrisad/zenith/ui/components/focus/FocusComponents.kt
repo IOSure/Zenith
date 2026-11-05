@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,7 @@ import android.provider.Settings
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.website.WebsiteRepository
 import com.etrisad.zenith.ui.viewmodel.AppInfo
 import com.etrisad.zenith.util.isAccessibilityServiceEnabled
@@ -520,7 +522,7 @@ fun <T> ZenithDropdown(
     width: Dp = 150.dp
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedText = options.find { it.second == selectedOption }?.first ?: "Select"
+    val selectedText = options.find { it.second == selectedOption }?.first ?: stringResource(R.string.grace_select)
 
     val menuScale by animateFloatAsState(
         targetValue = if (expanded) 1f else 0.8f,
@@ -767,8 +769,8 @@ fun TimePickerDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        confirmButton = { TextButton(onClick = onConfirm) { Text("OK") } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.grace_ok)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.grace_cancel)) } },
         text = { content() }
     )
 }
@@ -831,13 +833,13 @@ fun AccessibilityWarningCard(modifier: Modifier = Modifier) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Accessibility Required",
+                    text = stringResource(R.string.grace_accessibility_required_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "Website blocking requires the Accessibility Service to be enabled.",
+                    text = stringResource(R.string.grace_accessibility_required_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
@@ -850,7 +852,7 @@ fun AccessibilityWarningCard(modifier: Modifier = Modifier) {
                 shape = CircleShape
             ) {
                 Text(
-                    text = "Enable",
+                    text = stringResource(R.string.grace_enable),
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                     color = MaterialTheme.colorScheme.onPrimary,
                     fontWeight = FontWeight.Bold,

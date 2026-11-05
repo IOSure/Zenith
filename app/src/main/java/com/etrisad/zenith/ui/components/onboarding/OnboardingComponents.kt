@@ -17,8 +17,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 
 @Composable
 fun OptionCard(
@@ -98,7 +100,7 @@ fun OptionCard(
                 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Pros",
+                        text = stringResource(R.string.onboarding_pros),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -113,7 +115,7 @@ fun OptionCard(
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Cons",
+                        text = stringResource(R.string.onboarding_cons),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.error

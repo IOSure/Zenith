@@ -44,10 +44,12 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.focus.PreferenceCategory
 import kotlinx.coroutines.launch
@@ -135,14 +137,21 @@ fun LevelScreen(
                         Spacer(modifier = Modifier.width(16.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = "${state.xpTotal} XP",
+                                text = stringResource(R.string.alarm_level_xp_total, state.xpTotal),
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Black
                             )
+                            val nextRewardText = if (nextReward != null) {
+                                stringResource(
+                                    R.string.alarm_level_next_reward,
+                                    nextReward.label(),
+                                    nextReward.requiredLevel
+                                )
+                            } else {
+                                stringResource(R.string.alarm_level_all_rewards_unlocked)
+                            }
                             Text(
-                                text = nextReward?.let { (req, name) ->
-                                    "Next reward: $name at Level $req"
-                                } ?: "All level rewards unlocked",
+                                text = nextRewardText,
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.tertiary
                             )
@@ -161,7 +170,11 @@ fun LevelScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "${xpToNextLevel(state.xpTotal)} XP to Level ${level + 1}",
+                        text = stringResource(
+                            R.string.alarm_level_xp_to_next_level,
+                            xpToNextLevel(state.xpTotal),
+                            level + 1
+                        ),
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
@@ -172,7 +185,7 @@ fun LevelScreen(
 
         item(key = "titles") {
             Column {
-                PreferenceCategory(title = "Titles")
+                PreferenceCategory(title = stringResource(R.string.alarm_level_titles))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -229,7 +242,7 @@ fun LevelScreen(
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = title.name,
+                                        text = stringResource(title.nameRes),
                                         style = MaterialTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center,
@@ -240,7 +253,7 @@ fun LevelScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                     Text(
-                                        text = "Lv ${title.requiredLevel}",
+                                        text = stringResource(R.string.alarm_level_lv, title.requiredLevel),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = if (unlocked) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f)
                                         else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -253,14 +266,14 @@ fun LevelScreen(
                                         if (equipped) {
                                             Icon(
                                                 imageVector = Icons.Outlined.CheckCircleOutline,
-                                                contentDescription = "Equipped",
+                                                contentDescription = stringResource(R.string.alarm_level_equipped),
                                                 tint = MaterialTheme.colorScheme.onPrimary,
                                                 modifier = Modifier.size(16.dp)
                                             )
                                         } else if (!unlocked) {
                                             Icon(
                                                 imageVector = Icons.Outlined.Lock,
-                                                contentDescription = "Locked",
+                                                contentDescription = stringResource(R.string.alarm_level_locked),
                                                 tint = MaterialTheme.colorScheme.outline,
                                                 modifier = Modifier.size(14.dp)
                                             )
@@ -276,7 +289,7 @@ fun LevelScreen(
 
         item(key = "borders") {
             Column {
-                PreferenceCategory(title = "Avatar Borders")
+                PreferenceCategory(title = stringResource(R.string.alarm_level_avatar_borders))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -338,7 +351,7 @@ fun LevelScreen(
                                         if (!unlocked) {
                                             Icon(
                                                 imageVector = Icons.Outlined.Lock,
-                                                contentDescription = "Locked",
+                                                contentDescription = stringResource(R.string.alarm_level_locked),
                                                 tint = MaterialTheme.colorScheme.outline,
                                                 modifier = Modifier.size(14.dp)
                                             )
@@ -346,7 +359,7 @@ fun LevelScreen(
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = border.name,
+                                        text = stringResource(border.nameRes),
                                         style = MaterialTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center,
@@ -356,9 +369,21 @@ fun LevelScreen(
                                         overflow = TextOverflow.Ellipsis,
                                         modifier = Modifier.weight(1f)
                                     )
+                                    val borderColorCount = border.colors.size
                                     Text(
-                                        text = "Lv ${border.requiredLevel} - ${border.colors.size} color" +
-                                            if (border.colors.size > 1) "s" else "",
+                                        text = if (borderColorCount > 1) {
+                                            stringResource(
+                                                R.string.alarm_level_border_level_colors,
+                                                border.requiredLevel,
+                                                borderColorCount
+                                            )
+                                        } else {
+                                            stringResource(
+                                                R.string.alarm_level_border_level_color,
+                                                border.requiredLevel,
+                                                borderColorCount
+                                            )
+                                        },
                                         style = MaterialTheme.typography.labelSmall,
                                         color = if (unlocked) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f)
                                         else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -372,7 +397,7 @@ fun LevelScreen(
                                         if (equipped) {
                                             Icon(
                                                 imageVector = Icons.Outlined.CheckCircleOutline,
-                                                contentDescription = "Equipped",
+                                                contentDescription = stringResource(R.string.alarm_level_equipped),
                                                 tint = MaterialTheme.colorScheme.onPrimary,
                                                 modifier = Modifier.size(16.dp)
                                             )
@@ -388,7 +413,7 @@ fun LevelScreen(
 
         item(key = "shapes") {
             Column {
-                PreferenceCategory(title = "Profile Shapes")
+                PreferenceCategory(title = stringResource(R.string.alarm_level_profile_shapes))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -439,7 +464,7 @@ fun LevelScreen(
                                         if (!unlocked) {
                                             Icon(
                                                 imageVector = Icons.Outlined.Lock,
-                                                contentDescription = "Locked",
+                                                contentDescription = stringResource(R.string.alarm_level_locked),
                                                 tint = MaterialTheme.colorScheme.outline,
                                                 modifier = Modifier.size(14.dp)
                                             )
@@ -454,7 +479,7 @@ fun LevelScreen(
                                     }
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = pShapeDef.name,
+                                        text = stringResource(pShapeDef.nameRes),
                                         style = MaterialTheme.typography.labelMedium,
                                         fontWeight = FontWeight.Bold,
                                         textAlign = TextAlign.Center,
@@ -465,7 +490,7 @@ fun LevelScreen(
                                         modifier = Modifier.weight(1f)
                                     )
                                     Text(
-                                        text = "Lv ${pShapeDef.requiredLevel}",
+                                        text = stringResource(R.string.alarm_level_lv, pShapeDef.requiredLevel),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = if (unlocked) MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.75f)
                                         else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -478,7 +503,7 @@ fun LevelScreen(
                                         if (equipped) {
                                             Icon(
                                                 imageVector = Icons.Outlined.CheckCircleOutline,
-                                                contentDescription = "Equipped",
+                                                contentDescription = stringResource(R.string.alarm_level_equipped),
                                                 tint = MaterialTheme.colorScheme.onPrimary,
                                                 modifier = Modifier.size(16.dp)
                                             )
@@ -494,7 +519,7 @@ fun LevelScreen(
 
         item(key = "history") {
             Column {
-                PreferenceCategory(title = "Daily XP")
+                PreferenceCategory(title = stringResource(R.string.alarm_level_daily_xp))
                 Card(
                     shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(
@@ -504,14 +529,17 @@ fun LevelScreen(
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
                         Text(
-                            text = "Saved ${formatCompactDuration(state.totalSavedMillis)} in total",
+                            text = stringResource(
+                                R.string.alarm_level_saved_total,
+                                formatCompactDuration(state.totalSavedMillis)
+                            ),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         if (state.xpHistory.isEmpty()) {
                             Text(
-                                text = "No XP recorded yet - check back tomorrow",
+                                text = stringResource(R.string.alarm_level_no_xp_yet),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -528,7 +556,7 @@ fun LevelScreen(
                                             modifier = Modifier.weight(1f)
                                         )
                                         Text(
-                                            text = "+${day.xp} XP",
+                                            text = stringResource(R.string.alarm_level_xp_gained, day.xp),
                                             style = MaterialTheme.typography.labelMedium,
                                             fontWeight = FontWeight.Black,
                                             color = MaterialTheme.colorScheme.tertiary
@@ -544,11 +572,7 @@ fun LevelScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Shields earn XP for staying under the limit " +
-                                "(less usage = more XP, over the limit = 0). Goals earn " +
-                                "XP for reaching the target, plus a bonus for going over. " +
-                                "XP is awarded once per day. Each level needs more XP " +
-                                "than the last.",
+                            text = stringResource(R.string.alarm_level_xp_explanation),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

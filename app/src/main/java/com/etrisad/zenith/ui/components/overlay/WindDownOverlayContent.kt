@@ -22,12 +22,14 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.website.WebsiteRepository
 import com.etrisad.zenith.ui.components.ZenithButtonSize
 import kotlinx.coroutines.delay
@@ -83,21 +85,19 @@ fun WindDownOverlayContent(
         }
     }
 
-    val motivationalMessages = remember {
-        listOf(
-            "Time for a quick stretch!",
-            "Have you had enough water today?",
-            "Take 3 deep breaths...",
-            "Ready to crush your goals?",
-            "Productivity is a marathon, not a sprint.",
-            "Check your to-do list for a quick win!",
-            "A small step today is a big leap tomorrow.",
-            "Stay focused, stay mindful.",
-            "Remember your homework or tasks!",
-            "Do one small productive thing now.",
-            "Do 15 Pushups"
-        )
-    }
+    val motivationalMessages = listOf(
+        stringResource(R.string.winddown_motivational_stretch),
+        stringResource(R.string.winddown_motivational_water),
+        stringResource(R.string.winddown_motivational_breaths),
+        stringResource(R.string.winddown_motivational_goals),
+        stringResource(R.string.winddown_motivational_marathon),
+        stringResource(R.string.winddown_motivational_todo),
+        stringResource(R.string.winddown_motivational_small_step),
+        stringResource(R.string.winddown_motivational_focus),
+        stringResource(R.string.winddown_motivational_tasks),
+        stringResource(R.string.winddown_motivational_one_thing),
+        stringResource(R.string.winddown_motivational_pushups)
+    )
     val randomMessage = remember(isDelaying) {
         if (isDelaying) motivationalMessages.random() else ""
     }
@@ -458,7 +458,7 @@ private fun WindDownHeader(
     Spacer(modifier = Modifier.height(16.dp))
 
     Text(
-        text = "Wind Down",
+        text = stringResource(R.string.winddown_title),
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold
@@ -474,9 +474,9 @@ private fun WindDownHeader(
     Spacer(modifier = Modifier.height(8.dp))
 
     Text(
-        text = if (sessionUsed) 
-            "You've used your Wind Down session for this app. It's time to rest." 
-            else "Bedtime is approaching. Take a final look before we lock things down.",
+        text = if (sessionUsed)
+            stringResource(R.string.winddown_session_used_message)
+            else stringResource(R.string.winddown_bedtime_approaching_message),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         textAlign = TextAlign.Center
@@ -520,7 +520,7 @@ private fun WindDownActionSection(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "No more sessions available tonight.",
+                text = stringResource(R.string.winddown_no_sessions_tonight),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.error,
                 fontWeight = FontWeight.Bold,
@@ -567,7 +567,7 @@ fun WindDownDelaySection(
                 derivedStateOf { ceil((1f - progressAnimatable.value) * durationSeconds).toInt() }
             }
             Text(
-                text = "${secondsLeft}s",
+                text = stringResource(R.string.winddown_countdown_seconds, secondsLeft),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Black,
                 color = MaterialTheme.colorScheme.tertiary
@@ -583,7 +583,7 @@ fun WindDownDurationSection(onAllowUse: (Int) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Select your final session duration:",
+            text = stringResource(R.string.winddown_select_duration),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold
         )
@@ -667,7 +667,7 @@ fun WindDownDurationButton(
         )
     ) {
         Text(
-            text = "$minutes mins",
+            text = stringResource(R.string.winddown_duration_minutes_button, minutes),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge
         )

@@ -31,7 +31,11 @@ class NotificationInsightsWorker(context: Context, params: WorkerParameters) : C
         val manager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             if (manager.getNotificationChannel(channelId) == null) {
-                val channel = NotificationChannel(channelId, "Insights", NotificationManager.IMPORTANCE_DEFAULT)
+                val channel = NotificationChannel(
+                    channelId,
+                    applicationContext.getString(R.string.usage_history_channel_insights),
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
                 manager.createNotificationChannel(channel)
             }
         }
@@ -74,25 +78,41 @@ class NotificationInsightsWorker(context: Context, params: WorkerParameters) : C
 
                 val targetMinutes = prefs.screenTimeTargetMinutes
                 val message = buildString {
-                    append("Total screen time: ${formatDuration(todayMinutes)}")
+                    append(applicationContext.getString(R.string.usage_history_total_screen_time, formatDuration(todayMinutes)))
                     if (targetMinutes > 0) {
                         val diff = todayMinutes - targetMinutes
-                        if (diff > 0) append(" (${formatDuration(diff)} over target)")
-                        else append(" (${formatDuration(-diff)} under target)")
+                        if (diff > 0) append(
+                            " " + applicationContext.getString(R.string.usage_history_over_target, formatDuration(diff))
+                        )
+                        else append(
+                            " " + applicationContext.getString(R.string.usage_history_under_target, formatDuration(-diff))
+                        )
                     }
                     if (yesterdayMinutes > 0) {
                         val change = ((todayMinutes - yesterdayMinutes).toFloat() / yesterdayMinutes * 100).toInt()
-                        append(" | ${if (change >= 0) "+" else ""}$change% vs yesterday")
+                        append(
+                            " " + applicationContext.getString(
+                                R.string.usage_history_vs_yesterday,
+                                if (change >= 0) "+" else "",
+                                change
+                            )
+                        )
                     }
                 }
 
                 val detailLines = mutableListOf<String>()
-                if (shieldMinutes > 0) detailLines.add("Blocked usage: ${formatDuration(shieldMinutes)}")
-                if (goalMinutes > 0) detailLines.add("Goal usage: ${formatDuration(goalMinutes)}")
-                if (otherMinutes > 0) detailLines.add("Other: ${formatDuration(otherMinutes)}")
+                if (shieldMinutes > 0) detailLines.add(
+                    applicationContext.getString(R.string.usage_history_blocked_usage, formatDuration(shieldMinutes))
+                )
+                if (goalMinutes > 0) detailLines.add(
+                    applicationContext.getString(R.string.usage_history_goal_usage, formatDuration(goalMinutes))
+                )
+                if (otherMinutes > 0) detailLines.add(
+                    applicationContext.getString(R.string.usage_history_other_usage, formatDuration(otherMinutes))
+                )
 
                 val notification = NotificationCompat.Builder(applicationContext, channelId)
-                    .setContentTitle("Daily Focus Recap")
+                    .setContentTitle(applicationContext.getString(R.string.usage_history_daily_recap_title))
                     .setContentText(message)
                     .setStyle(NotificationCompat.BigTextStyle().bigText(
                         if (detailLines.isNotEmpty()) "$message\n\n${detailLines.joinToString("\n")}" else message
@@ -134,13 +154,25 @@ class NotificationInsightsWorker(context: Context, params: WorkerParameters) : C
                 val bestDay = dailyValues.maxOrNull() ?: 0
                 val worstDay = dailyValues.minOrNull() ?: 0
 
-                val title = "Weekly Insight"
-                val message = "${formatDuration(weeklyMinutes)} total this week"
+                val title = applicationContext.getString(R.string.usage_history_weekly_insight_title)
+                val message = applicationContext.getString(R.string.usage_history_weekly_total, formatDuration(weeklyMinutes))
                 val detailLines = mutableListOf<String>()
-                detailLines.add("Daily avg: ${formatDuration(avgDaily.toLong())}")
-                detailLines.add("Most: ${formatDuration(bestDay)} | Least: ${formatDuration(worstDay)}")
-                if (blockedTotal > 0) detailLines.add("Blocked: ${formatDuration(blockedTotal / 60000)}")
-                if (goalTotal > 0) detailLines.add("Goals: ${formatDuration(goalTotal / 60000)}")
+                detailLines.add(
+                    applicationContext.getString(R.string.usage_history_daily_average, formatDuration(avgDaily.toLong()))
+                )
+                detailLines.add(
+                    applicationContext.getString(
+                        R.string.usage_history_most_least,
+                        formatDuration(bestDay),
+                        formatDuration(worstDay)
+                    )
+                )
+                if (blockedTotal > 0) detailLines.add(
+                    applicationContext.getString(R.string.usage_history_blocked_label, formatDuration(blockedTotal / 60000))
+                )
+                if (goalTotal > 0) detailLines.add(
+                    applicationContext.getString(R.string.usage_history_goals_label, formatDuration(goalTotal / 60000))
+                )
 
                 val notification = NotificationCompat.Builder(applicationContext, channelId)
                     .setContentTitle(title)
@@ -167,18 +199,18 @@ class NotificationInsightsWorker(context: Context, params: WorkerParameters) : C
                 when (milestoneType) {
                     MILESTONE_SCREEN_TIME -> {
                         val days = value
-                        title = "Milestone Reached!"
-                        message = "You've kept under your screen time target for $days days in a row!"
+                        title = applicationContext.getString(R.string.usage_history_milestone_screen_time_title)
+                        message = applicationContext.getString(R.string.usage_history_milestone_screen_time_message, days)
                     }
                     MILESTONE_STREAK -> {
                         val streakDays = value
-                        title = "Streak Achievement!"
-                        message = "New best streak: $streakDays days! Keep the momentum going!"
+                        title = applicationContext.getString(R.string.usage_history_milestone_streak_title)
+                        message = applicationContext.getString(R.string.usage_history_milestone_streak_message, streakDays)
                     }
                     MILESTONE_FOCUS_HOURS -> {
                         val hours = value
-                        title = "Focus Achievement!"
-                        message = "You've accumulated $hours hours of focused time this week!"
+                        title = applicationContext.getString(R.string.usage_history_milestone_focus_title)
+                        message = applicationContext.getString(R.string.usage_history_milestone_focus_message, hours)
                     }
                     else -> return Result.success()
                 }
@@ -202,17 +234,19 @@ class NotificationInsightsWorker(context: Context, params: WorkerParameters) : C
     private fun formatDuration(totalMinutes: Long): String {
         val m = totalMinutes
         return when {
-            m <= 0 -> "0m"
-            m < 60 -> "${m}m"
+            m <= 0 -> applicationContext.getString(R.string.usage_history_duration_zero)
+            m < 60 -> applicationContext.getString(R.string.usage_history_duration_minutes, m)
             m < 1440 -> {
                 val h = m / 60
                 val r = m % 60
-                if (r > 0) "${h}h ${r}m" else "${h}h"
+                if (r > 0) applicationContext.getString(R.string.usage_history_duration_hours_minutes, h, r)
+                else applicationContext.getString(R.string.usage_history_duration_hours, h)
             }
             else -> {
                 val d = m / 1440
                 val h = (m % 1440) / 60
-                if (h > 0) "${d}d ${h}h" else "${d}d"
+                if (h > 0) applicationContext.getString(R.string.usage_history_duration_days_hours, d, h)
+                else applicationContext.getString(R.string.usage_history_duration_days, d)
             }
         }
     }

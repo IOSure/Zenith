@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
@@ -39,6 +40,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.etrisad.zenith.BuildConfig
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.remote.model.GitHubRelease
 import com.etrisad.zenith.ui.navigation.Screen
 import kotlinx.coroutines.delay
@@ -61,102 +63,141 @@ fun FeaturedCarousel(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    
+
+    val totalUsagePillTitle = stringResource(R.string.pomodoro_featured_total_usage_title)
+    val totalUsagePillDesc = stringResource(R.string.pomodoro_featured_total_usage_desc)
+    val audioFocusInterceptTitle = stringResource(R.string.pomodoro_featured_audio_focus_title)
+    val audioFocusInterceptDesc = stringResource(R.string.pomodoro_featured_audio_focus_desc)
+    val goalCallerOverlayTitle = stringResource(R.string.pomodoro_featured_goal_caller_title)
+    val goalCallerOverlayDesc = stringResource(R.string.pomodoro_featured_goal_caller_desc)
+    val gsFlexCustomizerTitle = stringResource(R.string.pomodoro_featured_gs_flex_title)
+    val gsFlexCustomizerDesc = stringResource(R.string.pomodoro_featured_gs_flex_desc)
+    val earlyKickTitle = stringResource(R.string.pomodoro_featured_early_kick_title)
+    val earlyKickDesc = stringResource(R.string.pomodoro_featured_early_kick_desc)
+    val sessionOverlayTitle = stringResource(R.string.pomodoro_featured_session_overlay_title)
+    val sessionOverlayDesc = stringResource(R.string.pomodoro_featured_session_overlay_desc)
+    val floatingTabBarTitle = stringResource(R.string.pomodoro_featured_floating_tab_title)
+    val floatingTabBarDesc = stringResource(R.string.pomodoro_featured_floating_tab_desc)
+    val smartDataRepairTitle = stringResource(R.string.pomodoro_featured_smart_repair_title)
+    val smartDataRepairDesc = stringResource(R.string.pomodoro_featured_smart_repair_desc)
+    val customizeAppearanceTitle = stringResource(R.string.pomodoro_featured_customize_appearance_title)
+    val customizeAppearanceDesc = stringResource(R.string.pomodoro_featured_customize_appearance_desc)
+    val mindfulGatewayTitle = stringResource(R.string.pomodoro_featured_mindful_gateway_title)
+    val mindfulGatewayDesc = stringResource(R.string.pomodoro_featured_mindful_gateway_desc)
+    val bedtimeGuardTitle = stringResource(R.string.pomodoro_featured_bedtime_guard_title)
+    val bedtimeGuardDesc = stringResource(R.string.pomodoro_featured_bedtime_guard_desc)
+    val pomodoroTimerTitle = stringResource(R.string.pomodoro_featured_pomodoro_timer_title)
+    val pomodoroTimerDesc = stringResource(R.string.pomodoro_featured_pomodoro_timer_desc)
+    val lockdownHoursTitle = stringResource(R.string.pomodoro_featured_lockdown_hours_title)
+    val lockdownHoursDesc = stringResource(R.string.pomodoro_featured_lockdown_hours_desc)
+    val pausePointTasksTitle = stringResource(R.string.pomodoro_featured_pause_point_title)
+    val pausePointTasksDesc = stringResource(R.string.pomodoro_featured_pause_point_desc)
+    val longTermHeatmapTitle = stringResource(R.string.pomodoro_featured_heatmap_title)
+    val longTermHeatmapDesc = stringResource(R.string.pomodoro_featured_heatmap_desc)
+    val joinCommunityTitle = stringResource(R.string.pomodoro_featured_join_community_title)
+    val joinCommunityDesc = stringResource(R.string.pomodoro_featured_join_community_desc)
+    val updateAvailableTitle = stringResource(R.string.pomodoro_featured_update_title)
+    val updateAvailableDescFormat = stringResource(R.string.pomodoro_featured_update_desc)
+    val supportDevelopmentTitle = stringResource(R.string.pomodoro_featured_support_title)
+    val supportDevelopmentDesc = stringResource(R.string.pomodoro_featured_support_desc)
+    val starOnGitHubTitle = stringResource(R.string.pomodoro_featured_github_title)
+    val starOnGitHubDesc = stringResource(R.string.pomodoro_featured_github_desc)
+
     val suggestions = remember {
         listOf(
             FeaturedItem(
-                title = "Total Usage Pill",
-                description = "Monitor your day with a tiny floating pill",
+                title = totalUsagePillTitle,
+                description = totalUsagePillDesc,
                 icon = Icons.Outlined.TrackChanges,
                 onClick = { onNavigate(Screen.SettingsCategory.createRoute("Features")) }
             ),
             FeaturedItem(
-                title = "Audio Focus Intercept",
-                description = "Auto-pause music when apps are blocked",
+                title = audioFocusInterceptTitle,
+                description = audioFocusInterceptDesc,
                 icon = Icons.Outlined.VolumeUp,
                 onClick = { onNavigate(Screen.SettingsCategory.createRoute("Features")) }
             ),
             FeaturedItem(
-                title = "Goal Caller Overlay",
-                description = "Full-screen nudge when goals are met",
+                title = goalCallerOverlayTitle,
+                description = goalCallerOverlayDesc,
                 icon = Icons.Outlined.NotificationsActive,
                 onClick = { onNavigate(Screen.Focus.route) }
             ),
             FeaturedItem(
-                title = "GS Flex Customizer",
-                description = "Fine-tune font weight and variations",
+                title = gsFlexCustomizerTitle,
+                description = gsFlexCustomizerDesc,
                 icon = Icons.Outlined.SettingsSuggest,
                 onClick = { onNavigate(Screen.GSFlexCustomizer.route) }
             ),
             FeaturedItem(
-                title = "Early Kick Feature",
-                description = "Build mindfulness by exiting apps early",
+                title = earlyKickTitle,
+                description = earlyKickDesc,
                 icon = Icons.Outlined.ExitToApp,
                 onClick = { onNavigate(Screen.SettingsCategory.createRoute("Features")) }
             ),
             FeaturedItem(
-                title = "Session Overlay",
-                description = "Track app usage with a floating pill",
+                title = sessionOverlayTitle,
+                description = sessionOverlayDesc,
                 icon = Icons.Outlined.VideoLabel,
                 onClick = { onNavigate(Screen.SettingsCategory.createRoute("Features")) }
             ),
             FeaturedItem(
-                title = "Floating Tab Bar",
-                description = "Enable a modern navigation experience",
+                title = floatingTabBarTitle,
+                description = floatingTabBarDesc,
                 icon = Icons.Outlined.MoreHoriz,
                 onClick = { onNavigate(Screen.SettingsCategory.createRoute("Appearance")) }
             ),
             FeaturedItem(
-                title = "Smart Data Repair",
-                description = "Fix usage sync issues with system logs",
+                title = smartDataRepairTitle,
+                description = smartDataRepairDesc,
                 icon = Icons.Outlined.Build,
                 onClick = { onNavigate(Screen.SettingsCategory.createRoute("Data Management")) }
             ),
             FeaturedItem(
-                title = "Customize Appearance",
-                description = "Change themes, fonts, and colors",
+                title = customizeAppearanceTitle,
+                description = customizeAppearanceDesc,
                 icon = Icons.Outlined.Palette,
                 onClick = { onNavigate(Screen.SettingsCategory.createRoute("Appearance")) }
             ),
             FeaturedItem(
-                title = "Mindful Gateway",
-                description = "Breathe before you scroll impulsively",
+                title = mindfulGatewayTitle,
+                description = mindfulGatewayDesc,
                 icon = Icons.Outlined.AutoFixHigh,
                 onClick = { onNavigate(Screen.SettingsCategory.createRoute("Features")) }
             ),
             FeaturedItem(
-                title = "Bedtime Guard",
-                description = "Configure your wind-down schedule",
+                title = bedtimeGuardTitle,
+                description = bedtimeGuardDesc,
                 icon = Icons.Outlined.Bedtime,
                 onClick = { onNavigate(Screen.Bedtime.route) }
             ),
             FeaturedItem(
-                title = "Pomodoro Timer",
-                description = "Focus in timed sessions with breaks",
+                title = pomodoroTimerTitle,
+                description = pomodoroTimerDesc,
                 icon = Icons.Outlined.Timer,
                 onClick = { onNavigate(Screen.Pomodoro.route) }
             ),
             FeaturedItem(
-                title = "Lockdown Hours",
-                description = "Freeze shield edits on a schedule",
+                title = lockdownHoursTitle,
+                description = lockdownHoursDesc,
                 icon = Icons.Outlined.Lock,
                 onClick = { onNavigate(Screen.Lockdown.route) }
             ),
             FeaturedItem(
-                title = "Pause Point Tasks",
-                description = "Earn your unlock with quick tasks",
+                title = pausePointTasksTitle,
+                description = pausePointTasksDesc,
                 icon = Icons.Outlined.TouchApp,
                 onClick = { onNavigate(Screen.PausePoint.route) }
             ),
             FeaturedItem(
-                title = "Long-Term Heatmap",
-                description = "See months of usage patterns",
+                title = longTermHeatmapTitle,
+                description = longTermHeatmapDesc,
                 icon = Icons.Outlined.Insights,
                 onClick = { onNavigate(Screen.UsageStats.route) }
             ),
             FeaturedItem(
-                title = "Join Community",
-                description = "View development and sneak peaks",
+                title = joinCommunityTitle,
+                description = joinCommunityDesc,
                 icon = Icons.Outlined.Chat,
                 onClick = {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://whatsapp.com/channel/0029VbAKkhlAojYyegxvV83V"))
@@ -172,8 +213,8 @@ fun FeaturedCarousel(
         if (BuildConfig.SHOW_UPDATES && updateAvailable != null) {
             list.add(
                 FeaturedItem(
-                    title = "Update Available",
-                    description = "Version ${updateAvailable.tagName} is now available",
+                    title = updateAvailableTitle,
+                    description = updateAvailableDescFormat.format(updateAvailable.tagName),
                     icon = Icons.Outlined.Update,
                     isTertiary = true,
                     onClick = onUpdateClick
@@ -183,8 +224,8 @@ fun FeaturedCarousel(
         
         list.add(
             FeaturedItem(
-                title = "Support Development",
-                description = "Fuel our mission with a tip on Ko-fi",
+                title = supportDevelopmentTitle,
+                description = supportDevelopmentDesc,
                 icon = Icons.Outlined.Favorite,
                 isTertiary = true,
                 onClick = {
@@ -195,8 +236,8 @@ fun FeaturedCarousel(
         )
         list.add(
             FeaturedItem(
-                title = "Star on GitHub",
-                description = "Love Zenith? Give us a star on GitHub!",
+                title = starOnGitHubTitle,
+                description = starOnGitHubDesc,
                 icon = Icons.Outlined.Star,
                 isTertiary = true,
                 onClick = {

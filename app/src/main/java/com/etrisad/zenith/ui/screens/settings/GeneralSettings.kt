@@ -55,12 +55,67 @@ fun GeneralSettings(
         preferences.excludedFromTrackingPackages
     )
 
+    val permissionsSummary = if (permissionsMissing) {
+        stringResource(R.string.general_permissions_summary_missing)
+    } else {
+        stringResource(R.string.general_permissions_summary)
+    }
+
+    val rechargeMinutes = preferences.emergencyRechargeDurationMinutes
+    val rechargeLabel = when {
+        rechargeMinutes >= 1440 -> {
+            val days = rechargeMinutes / 1440
+            if (days > 1) stringResource(R.string.general_unit_days, days)
+            else stringResource(R.string.general_unit_day, days)
+        }
+        rechargeMinutes >= 60 -> {
+            val hours = rechargeMinutes / 60
+            if (hours > 1) stringResource(R.string.general_unit_hours, hours)
+            else stringResource(R.string.general_unit_hour, hours)
+        }
+        else -> stringResource(R.string.general_unit_minutes, rechargeMinutes)
+    }
+    val emergencyRechargeSummary = stringResource(R.string.general_recharge_period, rechargeLabel)
+
+    val targetMinutes = preferences.screenTimeTargetMinutes
+    val targetSummary = if (targetMinutes > 0) {
+        val h = targetMinutes / 60
+        val m = targetMinutes % 60
+        if (h > 0) stringResource(R.string.general_target_set_hours, h, m)
+        else stringResource(R.string.general_target_set_minutes, m)
+    } else {
+        stringResource(R.string.general_no_target_set)
+    }
+
+    val delaySeconds = preferences.delayAppDurationSeconds
+    val delayLabel = when {
+        delaySeconds >= 3600 -> stringResource(R.string.general_duration_hours_short, delaySeconds / 3600)
+        delaySeconds >= 60 -> stringResource(R.string.general_duration_minutes_short, delaySeconds / 60)
+        else -> stringResource(R.string.general_duration_seconds_short, delaySeconds)
+    }
+    val delaySummary = stringResource(R.string.general_wait_before_reopening, delayLabel)
+
+    val dayStartSummary = if (preferences.dayStartHour == 0 && preferences.dayStartMinute == 0) {
+        stringResource(R.string.general_day_resets_midnight)
+    } else {
+        stringResource(
+            R.string.general_day_resets_at,
+            String.format("%02d:%02d", preferences.dayStartHour, preferences.dayStartMinute)
+        )
+    }
+
+    val bypassSummary = if (preferences.whitelistedPackages.isEmpty()) {
+        stringResource(R.string.general_bypass_summary_none)
+    } else {
+        stringResource(R.string.general_bypass_summary_count, preferences.whitelistedPackages.size)
+    }
+
     Column {
-        PreferenceCategory(title = "General")
+        PreferenceCategory(title = stringResource(R.string.general_general))
 
         SettingsActionItem(
-            title = "Permissions",
-            summary = if (permissionsMissing) "Some required permissions are not granted" else "Manage required and optional system permissions",
+            title = stringResource(R.string.general_permissions),
+            summary = permissionsSummary,
             onClick = onOpenPermissions,
             icon = Icons.Outlined.Security,
             shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp, bottomStart = 8.dp, bottomEnd = 8.dp),
@@ -87,15 +142,8 @@ fun GeneralSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsActionItem(
-            title = "Emergency Recharge Time",
-            summary = preferences.emergencyRechargeDurationMinutes.let { mins ->
-                val label = when {
-                    mins >= 1440 -> "${mins / 1440} day${if (mins / 1440 > 1) "s" else ""}"
-                    mins >= 60 -> "${mins / 60} hour${if (mins / 60 > 1) "s" else ""}"
-                    else -> "$mins minutes"
-                }
-                "1 charge every $label"
-            },
+            title = stringResource(R.string.general_emergency_recharge_time),
+            summary = emergencyRechargeSummary,
             onClick = { showEmergencyRechargeSheet = true },
             icon = Icons.Outlined.Shield,
             shape = RoundedCornerShape(8.dp)
@@ -103,12 +151,8 @@ fun GeneralSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsActionItem(
-            title = "Daily Screen Time Target",
-            summary = if (preferences.screenTimeTargetMinutes > 0) {
-                val h = preferences.screenTimeTargetMinutes / 60
-                val m = preferences.screenTimeTargetMinutes % 60
-                "Target set to ${if (h > 0) "${h}h " else ""}${m}m"
-            } else "No target set",
+            title = stringResource(R.string.general_daily_screen_time_target),
+            summary = targetSummary,
             onClick = { showTargetSheet = true },
             icon = Icons.Outlined.Edit,
             shape = RoundedCornerShape(8.dp)
@@ -116,15 +160,8 @@ fun GeneralSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsActionItem(
-            title = "App Opening Delay",
-            summary = preferences.delayAppDurationSeconds.let { secs ->
-                val label = when {
-                    secs >= 3600 -> "${secs / 3600}h"
-                    secs >= 60 -> "${secs / 60}m"
-                    else -> "${secs}s"
-                }
-                "Wait $label before reopening"
-            },
+            title = stringResource(R.string.general_app_opening_delay),
+            summary = delaySummary,
             onClick = { showDelayAppSheet = true },
             icon = Icons.Outlined.History,
             shape = RoundedCornerShape(8.dp)
@@ -132,14 +169,8 @@ fun GeneralSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsActionItem(
-            title = "Day Start Time",
-            summary = if (preferences.dayStartHour == 0 && preferences.dayStartMinute == 0) {
-                "Day resets at midnight (default)"
-            } else {
-                val h = preferences.dayStartHour
-                val m = preferences.dayStartMinute
-                "Day resets at ${String.format("%02d:%02d", h, m)}"
-            },
+            title = stringResource(R.string.general_day_start_time),
+            summary = dayStartSummary,
             onClick = { showDayStartSheet = true },
             icon = Icons.Outlined.Schedule,
             shape = RoundedCornerShape(8.dp)
@@ -147,9 +178,8 @@ fun GeneralSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsActionItem(
-            title = "Bypass Restrictions",
-            summary = if (preferences.whitelistedPackages.isEmpty()) "No apps can skip schedules, shields, or goals"
-                      else "${preferences.whitelistedPackages.size} apps skip schedules, shields & goals (still tracked)",
+            title = stringResource(R.string.general_bypass_restrictions),
+            summary = bypassSummary,
             onClick = { onShowWhitelistSheetChange(true) },
             icon = Icons.Outlined.VerifiedUser,
             shape = RoundedCornerShape(8.dp)
@@ -157,12 +187,16 @@ fun GeneralSettings(
 
         Spacer(modifier = Modifier.height(4.dp))
         SettingsActionItem(
-            title = "Private & Hidden Apps",
+            title = stringResource(R.string.general_private_hidden_apps),
             summary = exclusionSummary,
             onClick = { onShowAppExclusionsSheetChange(true) },
             icon = Icons.Outlined.Security,
             shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp, bottomStart = 24.dp, bottomEnd = 24.dp)
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+        PreferenceCategory(title = stringResource(R.string.settings_language_category))
+        LanguageSettingsItem()
     }
 
     if (showTargetSheet) {
@@ -257,13 +291,13 @@ fun DelayAppBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "App Opening Delay",
+                        text = stringResource(R.string.general_app_opening_delay),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Set how many seconds to wait before reopening an app",
+                        text = stringResource(R.string.general_delay_sheet_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -281,7 +315,7 @@ fun DelayAppBottomSheet(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Delay Duration",
+                            text = stringResource(R.string.general_delay_duration),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
@@ -298,7 +332,15 @@ fun DelayAppBottomSheet(
                                 Text("-", style = MaterialTheme.typography.headlineMedium)
                             }
                             Text(
-                                text = if (seconds >= 60) "${seconds / 60}m ${seconds % 60}s" else "${seconds}s",
+                                text = if (seconds >= 60) {
+                                    stringResource(
+                                        R.string.general_duration_minutes_seconds_short,
+                                        seconds / 60,
+                                        seconds % 60
+                                    )
+                                } else {
+                                    stringResource(R.string.general_duration_seconds_short, seconds)
+                                },
                                 style = MaterialTheme.typography.displayLarge.copy(
                                     fontSize = 36.sp,
                                     fontWeight = FontWeight.Bold
@@ -321,7 +363,7 @@ fun DelayAppBottomSheet(
                     val presets = listOf(15, 30, 60)
                     presets.forEachIndexed { index, preset ->
                         val isSelected = seconds == preset
-                        val label = "${preset}s"
+                        val label = stringResource(R.string.general_duration_seconds_short, preset)
                         val pShape = when (index) {
                             0 -> RoundedCornerShape(bottomStart = 28.dp, topStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp)
                             presets.lastIndex -> RoundedCornerShape(bottomEnd = 28.dp, topEnd = 8.dp, topStart = 8.dp, bottomStart = 8.dp)
@@ -364,7 +406,7 @@ fun DelayAppBottomSheet(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Save Delay"
+                    text = stringResource(R.string.general_save_delay)
                 )
             }
         }
@@ -417,13 +459,13 @@ fun EmergencyRechargeBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Emergency Recharge",
+                        text = stringResource(R.string.general_emergency_recharge),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Set how long it takes to recover one emergency use count",
+                        text = stringResource(R.string.general_emergency_recharge_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -441,7 +483,7 @@ fun EmergencyRechargeBottomSheet(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Recharge Duration",
+                            text = stringResource(R.string.general_recharge_duration),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
@@ -459,9 +501,25 @@ fun EmergencyRechargeBottomSheet(
                             }
                             Text(
                                 text = when {
-                                    minutes >= 1440 -> "${minutes / 1440}d" + if (minutes % 1440 > 0) " ${(minutes % 1440) / 60}h" else ""
-                                    minutes >= 60 -> "${minutes / 60}h" + if (minutes % 60 > 0) " ${minutes % 60}m" else ""
-                                    else -> "${minutes}m"
+                                    minutes >= 1440 -> {
+                                        val days = minutes / 1440
+                                        val restHours = (minutes % 1440) / 60
+                                        if (minutes % 1440 > 0) {
+                                            stringResource(R.string.general_duration_days_hours_short, days, restHours)
+                                        } else {
+                                            stringResource(R.string.general_duration_days_short, days)
+                                        }
+                                    }
+                                    minutes >= 60 -> {
+                                        val hours = minutes / 60
+                                        val restMinutes = minutes % 60
+                                        if (minutes % 60 > 0) {
+                                            stringResource(R.string.general_duration_hours_minutes_short, hours, restMinutes)
+                                        } else {
+                                            stringResource(R.string.general_duration_hours_short, hours)
+                                        }
+                                    }
+                                    else -> stringResource(R.string.general_duration_minutes_short, minutes)
                                 },
                                 style = MaterialTheme.typography.displayLarge.copy(
                                     fontSize = 36.sp,
@@ -486,9 +544,9 @@ fun EmergencyRechargeBottomSheet(
                     presets.forEachIndexed { index, preset ->
                         val isSelected = minutes == preset
                         val label = when {
-                            preset >= 1440 -> "${preset / 1440}d"
-                            preset >= 60 -> "${preset / 60}h"
-                            else -> "${preset}m"
+                            preset >= 1440 -> stringResource(R.string.general_duration_days_short, preset / 1440)
+                            preset >= 60 -> stringResource(R.string.general_duration_hours_short, preset / 60)
+                            else -> stringResource(R.string.general_duration_minutes_short, preset)
                         }
                         val pShape = when (index) {
                             0 -> RoundedCornerShape(bottomStart = 28.dp, topStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp)
@@ -532,7 +590,7 @@ fun EmergencyRechargeBottomSheet(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Save Duration"
+                    text = stringResource(R.string.general_save_duration)
                 )
             }
         }
@@ -614,13 +672,13 @@ fun DayStartTimeBottomSheet(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Day Start Time",
+                        text = stringResource(R.string.general_day_start_time),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Set when a new day begins",
+                        text = stringResource(R.string.general_day_start_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -639,7 +697,7 @@ fun DayStartTimeBottomSheet(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Day Resets At",
+                            text = stringResource(R.string.general_day_resets_at_label),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
@@ -661,7 +719,11 @@ fun DayStartTimeBottomSheet(
                     val presets = listOf(0 to 0, 6 to 0, 9 to 0, 12 to 0)
                     presets.forEachIndexed { index, (ph, pm) ->
                         val isSelected = selectedHour == ph && selectedMinute == pm
-                        val label = if (ph == 0 && pm == 0) "Midnight" else String.format("%02d:%02d", ph, pm)
+                        val label = if (ph == 0 && pm == 0) {
+                            stringResource(R.string.general_midnight)
+                        } else {
+                            String.format("%02d:%02d", ph, pm)
+                        }
                         val pShape = when (index) {
                             0 -> RoundedCornerShape(bottomStart = 28.dp, topStart = 8.dp, topEnd = 8.dp, bottomEnd = 8.dp)
                             presets.lastIndex -> RoundedCornerShape(bottomEnd = 28.dp, topEnd = 8.dp, topStart = 8.dp, bottomStart = 8.dp)
@@ -707,7 +769,7 @@ fun DayStartTimeBottomSheet(
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Save Day Start Time"
+                    text = stringResource(R.string.general_save_day_start_time)
                 )
             }
         }

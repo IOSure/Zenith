@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.components.focus.appIconShape
 import com.etrisad.zenith.ui.viewmodel.AppUsageInfo
 import com.etrisad.zenith.ui.viewmodel.DailyUsage
@@ -135,8 +137,8 @@ fun LongTermSection(
         Spacer(modifier = Modifier.height(12.dp))
         ZenithToggleButtonGroup(
             options = listOf(
-                ZenithToggleOption(text = "Monthly"),
-                ZenithToggleOption(text = "Yearly")
+                ZenithToggleOption(text = stringResource(R.string.pause_monthly)),
+                ZenithToggleOption(text = stringResource(R.string.pause_yearly))
             ),
             selectedIndices = setOf(
                 when (selectedRange) {
@@ -191,14 +193,14 @@ fun LongTermSection(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 StatTile(
-                    caption = "Daily avg",
+                    caption = stringResource(R.string.pause_daily_avg),
                     value = formatDuration(avg),
                     index = 0,
                     total = 4,
                     modifier = Modifier.weight(1f)
                 )
                 StatTile(
-                    caption = "Best day",
+                    caption = stringResource(R.string.pause_best_day),
                     value = if (bestVal > 0L && bestMillis != null) {
                         "${eeFmt.format(java.util.Date(bestMillis))} ${formatShortDuration(bestVal)}"
                     } else "-",
@@ -220,14 +222,14 @@ fun LongTermSection(
                     } else null
                 )
                 StatTile(
-                    caption = "Active",
+                    caption = stringResource(R.string.pause_active),
                     value = if (totals.isEmpty()) "-" else "${totals.count { it > 0L }}/${totals.size}",
                     index = 2,
                     total = 4,
                     modifier = Modifier.weight(1f)
                 )
                 StatTile(
-                    caption = "vs last",
+                    caption = stringResource(R.string.pause_vs_last),
                     value = deltaPct?.let {
                         val r = Math.round(it * 100)
                         if (r > 0) "+$r%" else if (r < 0) "-$r%" else "0%"
@@ -275,7 +277,7 @@ fun LongTermSection(
                         Row(modifier = Modifier.fillMaxWidth()) {
                         Column(verticalArrangement = Arrangement.spacedBy(calGap)) {
                             Spacer(modifier = Modifier.height(20.dp))
-                            CalWeekdayLetters.forEach { letter ->
+                            calWeekdayLetters().forEach { letter ->
                                 Box(
                                     modifier = Modifier.size(calCell)
                                         .clip(RoundedCornerShape(8.dp))
@@ -421,7 +423,7 @@ fun LongTermSection(
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                                        contentDescription = "Scroll to earlier weeks",
+                                        contentDescription = stringResource(R.string.pause_scroll_earlier_weeks),
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -440,7 +442,7 @@ fun LongTermSection(
                                 ) {
                                     Icon(
                                         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                        contentDescription = "Scroll to later weeks",
+                                        contentDescription = stringResource(R.string.pause_scroll_later_weeks),
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -454,7 +456,7 @@ fun LongTermSection(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                "Less",
+                                stringResource(R.string.pause_legend_less),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -469,7 +471,7 @@ fun LongTermSection(
                                 Spacer(modifier = Modifier.width(4.dp))
                             }
                             Text(
-                                "More",
+                                stringResource(R.string.pause_legend_more),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -519,7 +521,10 @@ fun LongTermSection(
                                     Column {
                                     if (dayAppLoader != null) {
                                         Text(
-                                            "Apps - " + com.etrisad.zenith.util.DateTimeUtils.formatDateRange(animWeek.first(), animWeek.last()),
+                                            stringResource(
+                                                R.string.pause_apps_range,
+                                                com.etrisad.zenith.util.DateTimeUtils.formatDateRange(animWeek.first(), animWeek.last())
+                                            ),
                                             style = MaterialTheme.typography.labelMedium,
                                             fontWeight = FontWeight.Bold
                                         )
@@ -542,7 +547,10 @@ fun LongTermSection(
                                                     color = accentColor
                                                 )
                                                 Text(
-                                                    "- ${formatDuration(animWeek.sumOf { dayMap[it]?.totalTime ?: 0L })} this week",
+                                                    stringResource(
+                                                        R.string.pause_day_week_delta,
+                                                        formatDuration(animWeek.sumOf { dayMap[it]?.totalTime ?: 0L })
+                                                    ),
                                                     style = MaterialTheme.typography.bodyMedium,
                                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                                     modifier = Modifier.padding(start = 8.dp, bottom = 2.dp)
@@ -564,7 +572,7 @@ fun LongTermSection(
                                         }
                                     } else if (dayAppLoader != null && animList.apps.isEmpty()) {
                                         Text(
-                                            "No app data for this week",
+                                            stringResource(R.string.pause_no_app_data_week),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -594,7 +602,7 @@ fun LongTermSection(
                                                 ListItem(
                                                     headlineContent = {
                                                         Text(
-                                                            text = "Other Apps",
+                                                            text = stringResource(R.string.pause_other_apps),
                                                             style = MaterialTheme.typography.titleMedium,
                                                             fontWeight = FontWeight.Bold,
                                                             color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -602,7 +610,7 @@ fun LongTermSection(
                                                     },
                                                     supportingContent = {
                                                         Text(
-                                                            text = "${restApps.size} more apps",
+                                                            text = stringResource(R.string.pause_more_apps, restApps.size),
                                                             style = MaterialTheme.typography.bodyMedium,
                                                             color = MaterialTheme.colorScheme.onSecondaryContainer
                                                         )
@@ -678,7 +686,16 @@ fun LongTermSection(
         Spacer(modifier = Modifier.height(8.dp))
     }
 
-private val CalWeekdayLetters = listOf("M", "T", "W", "T", "F", "S", "S")
+@Composable
+private fun calWeekdayLetters(): List<String> = listOf(
+    stringResource(R.string.profile2_weekday_mon),
+    stringResource(R.string.profile2_weekday_tue),
+    stringResource(R.string.profile2_weekday_wed),
+    stringResource(R.string.profile2_weekday_thu),
+    stringResource(R.string.profile2_weekday_fri),
+    stringResource(R.string.profile2_weekday_sat),
+    stringResource(R.string.profile2_weekday_sun)
+)
 
 private data class CalWeek(val days: List<Long?>, val monthLabel: String?)
 private data class DayListState(
@@ -787,10 +804,10 @@ private fun DayAppRow(
                         else -> MaterialTheme.colorScheme.secondary
                     }
                     val badgeText = when (type) {
-                        "GOAL" -> "Goal"
-                        "SHIELD" -> "Shield"
-                        "WEBSITE" -> "Website"
-                        else -> "Other"
+                        "GOAL" -> stringResource(R.string.pause_badge_goal)
+                        "SHIELD" -> stringResource(R.string.pause_badge_shield)
+                        "WEBSITE" -> stringResource(R.string.pause_badge_website)
+                        else -> stringResource(R.string.pause_badge_other)
                     }
                     val isWebsitePackage = app.packageName.startsWith("zenith-web:")
                     if (isWebsitePackage && (type == "SHIELD" || type == "GOAL")) {
@@ -800,7 +817,7 @@ private fun DayAppRow(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Language,
-                                contentDescription = "Website",
+                                contentDescription = stringResource(R.string.pause_badge_website),
                                 tint = badgeColor,
                                 modifier = Modifier.size(10.dp)
                             )

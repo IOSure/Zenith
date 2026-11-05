@@ -52,6 +52,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -73,6 +74,7 @@ import com.etrisad.zenith.ui.components.ShieldSortHeader
 import com.etrisad.zenith.ui.components.UninstalledAppCard
 import com.etrisad.zenith.ui.theme.ZenithTheme
 import com.etrisad.zenith.data.website.WebsiteRepository
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ZenithApplication
 import com.etrisad.zenith.ui.viewmodel.AppInfo
 import com.etrisad.zenith.ui.viewmodel.FocusUiState
@@ -232,7 +234,7 @@ fun FocusScreen(
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            "Editing is currently restricted",
+                            stringResource(R.string.focus_editing_restricted),
                             style = MaterialTheme.typography.labelLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onErrorContainer,
@@ -249,7 +251,7 @@ fun FocusScreen(
                         Column {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                "Editing shields, goals, and schedules is restricted during your set lockdown hours. Disable lockdown in settings to make changes.",
+                                stringResource(R.string.focus_editing_restricted_desc),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onErrorContainer
                             )
@@ -290,7 +292,9 @@ fun FocusScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Add,
-                                contentDescription = if (isFabMenuExpanded) "Close Menu" else "Add Shield",
+                                contentDescription = stringResource(
+                                    if (isFabMenuExpanded) R.string.focus_close_menu else R.string.focus_add_shield
+                                ),
                                 modifier = Modifier
                                     .size(iconSize)
                                     .rotate(rotation),
@@ -308,7 +312,7 @@ fun FocusScreen(
                             isAppPickerOpen.value = true
                         },
                         icon = { Icon(Icons.Outlined.Shield, contentDescription = null) },
-                        text = { Text("Add Shield") }
+                        text = { Text(stringResource(R.string.focus_add_shield)) }
                     )
                 }
 
@@ -320,7 +324,7 @@ fun FocusScreen(
                             isAppPickerOpen.value = true
                         },
                         icon = { Icon(Icons.Outlined.Flag, contentDescription = null) },
-                        text = { Text("Add Goal") }
+                        text = { Text(stringResource(R.string.focus_add_goal)) }
                     )
                 }
 
@@ -331,7 +335,7 @@ fun FocusScreen(
                             viewModel.openSchedulePicker()
                         },
                         icon = { Icon(Icons.Outlined.Schedule, contentDescription = null) },
-                        text = { Text("Add Schedule") }
+                        text = { Text(stringResource(R.string.focus_add_schedule)) }
                     )
                 }
             }
@@ -504,6 +508,9 @@ fun FocusScreenContent(
 
     var activeTab by remember { mutableStateOf(AppTypeTab.APPS) }
 
+    val activeGoalsTitle = stringResource(R.string.focus_active_goals)
+    val activeShieldsTitle = stringResource(R.string.focus_active_shields)
+
     val listState = rememberLazyListState()
     val canScroll by remember {
         derivedStateOf { listState.canScrollForward || listState.canScrollBackward }
@@ -544,7 +551,7 @@ fun FocusScreenContent(
 
                 activeShieldSection(
                     key = "goals",
-                title = "Active Goals",
+                title = activeGoalsTitle,
                 shields = uiState.activeGoals,
                 sortType = uiState.goalSortType,
                 onSortTypeChange = onGoalSortTypeChange,
@@ -566,7 +573,7 @@ fun FocusScreenContent(
     
             item(key = "shields_header") {
                 ShieldSortHeader(
-                    title = "Active Shields",
+                    title = activeShieldsTitle,
                     currentSortType = uiState.shieldSortType,
                     onSortTypeChange = onShieldSortTypeChange
                 )
@@ -581,12 +588,13 @@ fun FocusScreenContent(
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            val tierLabel = when {
-                                uiState.incentiveProgress < 0.25f -> "Locked"
-                                uiState.incentiveProgress < 0.5f -> "Limited Access"
-                                uiState.incentiveProgress < 0.75f -> "Moderate Access"
-                                else -> "Almost Unlocked"
+                            val tierLabelRes = when {
+                                uiState.incentiveProgress < 0.25f -> R.string.focus_tier_locked
+                                uiState.incentiveProgress < 0.5f -> R.string.focus_tier_limited_access
+                                uiState.incentiveProgress < 0.75f -> R.string.focus_tier_moderate_access
+                                else -> R.string.focus_tier_almost_unlocked
                             }
+                            val tierLabel = stringResource(tierLabelRes)
                             val animatedProgress by animateFloatAsState(
                                 targetValue = uiState.incentiveProgress,
                                 animationSpec = spring(dampingRatio = 0.5f, stiffness = 100f),
@@ -602,7 +610,7 @@ fun FocusScreenContent(
                                         val total = uiState.incentiveTier.bonusUses
                                         Surface(shape = RoundedCornerShape(8.dp), color = if (uiState.bonusUsesLeft > 0) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.surfaceVariant, tonalElevation = 2.dp, shadowElevation = 2.dp, modifier = Modifier.align(Alignment.BottomCenter).offset(y = 3.dp)) {
                                             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)) {
-                                                Icon(imageVector = Icons.Outlined.Timer, contentDescription = "Bonus", modifier = Modifier.size(10.dp), tint = if (uiState.bonusUsesLeft > 0) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onSurfaceVariant)
+                                                Icon(imageVector = Icons.Outlined.Timer, contentDescription = stringResource(R.string.focus_bonus), modifier = Modifier.size(10.dp), tint = if (uiState.bonusUsesLeft > 0) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onSurfaceVariant)
                                                 Text(text = "${uiState.bonusUsesLeft}/$total", style = MaterialTheme.typography.labelSmall, fontSize = 8.sp, fontWeight = FontWeight.Bold, color = if (uiState.bonusUsesLeft > 0) MaterialTheme.colorScheme.onTertiary else MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(start = 2.dp))
                                             }
                                         }
@@ -610,8 +618,8 @@ fun FocusScreenContent(
                                 }
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Column(modifier = Modifier.weight(1f)) {
-                                    Text(text = "Shields: $tierLabel", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                                    Text(text = "Complete your app goals to earn shield access.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    Text(text = stringResource(R.string.focus_shields_tier, tierLabel), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                                    Text(text = stringResource(R.string.focus_complete_goals_earn_shields), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(text = "$percentage%", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -632,7 +640,7 @@ fun FocusScreenContent(
 
             activeShieldSection(
                 key = "shields",
-                title = "Active Shields",
+                title = activeShieldsTitle,
                 shields = uiState.activeShields,
                 sortType = uiState.shieldSortType,
                 onSortTypeChange = onShieldSortTypeChange,

@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +30,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.FontOption
 import com.etrisad.zenith.ui.theme.GSFlexSettings
 import com.etrisad.zenith.ui.theme.ZenithTheme
@@ -174,9 +176,9 @@ class UsageGlimpseOverlayManager(private val context: Context) {
         val hours = minutes / 60
         val remainingMinutes = minutes % 60
         return if (hours > 0) {
-            "${hours}h ${remainingMinutes}m"
+            context.getString(R.string.small_duration_hours_minutes, hours, remainingMinutes)
         } else {
-            "${minutes}m"
+            context.getString(R.string.small_duration_minutes, minutes)
         }
     }
 
@@ -276,7 +278,7 @@ fun UsageGlimpseHUD(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Today",
+                        text = stringResource(R.string.small_today),
                         style = MaterialTheme.typography.labelSmall,
                         color = hudColors.onSurface.copy(alpha = 0.7f),
                         fontWeight = FontWeight.Medium,

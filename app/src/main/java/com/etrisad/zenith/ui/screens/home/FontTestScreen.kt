@@ -13,9 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.GSFlexPreset
 import com.etrisad.zenith.ui.components.ZenithToggleButtonGroup
 import com.etrisad.zenith.ui.components.ZenithToggleOption
@@ -42,9 +44,9 @@ fun FontTestScreen(
             .padding(top = innerPadding.calculateTopPadding())
     ) {
         PrimaryTabRow(selectedTabIndex = selectedTab) {
-            Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text("Custom") })
-            Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text("Scale") })
-            Tab(selected = selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text("Presets") })
+            Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text(stringResource(R.string.overlay_font_tab_custom)) })
+            Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text(stringResource(R.string.overlay_font_tab_scale)) })
+            Tab(selected = selectedTab == 2, onClick = { selectedTab = 2 }, text = { Text(stringResource(R.string.overlay_font_tab_presets)) })
         }
 
         Column(
@@ -61,7 +63,7 @@ fun FontTestScreen(
                     OutlinedTextField(
                         value = customText,
                         onValueChange = { customText = it },
-                        label = { Text("Interactive Text") },
+                        label = { Text(stringResource(R.string.overlay_font_interactive_text)) },
                         modifier = Modifier.fillMaxWidth(),
                         leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) },
                         shape = MaterialTheme.shapes.large
@@ -84,7 +86,7 @@ fun FontTestScreen(
                                 )
                             )
                             Text(
-                                text = "Custom Editorial Treatment",
+                                text = stringResource(R.string.overlay_font_custom_editorial),
                                 style = dynamicTypography.titleMedium,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -92,12 +94,12 @@ fun FontTestScreen(
                     }
                 }
                 1 -> {
-                    Text("Dynamic Typescale", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-                    TypescaleItem("Display Large", dynamicTypography.displayLarge)
-                    TypescaleItem("Headline Medium", dynamicTypography.headlineMedium)
-                    TypescaleItem("Title Large", dynamicTypography.titleLarge)
-                    TypescaleItem("Body Large", dynamicTypography.bodyLarge)
-                    TypescaleItem("Label Small", dynamicTypography.labelSmall)
+                    Text(stringResource(R.string.overlay_font_dynamic_typescale), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+                    TypescaleItem(stringResource(R.string.overlay_typescale_display_large), dynamicTypography.displayLarge)
+                    TypescaleItem(stringResource(R.string.overlay_typescale_headline_medium), dynamicTypography.headlineMedium)
+                    TypescaleItem(stringResource(R.string.overlay_typescale_title_large), dynamicTypography.titleLarge)
+                    TypescaleItem(stringResource(R.string.overlay_typescale_body_large), dynamicTypography.bodyLarge)
+                    TypescaleItem(stringResource(R.string.overlay_typescale_label_small), dynamicTypography.labelSmall)
                 }
                 2 -> {
                     ZenithProposeContent(
@@ -110,7 +112,7 @@ fun FontTestScreen(
 
             if (selectedTab != 2) {
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                Text("Global Axis Override (Simple Custom)", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.secondary)
+                Text(stringResource(R.string.overlay_font_global_axis_override), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.secondary)
                 
                 val currentAxes = settings.display
                 fun updateGlobal(newVal: (com.etrisad.zenith.ui.theme.FontAxes) -> com.etrisad.zenith.ui.theme.FontAxes) {
@@ -122,12 +124,12 @@ fun FontTestScreen(
                     )
                 }
 
-                VariableSlider(label = "Weight", value = currentAxes.weight, range = 100f..1000f, onValueChange = { w -> updateGlobal { it.copy(weight = w) } })
-                VariableSlider(label = "Width", value = currentAxes.width, range = 25f..150f, onValueChange = { w -> updateGlobal { it.copy(width = w) } })
-                VariableSlider(label = "Optical Size", value = currentAxes.opsz, range = 6f..72f, onValueChange = { v -> updateGlobal { it.copy(opsz = v) } })
-                VariableSlider(label = "Grade", value = currentAxes.grade, range = -200f..200f, onValueChange = { v -> updateGlobal { it.copy(grade = v) } })
-                VariableSlider(label = "Slant", value = currentAxes.slant, range = -10f..0f, onValueChange = { v -> updateGlobal { it.copy(slant = v) } })
-                VariableSlider(label = "Roundness", value = currentAxes.roundness, range = 0f..100f, onValueChange = { v -> updateGlobal { it.copy(roundness = v) } })
+                VariableSlider(label = stringResource(R.string.overlay_font_axis_weight), value = currentAxes.weight, range = 100f..1000f, onValueChange = { w -> updateGlobal { it.copy(weight = w) } })
+                VariableSlider(label = stringResource(R.string.overlay_font_axis_width), value = currentAxes.width, range = 25f..150f, onValueChange = { w -> updateGlobal { it.copy(width = w) } })
+                VariableSlider(label = stringResource(R.string.overlay_font_axis_optical_size), value = currentAxes.opsz, range = 6f..72f, onValueChange = { v -> updateGlobal { it.copy(opsz = v) } })
+                VariableSlider(label = stringResource(R.string.overlay_font_axis_grade), value = currentAxes.grade, range = -200f..200f, onValueChange = { v -> updateGlobal { it.copy(grade = v) } })
+                VariableSlider(label = stringResource(R.string.overlay_font_axis_slant), value = currentAxes.slant, range = -10f..0f, onValueChange = { v -> updateGlobal { it.copy(slant = v) } })
+                VariableSlider(label = stringResource(R.string.overlay_font_axis_roundness), value = currentAxes.roundness, range = 0f..100f, onValueChange = { v -> updateGlobal { it.copy(roundness = v) } })
             }
 
             Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding() + 32.dp))
@@ -142,15 +144,15 @@ fun ZenithProposeContent(
     typography: Typography
 ) {
     val presetOptions = listOf(
-        GSFlexPreset.ZENITH to "Zenith",
-        GSFlexPreset.NEO to "Neo",
-        GSFlexPreset.COMPACT to "Impact",
-        GSFlexPreset.AIRY to "Airy"
+        GSFlexPreset.ZENITH to stringResource(R.string.overlay_font_preset_zenith),
+        GSFlexPreset.NEO to stringResource(R.string.overlay_font_preset_neo),
+        GSFlexPreset.COMPACT to stringResource(R.string.overlay_font_preset_impact),
+        GSFlexPreset.AIRY to stringResource(R.string.overlay_font_preset_airy)
     )
 
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Column(modifier = Modifier.padding(vertical = 8.dp)) {
-            Text("Pro Presets", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+            Text(stringResource(R.string.overlay_font_pro_presets), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.height(12.dp))
             ZenithToggleButtonGroup(
                 options = presetOptions.map { ZenithToggleOption(text = it.second) },
@@ -175,7 +177,7 @@ fun ZenithProposeContent(
                 }
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    text = "Material 3 Expressive preset optimized for the Zenith design system.",
+                    text = stringResource(R.string.overlay_font_material_preset_description),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -183,21 +185,21 @@ fun ZenithProposeContent(
         }
 
         ZenithProposeItem(
-            level = "Display (Impact)",
+            level = stringResource(R.string.overlay_font_level_display),
             style = typography.displayLarge,
-            description = "Editorial hero treatments."
+            description = stringResource(R.string.overlay_font_display_description)
         )
 
         ZenithProposeItem(
-            level = "Headline (Expressive)",
+            level = stringResource(R.string.overlay_font_level_headline),
             style = typography.headlineMedium,
-            description = "Section headers and navigation."
+            description = stringResource(R.string.overlay_font_headline_description)
         )
 
         ZenithProposeItem(
-            level = "Body (Optimized)",
+            level = stringResource(R.string.overlay_font_level_body),
             style = typography.bodyMedium,
-            description = "Primary reading experience."
+            description = stringResource(R.string.overlay_font_body_description)
         )
     }
 }
@@ -211,7 +213,7 @@ fun ZenithProposeItem(
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = level, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
         Text(
-            text = "Zenith Design",
+            text = stringResource(R.string.overlay_font_zenith_design),
             style = style
         )
         Text(text = description, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.outline)
@@ -225,7 +227,7 @@ fun TypescaleItem(label: String, style: androidx.compose.ui.text.TextStyle) {
     Column(modifier = Modifier.padding(vertical = 4.dp)) {
         Text(text = label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)
         Text(
-            text = "Google Sans Flex",
+            text = stringResource(R.string.overlay_font_family_google_sans_flex),
             style = style
         )
     }

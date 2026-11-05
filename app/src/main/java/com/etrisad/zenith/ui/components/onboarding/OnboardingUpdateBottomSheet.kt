@@ -18,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.UserPreferencesRepository
 import com.etrisad.zenith.ui.components.ZenithButton
 import kotlinx.coroutines.launch
@@ -59,12 +61,12 @@ fun OnboardingUpdateBottomSheet(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Stay Up to Date",
+                text = stringResource(R.string.usage_history_stay_up_to_date),
                 style = MaterialTheme.typography.headlineSmall,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Keep Zenith updated with the latest features and stability improvements.",
+                text = stringResource(R.string.usage_history_stay_up_to_date_desc),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -73,8 +75,8 @@ fun OnboardingUpdateBottomSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             ToggleItemRow(
-                title = "Check update on start",
-                description = "Automatically check for updates when the app starts",
+                title = stringResource(R.string.usage_history_check_update_on_start),
+                description = stringResource(R.string.usage_history_check_update_on_start_desc),
                 checked = checkUpdateEnabled,
                 onCheckedChange = { checkUpdateEnabled = it },
                 icon = Icons.Outlined.SystemUpdate
@@ -92,7 +94,7 @@ fun OnboardingUpdateBottomSheet(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                text = "Continue"
+                text = stringResource(R.string.usage_history_continue)
             )
         }
     }

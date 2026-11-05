@@ -20,8 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ui.viewmodel.UsageHistoryGroup
 import com.etrisad.zenith.ui.viewmodel.UsageRecord
 import java.text.SimpleDateFormat
@@ -69,6 +72,7 @@ fun UsageHistoryGroupCard(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val nowLabel = stringResource(R.string.misc_debug_now)
     val rotation by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         animationSpec = spring(dampingRatio = Spring.DampingRatioLowBouncy)
@@ -181,7 +185,7 @@ fun UsageHistoryGroupCard(
                                 modifier = Modifier.padding(start = 8.dp)
                             ) {
                                 Text(
-                                    "LIVE",
+                                    stringResource(R.string.misc_debug_badge_live),
                                     style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onTertiary,
                                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
@@ -191,10 +195,10 @@ fun UsageHistoryGroupCard(
                     }
                     Text(
                         text = when {
-                            group.isMissing -> "No data found anywhere"
-                            group.isLive -> "Live monitoring data"
-                            group.hasDatabaseRecord -> "Saved in Database"
-                            else -> "Found in System Stats only"
+                            group.isMissing -> stringResource(R.string.misc_debug_status_no_data)
+                            group.isLive -> stringResource(R.string.misc_debug_status_live)
+                            group.hasDatabaseRecord -> stringResource(R.string.misc_debug_status_database)
+                            else -> stringResource(R.string.misc_debug_status_system_only)
                         },
                         style = MaterialTheme.typography.bodySmall,
                         color = statusColor
@@ -231,7 +235,7 @@ fun UsageHistoryGroupCard(
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                         Text(
-                                            "SNAPSHOT",
+                                            stringResource(R.string.misc_debug_badge_snapshot),
                                             style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.primary,
@@ -266,7 +270,7 @@ fun UsageHistoryGroupCard(
                                             tint = MaterialTheme.colorScheme.secondary
                                         )
                                         Text(
-                                            "HOURLY",
+                                            stringResource(R.string.misc_debug_badge_hourly),
                                             style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.secondary,
@@ -301,7 +305,7 @@ fun UsageHistoryGroupCard(
                                             tint = MaterialTheme.colorScheme.tertiary
                                         )
                                         Text(
-                                            "PIECHART",
+                                            stringResource(R.string.misc_debug_badge_piechart),
                                             style = MaterialTheme.typography.labelSmall,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.tertiary,
@@ -317,7 +321,7 @@ fun UsageHistoryGroupCard(
                 if (!group.isMissing) {
                     Icon(
                         imageVector = Icons.Outlined.ExpandMore,
-                        contentDescription = "Expand",
+                        contentDescription = stringResource(R.string.misc_debug_expand),
                         modifier = Modifier.rotate(rotation),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -354,7 +358,7 @@ fun UsageHistoryGroupCard(
                                 UsageRecordListItem(
                                     packageName = record.packageName,
                                     formattedDuration = formatDuration(record.usageTimeMillis),
-                                    formattedTime = "Now",
+                                    formattedTime = nowLabel,
                                     isDatabase = false,
                                     isFirst = isFirstRec,
                                     isLast = isLastRec
@@ -382,12 +386,13 @@ fun UsageRecordListItem(
     isLast: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val displayName = remember(packageName) {
         when (packageName) {
-            "TOTAL" -> "Total Screen Time"
-            "SHIELD_TOTAL" -> "Shielded Apps Snapshot"
-            "GOAL_TOTAL" -> "Goal Apps Snapshot"
-            "OTHER_TOTAL" -> "Other Apps Snapshot"
+            "TOTAL" -> context.getString(R.string.misc_debug_total_screen_time)
+            "SHIELD_TOTAL" -> context.getString(R.string.misc_debug_shielded_apps_snapshot)
+            "GOAL_TOTAL" -> context.getString(R.string.misc_debug_goal_apps_snapshot)
+            "OTHER_TOTAL" -> context.getString(R.string.misc_debug_other_apps_snapshot)
             else -> packageName
         }
     }
@@ -442,7 +447,11 @@ fun UsageRecordListItem(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = if (isDatabase) "Saved in Database: $formattedTime" else "Fetched from App Usage",
+                    text = if (isDatabase) {
+                        stringResource(R.string.misc_debug_saved_in_database_at, formattedTime)
+                    } else {
+                        stringResource(R.string.misc_debug_fetched_from_app_usage)
+                    },
                     style = MaterialTheme.typography.labelSmall,
                     fontSize = MaterialTheme.typography.labelSmall.fontSize * 0.9f,
                     color = MaterialTheme.colorScheme.onSurfaceVariant

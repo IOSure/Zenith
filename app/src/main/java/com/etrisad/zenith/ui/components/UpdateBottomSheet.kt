@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.compose.ui.graphics.Brush
 import androidx.palette.graphics.Palette
 import coil.request.ImageRequest
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.remote.model.GitHubRelease
 import com.etrisad.zenith.ui.theme.ZenithTheme
 import androidx.compose.ui.tooling.preview.Preview
@@ -141,8 +143,8 @@ fun ChangelogBottomSheet(
     releases: List<GitHubRelease>,
     useExpressiveColors: Boolean,
     isDark: Boolean = isSystemInDarkTheme(),
-    title: String = "Changelog History",
-    subtitle: String = "Updates & Improvements",
+    title: String = stringResource(R.string.notifications_changelog_history),
+    subtitle: String = stringResource(R.string.notifications_updates_and_improvements),
     onDismiss: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -352,7 +354,7 @@ fun ChangelogVersionCard(
                             shape = CircleShape
                         ) {
                             Text(
-                                text = badgeType,
+                                text = updateBadgeLabel(badgeType),
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = getBadgeTextColor(badgeType),
@@ -533,7 +535,7 @@ fun UpdateBottomSheetContent(
                 ZenithButtonWeighted(
                     onClick = onDismiss,
                     weight = 1f,
-                    text = "Later",
+                    text = stringResource(R.string.notifications_later),
                     type = ZenithButtonType.Tonal,
                     size = ZenithButtonSize.ExtraLarge,
                     isFirst = true,
@@ -543,7 +545,7 @@ fun UpdateBottomSheetContent(
                 ZenithButtonWeighted(
                     onClick = onUpdate,
                     weight = 1.5f,
-                    text = "Update",
+                    text = stringResource(R.string.notifications_update_now),
                     icon = Icons.Outlined.Download,
                     type = ZenithButtonType.Filled,
                     size = ZenithButtonSize.ExtraLarge,
@@ -588,7 +590,7 @@ private fun UpdateHeaderSection(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "New Version Available",
+            text = stringResource(R.string.notifications_new_version_available),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center
@@ -619,7 +621,7 @@ private fun UpdateHeaderSection(
                     shape = CircleShape
                 ) {
                     Text(
-                        text = badgeType,
+                        text = updateBadgeLabel(badgeType),
                         modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp),
                         style = MaterialTheme.typography.labelMedium,
                         color = getBadgeTextColor(badgeType),
@@ -649,22 +651,23 @@ private fun UpdateHeaderSection(
     }
 }
 
+@Composable
 private fun formatTimeAgo(dateString: String?): String {
     if (dateString.isNullOrBlank()) return ""
-    return try {
+    val duration = try {
         val instant = java.time.Instant.parse(dateString)
         val now = java.time.Instant.now()
-        val duration = java.time.Duration.between(instant, now)
-        when {
-            duration.toDays() > 365 -> "${duration.toDays() / 365}y ago"
-            duration.toDays() > 30 -> "${duration.toDays() / 30}mo ago"
-            duration.toDays() > 0 -> "${duration.toDays()}d ago"
-            duration.toHours() > 0 -> "${duration.toHours()}h ago"
-            duration.toMinutes() > 0 -> "${duration.toMinutes()}m ago"
-            else -> "Just now"
-        }
+        java.time.Duration.between(instant, now)
     } catch (e: Exception) {
-        ""
+        return ""
+    }
+    return when {
+        duration.toDays() > 365 -> stringResource(R.string.misc2_time_ago_years, duration.toDays() / 365)
+        duration.toDays() > 30 -> stringResource(R.string.misc2_time_ago_months, duration.toDays() / 30)
+        duration.toDays() > 0 -> stringResource(R.string.misc2_time_ago_days, duration.toDays())
+        duration.toHours() > 0 -> stringResource(R.string.misc2_time_ago_hours, duration.toHours())
+        duration.toMinutes() > 0 -> stringResource(R.string.misc2_time_ago_minutes, duration.toMinutes())
+        else -> stringResource(R.string.misc2_time_ago_just_now)
     }
 }
 
@@ -1209,6 +1212,17 @@ private fun normalizeCategory(input: String): String {
         lower.contains("qol") || lower.contains("quality") -> "QOL"
         else -> input.replaceFirstChar { it.uppercase() }
     }
+}
+
+@Composable
+private fun updateBadgeLabel(type: String): String = when (type.lowercase()) {
+    "critical fix" -> stringResource(R.string.misc2_update_badge_critical_fix)
+    "bug fixes" -> stringResource(R.string.misc2_update_badge_bug_fixes)
+    "features" -> stringResource(R.string.misc2_update_badge_features)
+    "performances" -> stringResource(R.string.misc2_update_badge_performances)
+    "cosmetics" -> stringResource(R.string.misc2_update_badge_cosmetics)
+    "qol" -> stringResource(R.string.misc2_update_badge_qol)
+    else -> type
 }
 
 private fun cleanMarkdownBody(body: String?): String {

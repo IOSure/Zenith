@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,7 +80,7 @@ fun InterceptServiceWarningBottomSheet(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Intercept Service",
+                    text = stringResource(R.string.warn_intercept_title),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -86,7 +88,7 @@ fun InterceptServiceWarningBottomSheet(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Zenith uses Android notification access to pause distracting alerts during focus sessions and schedules, then restore them afterwards.",
+                    text = stringResource(R.string.warn_intercept_body),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -107,7 +109,7 @@ fun InterceptServiceWarningBottomSheet(
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             Text(
-                                text = "What Zenith can read",
+                                text = stringResource(R.string.warn_intercept_can_read_title),
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -118,17 +120,17 @@ fun InterceptServiceWarningBottomSheet(
 
                         InterceptWarningRow(
                             number = "1.",
-                            text = "Notification title, body, and app name, but only for apps you have not excluded."
+                            text = stringResource(R.string.warn_intercept_can_read_item1)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InterceptWarningRow(
                             number = "2.",
-                            text = "When the notification was posted, so Zenith can restore it after a focus session or schedule."
+                            text = stringResource(R.string.warn_intercept_can_read_item2)
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         InterceptWarningRow(
                             number = "3.",
-                            text = "Notification actions needed to silence and restore the alert."
+                            text = stringResource(R.string.warn_intercept_can_read_item3)
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -141,12 +143,7 @@ fun InterceptServiceWarningBottomSheet(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
-                            text = buildAnnotatedString {
-                                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append("What it never does: ")
-                                }
-                                append("it does not read screen content, keystrokes, or browsing history through this permission.")
-                            },
+                            text = stringResource(R.string.warn_intercept_never_does),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.85f)
                         )
@@ -169,20 +166,20 @@ fun InterceptServiceWarningBottomSheet(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Your controls",
+                                text = stringResource(R.string.warn_intercept_controls_title),
                                 style = MaterialTheme.typography.labelLarge,
                                 fontWeight = FontWeight.Bold
                             )
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Private apps and Excluded Notification Apps are skipped before inspection. With Store Notification Contents off, titles and bodies are not saved. Everything stays in Zenith's local database and is never uploaded.",
+                            text = stringResource(R.string.warn_intercept_controls_body),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Android labels this permission as notification access. Only grant it to apps you trust, and revoke it anytime in Android Settings.",
+                            text = stringResource(R.string.warn_intercept_permission_note),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -230,7 +227,7 @@ fun InterceptServiceWarningBottomSheet(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Don't show this again",
+                        text = stringResource(R.string.warn_dont_show_again),
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.weight(1f)
                     )
@@ -250,9 +247,10 @@ fun InterceptServiceWarningBottomSheet(
                         }
                     )
                     Spacer(modifier = Modifier.width(8.dp))
+                    val acknowledgeText = stringResource(R.string.warn_intercept_acknowledge)
                     Text(
                         text = buildAnnotatedString {
-                            append("I understand what Zenith can read and store.")
+                            append(acknowledgeText)
                             append(" ")
                             withStyle(
                                 SpanStyle(
@@ -268,7 +266,7 @@ fun InterceptServiceWarningBottomSheet(
 
                 AnimatedVisibility(visible = showError) {
                     Text(
-                        text = "Please check this box before opening settings.",
+                        text = stringResource(R.string.warn_intercept_check_required),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier.padding(start = 16.dp, bottom = 4.dp)
@@ -285,7 +283,7 @@ fun InterceptServiceWarningBottomSheet(
                                 onDismiss()
                             }
                         },
-                        text = "Not now",
+                        text = stringResource(R.string.warn_action_not_now),
                         type = ZenithButtonType.Outlined,
                         isLast = false,
                         size = ZenithButtonSize.ExtraLarge
@@ -298,7 +296,7 @@ fun InterceptServiceWarningBottomSheet(
                             }
                             onOpenSettings()
                         },
-                        text = "Open Settings",
+                        text = stringResource(R.string.warn_action_open_settings),
                         type = ZenithButtonType.Filled,
                         isFirst = false,
                         size = ZenithButtonSize.ExtraLarge,

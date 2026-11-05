@@ -11,9 +11,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.lifecycle.ViewModelProvider
+import com.etrisad.zenith.R
 import com.etrisad.zenith.ZenithApplication
 import com.etrisad.zenith.ui.components.focus.AppPickerBottomSheet
 import com.etrisad.zenith.ui.theme.ZenithTheme
@@ -25,6 +27,9 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.datastore.preferences.core.MutablePreferences
 
 class AppStreakWidgetConfigurationActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(com.etrisad.zenith.util.AppLanguage.wrap(newBase))
+    }
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
@@ -72,7 +77,7 @@ class AppStreakWidgetConfigurationActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     AppPickerBottomSheet(
                         uiState = uiState,
-                        title = "Select App for Streak",
+                        title = stringResource(R.string.small_select_app_for_streak),
                         onDismiss = { finish() },
                         onAppSelected = { appInfo ->
                             saveWidgetSelection(appInfo.packageName)

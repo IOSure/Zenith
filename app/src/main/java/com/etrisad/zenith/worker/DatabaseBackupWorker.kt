@@ -32,7 +32,10 @@ class DatabaseBackupWorker(
             val backupFolder = DocumentFile.fromTreeUri(applicationContext, directoryUri)
             
             if (backupFolder == null || !backupFolder.exists() || !backupFolder.canWrite()) {
-                sendNotification("Backup Failed", "Backup location is not accessible.")
+                sendNotification(
+                    applicationContext.getString(R.string.small_backup_failed_title),
+                    applicationContext.getString(R.string.small_backup_location_inaccessible)
+                )
                 return@withContext Result.failure()
             }
 
@@ -46,7 +49,10 @@ class DatabaseBackupWorker(
                 app.userPreferencesRepository.setLastBackupTimestamp(System.currentTimeMillis())
 
                 cleanupOldBackups(backupFolder)
-                sendNotification("Backup Successful", "Your data has been automatically backed up as $fileName")
+                sendNotification(
+                    applicationContext.getString(R.string.small_backup_successful_title),
+                    applicationContext.getString(R.string.small_backup_successful_message, fileName)
+                )
                 Result.success()
             } else {
                 targetFile.delete()
@@ -54,7 +60,10 @@ class DatabaseBackupWorker(
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            sendNotification("Backup Failed", "An error occurred during automatic backup.")
+            sendNotification(
+                applicationContext.getString(R.string.small_backup_failed_title),
+                applicationContext.getString(R.string.small_backup_error_message)
+            )
             Result.retry()
         }
     }
@@ -67,10 +76,10 @@ class DatabaseBackupWorker(
             if (notificationManager.getNotificationChannel(channelId) == null) {
                 val channel = NotificationChannel(
                     channelId,
-                    "Database Backups",
+                    applicationContext.getString(R.string.small_backup_channel_name),
                     NotificationManager.IMPORTANCE_LOW
                 ).apply {
-                    description = "Notifications for automatic database backups"
+                    description = applicationContext.getString(R.string.small_backup_channel_description)
                 }
                 notificationManager.createNotificationChannel(channel)
             }

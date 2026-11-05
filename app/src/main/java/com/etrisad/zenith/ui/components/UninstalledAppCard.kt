@@ -10,8 +10,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.etrisad.zenith.R
 
 @Composable
 fun UninstalledAppCard(
@@ -41,7 +43,7 @@ fun UninstalledAppCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "\"$appName\" is no longer installed on your device",
+                    text = stringResource(R.string.small_app_no_longer_installed, appName),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -54,7 +56,7 @@ fun UninstalledAppCard(
             ZenithGroupedButton(size = ZenithButtonSize.Small) {
                 ZenithButtonWeighted(
                     onClick = onDismissToday,
-                    text = "Remind tomorrow",
+                    text = stringResource(R.string.small_remind_tomorrow),
                     icon = Icons.Outlined.Snooze,
                     size = ZenithButtonSize.Small,
                     type = ZenithButtonType.Tonal,
@@ -63,7 +65,7 @@ fun UninstalledAppCard(
                 )
                 ZenithButtonWeighted(
                     onClick = onDelete,
-                    text = "Remove from Zenith",
+                    text = stringResource(R.string.small_remove_from_zenith),
                     icon = Icons.Outlined.Delete,
                     size = ZenithButtonSize.Small,
                     type = ZenithButtonType.Tonal,

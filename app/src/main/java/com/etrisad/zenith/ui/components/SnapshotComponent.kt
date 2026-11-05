@@ -32,10 +32,12 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.ui.viewmodel.AppUsageInfo
 import kotlinx.coroutines.launch
@@ -230,24 +232,24 @@ fun SnapshotInsightCard(
     val (icon, message, accentColor) = when (dominantType) {
         FocusType.SHIELD -> Triple(
             Icons.Outlined.Warning,
-            "Usage of ${dominantApp?.appName} is very intense. It might be time to tighten the limits.",
+            stringResource(R.string.debug_snapshot_insight_shield, dominantApp?.appName.orEmpty()),
             MaterialTheme.colorScheme.primary
         )
         FocusType.GOAL -> Triple(
             Icons.Outlined.TrendingUp,
-            "Fantastic! You're consistently staying focused on ${dominantApp?.appName}. Keep going!",
+            stringResource(R.string.debug_snapshot_insight_goal, dominantApp?.appName.orEmpty()),
             MaterialTheme.colorScheme.tertiary
         )
         else -> if (dominantApp != null) {
             Triple(
                 Icons.Outlined.AutoAwesome,
-                "It looks like ${dominantApp.appName} is grabbing your attention. Let's try to limit it for better focus.",
+                stringResource(R.string.debug_snapshot_insight_attention, dominantApp.appName),
                 MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
             Triple(
                 Icons.Outlined.Camera,
-                "Not enough data yet for a snapshot insight. Keep using Zenith!",
+                stringResource(R.string.debug_snapshot_insight_no_data),
                 MaterialTheme.colorScheme.outline
             )
         }
@@ -326,7 +328,7 @@ fun SnapshotInsightCard(
                     ) {
                         Icon(
                             imageVector = Icons.Outlined.Add,
-                            contentDescription = "Shield this app",
+                            contentDescription = stringResource(R.string.debug_snapshot_shield_app),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -420,7 +422,7 @@ fun SnapshotCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Snapshot",
+                        text = stringResource(R.string.debug_snapshot_title),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold
                     )
@@ -457,7 +459,7 @@ fun SnapshotCard(
                         )
                     } else if (isPendingTodaySelected) {
                         Text(
-                            text = "Pending (9 PM)",
+                            text = stringResource(R.string.debug_snapshot_pending),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)

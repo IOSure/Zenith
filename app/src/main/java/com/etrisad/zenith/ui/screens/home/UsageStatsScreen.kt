@@ -74,6 +74,8 @@ import com.etrisad.zenith.ui.viewmodel.HourlyUsageInfo
 import androidx.compose.material.icons.outlined.Sort
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.etrisad.zenith.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -112,9 +114,9 @@ fun UsageStatsScreen(
         if (!uiState.isLoading && isManualRefreshing) {
             isManualRefreshing = false
             val message = if (preferences.smartRepairOnRefresh) {
-                "Smart Repair complete: Hourly stats recalculated from system logs."
+                context.getString(R.string.usage_stats_toast_smart_repair_complete)
             } else {
-                "Stats synchronized with system usage."
+                context.getString(R.string.usage_stats_toast_stats_synced)
             }
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         } else if (!uiState.isLoading) {
@@ -399,7 +401,10 @@ fun UsageStatsScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = "Apps used at ${String.format("%02d:00", currentTargetHour)}",
+                                text = stringResource(
+                                    R.string.usage_stats_apps_used_at,
+                                    String.format("%02d:00", currentTargetHour)
+                                ),
                                 style = MaterialTheme.typography.labelMedium,
                                 fontWeight = FontWeight.Bold,
                                 color = hourlyAccentColor,
@@ -407,8 +412,8 @@ fun UsageStatsScreen(
                             )
                             ZenithToggleButtonGroup(
                                 options = listOf(
-                                    ZenithToggleOption(text = "Usage", icon = Icons.Outlined.Sort),
-                                    ZenithToggleOption(text = "Recent", icon = Icons.Outlined.Schedule)
+                                    ZenithToggleOption(text = stringResource(R.string.usage_stats_sort_usage), icon = Icons.Outlined.Sort),
+                                    ZenithToggleOption(text = stringResource(R.string.usage_stats_sort_recent), icon = Icons.Outlined.Schedule)
                                 ),
                                 selectedIndices = setOf(if (uiState.hourlySortType == HourlySortType.USAGE_TIME) 0 else 1),
                                 onToggle = { index ->
@@ -459,14 +464,14 @@ fun UsageStatsScreen(
                             ListItem(
                                 headlineContent = {
                                     Text(
-                                        text = "Other Websites",
+                                        text = stringResource(R.string.usage_stats_other_websites),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                 },
                                 supportingContent = {
                                     Text(
-                                        text = "${hourlyWebsiteUsage.size} domains visited",
+                                        text = stringResource(R.string.usage_stats_domains_visited, hourlyWebsiteUsage.size),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = hourlyAccentColor
                                     )
@@ -553,14 +558,14 @@ fun UsageStatsScreen(
                             ListItem(
                                 headlineContent = {
                                     Text(
-                                        text = "Other Apps",
+                                        text = stringResource(R.string.usage_stats_other_apps),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold
                                     )
                                 },
                                 supportingContent = {
                                     Text(
-                                        text = "${lowUsageHourApps.size} apps with minimal usage",
+                                        text = stringResource(R.string.usage_stats_apps_minimal_usage, lowUsageHourApps.size),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = hourlyAccentColor
                                     )
@@ -644,7 +649,7 @@ fun UsageStatsScreen(
                     onChunkSelected = viewModel::onVisibleWeekChanged,
                     olderWeekLoader = viewModel::getGlobalWeekHistory,
                     loaderKey = "global",
-                    title = "Usage Trends",
+                    title = stringResource(R.string.usage_stats_usage_trends),
                     showDatabaseIndicator = showDatabaseIndicator,
                     shape = getGroupShape(hourlyGroupTotal - 1, hourlyGroupTotal),
                     containerColor = MaterialTheme.colorScheme.surfaceContainerLow
@@ -656,7 +661,7 @@ fun UsageStatsScreen(
             Column(modifier = Modifier.animateItem()) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = "Highlight",
+                    text = stringResource(R.string.usage_stats_highlight),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
@@ -759,7 +764,7 @@ fun UsageStatsScreen(
             Column(modifier = Modifier.animateItem()) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = "About You",
+                    text = stringResource(R.string.usage_stats_about_you),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
@@ -827,7 +832,7 @@ fun UsageStatsScreen(
             Column(modifier = Modifier.animateItem()) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    text = "App Usage",
+                    text = stringResource(R.string.usage_stats_app_usage),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
@@ -865,14 +870,14 @@ fun UsageStatsScreen(
                         ListItem(
                             headlineContent = {
                                 Text(
-                                    text = "Other Websites",
+                                    text = stringResource(R.string.usage_stats_other_websites),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                             },
                             supportingContent = {
                                 Text(
-                                    text = "${lowWebsiteUsage.size} domains visited",
+                                    text = stringResource(R.string.usage_stats_domains_visited, lowWebsiteUsage.size),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -958,14 +963,14 @@ fun UsageStatsScreen(
                         ListItem(
                             headlineContent = {
                                 Text(
-                                    text = "Other Apps",
+                                    text = stringResource(R.string.usage_stats_other_apps),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                             },
                             supportingContent = {
                                 Text(
-                                    text = "${lowUsageApps.size} apps with minimal usage",
+                                    text = stringResource(R.string.usage_stats_apps_minimal_usage, lowUsageApps.size),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -1285,7 +1290,7 @@ fun ZenithDashboard(
             val anyHighlighted = highlightedCategory != null
             DashboardSmallCard(
                 icon = Icons.Outlined.Android,
-                label = "Other Apps",
+                label = stringResource(R.string.usage_stats_other_apps),
                 value = formatDuration(otherUsage),
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 iconSectionColor = MaterialTheme.colorScheme.secondary,
@@ -1300,7 +1305,7 @@ fun ZenithDashboard(
             )
             DashboardSmallCard(
                 icon = Icons.Outlined.TrackChanges,
-                label = "Goal Apps",
+                label = stringResource(R.string.usage_stats_goal_apps),
                 value = formatDuration(goalUsage),
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 iconSectionColor = MaterialTheme.colorScheme.tertiary,
@@ -1315,7 +1320,7 @@ fun ZenithDashboard(
             )
             DashboardSmallCard(
                 icon = Icons.Outlined.Shield,
-                label = "Shield Apps",
+                label = stringResource(R.string.usage_stats_shield_apps),
                 value = formatDuration(shieldUsage),
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 iconSectionColor = MaterialTheme.colorScheme.primary,
@@ -1522,7 +1527,7 @@ fun HourlyStatsContent(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Hourly Usage",
+                    text = stringResource(R.string.usage_stats_hourly_usage),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold
                 )
@@ -1556,7 +1561,7 @@ fun HourlyStatsContent(
                     }
                 } else {
                     Text(
-                        text = "Tap a bar for details",
+                        text = stringResource(R.string.usage_stats_tap_bar_for_details),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
@@ -1680,12 +1685,15 @@ fun EfficiencyScoreItem(
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
-                        text = "Focus Efficiency",
+                        text = stringResource(R.string.usage_stats_focus_efficiency),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = if (efficiency >= 50) "Productive Day!" else "Distraction Heavy",
+                        text = stringResource(
+                            if (efficiency >= 50) R.string.usage_stats_productive_day
+                            else R.string.usage_stats_distraction_heavy
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1711,13 +1719,13 @@ fun EfficiencyScoreItem(
             Spacer(modifier = Modifier.height(12.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    text = "Goal: ${formatDuration(goalUsage)}",
+                    text = stringResource(R.string.usage_stats_goal_usage, formatDuration(goalUsage)),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.tertiary,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Shield: ${formatDuration(shieldUsage)}",
+                    text = stringResource(R.string.usage_stats_shield_usage, formatDuration(shieldUsage)),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
@@ -1736,11 +1744,19 @@ fun TimeProfileItem(
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     val profileDetails = when (profile) {
-        "Early Bird" -> "Your productivity peaks in the morning. Use this time for tasks that require high concentration."
-        "Day Runner" -> "You are most active during core working hours. Maintain your momentum throughout the day."
-        "Evening Active" -> "Your energy increases as the day gets darker. Perfect for reflection or creative projects."
-        "Night Owl" -> "You prefer to be active late at night. Be careful with blue light exposure before bed."
-        else -> "Continue using the device to determine your chronotype profile."
+        "Early Bird" -> stringResource(R.string.usage_stats_profile_detail_early_bird)
+        "Day Runner" -> stringResource(R.string.usage_stats_profile_detail_day_runner)
+        "Evening Active" -> stringResource(R.string.usage_stats_profile_detail_evening_active)
+        "Night Owl" -> stringResource(R.string.usage_stats_profile_detail_night_owl)
+        else -> stringResource(R.string.usage_stats_profile_detail_unknown)
+    }
+    val profileLabel = when (profile) {
+        "Early Bird" -> stringResource(R.string.usage_stats_profile_early_bird)
+        "Day Runner" -> stringResource(R.string.usage_stats_profile_day_runner)
+        "Evening Active" -> stringResource(R.string.usage_stats_profile_evening_active)
+        "Night Owl" -> stringResource(R.string.usage_stats_profile_night_owl)
+        "No usage yet" -> stringResource(R.string.usage_stats_profile_no_usage)
+        else -> profile
     }
 
     GroupedCard(index = index, total = total, onClick = { 
@@ -1751,14 +1767,14 @@ fun TimeProfileItem(
             ListItem(
                 headlineContent = {
                     Text(
-                        text = "Daily Chronotype",
+                        text = stringResource(R.string.usage_stats_daily_chronotype),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
                 },
                 supportingContent = {
                     Text(
-                        text = "Your peak activity period",
+                        text = stringResource(R.string.usage_stats_peak_activity_period),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1781,7 +1797,7 @@ fun TimeProfileItem(
                 trailingContent = {
                     SuggestionChip(
                         onClick = { },
-                        label = { Text(profile) },
+                        label = { Text(profileLabel) },
                         colors = SuggestionChipDefaults.suggestionChipColors(
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             labelColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -1842,12 +1858,12 @@ fun UsagePatternItem(
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Usage Pattern",
+                    text = stringResource(R.string.usage_stats_usage_pattern),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Total $totalSessions unlocks",
+                    text = stringResource(R.string.usage_stats_total_unlocks, totalSessions),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1860,7 +1876,7 @@ fun UsagePatternItem(
                     color = MaterialTheme.colorScheme.tertiary
                 )
                 Text(
-                    text = "avg / session",
+                    text = stringResource(R.string.usage_stats_avg_per_session),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
@@ -1883,7 +1899,7 @@ fun GoalHeatmapItem(
     GroupedCard(index = index, total = total) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Goal Consistency",
+                text = stringResource(R.string.usage_stats_goal_consistency),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -1935,11 +1951,11 @@ fun GoalHeatmapItem(
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Last 14 Days", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.usage_stats_last_14_days), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(modifier = Modifier.size(8.dp).clip(CircleShape).background(MaterialTheme.colorScheme.tertiary))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Target Met", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(stringResource(R.string.usage_stats_target_met), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -1976,7 +1992,7 @@ fun WeeklyStatsDoubleCard(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Weekly Avg",
+                    text = stringResource(R.string.usage_stats_weekly_avg),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
@@ -2009,7 +2025,7 @@ fun WeeklyStatsDoubleCard(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Top Activities",
+                    text = stringResource(R.string.usage_stats_top_activities),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontWeight = FontWeight.Bold
@@ -2092,7 +2108,7 @@ fun LongTermStatsSection(
     Column {
         GroupedCard(index = 2, total = 5, containerColor = MaterialTheme.colorScheme.surfaceContainerLow) {
             LongTermSection(
-                title = "Heatmap",
+                title = stringResource(R.string.usage_stats_heatmap),
                 accentColor = MaterialTheme.colorScheme.primary,
                 highlightColor = MaterialTheme.colorScheme.tertiary,
                 selectedRange = selectedRange,
@@ -2104,7 +2120,7 @@ fun LongTermStatsSection(
                 totalMillis = totalPeriod,
                 prevTotal = prevTotal,
                 dailyHistory = dailyHistory,
-                heatmapEmptyText = "No daily data",
+                heatmapEmptyText = stringResource(R.string.usage_stats_no_daily_data),
                 formatDuration = viewModel::formatLongDuration,
                 periodDays = periodDays,
                 dayAppLoader = viewModel::getDayAppBreakdown,
@@ -2146,10 +2162,10 @@ fun UsageItem(
                         else -> MaterialTheme.colorScheme.secondary
                     }
                     val badgeText = when (type) {
-                        "GOAL" -> "Goal"
-                        "SHIELD" -> "Shield"
-                        "WEBSITE" -> "Website"
-                        else -> "Other"
+                        "GOAL" -> stringResource(R.string.usage_stats_badge_goal)
+                        "SHIELD" -> stringResource(R.string.usage_stats_badge_shield)
+                        "WEBSITE" -> stringResource(R.string.usage_stats_badge_website)
+                        else -> stringResource(R.string.usage_stats_badge_other)
                     }
                     val isWebsitePackage = app.packageName.startsWith("zenith-web:")
                     if (isWebsitePackage && (type == "SHIELD" || type == "GOAL")) {
@@ -2162,7 +2178,7 @@ fun UsageItem(
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Language,
-                                contentDescription = "Website",
+                                contentDescription = stringResource(R.string.usage_stats_badge_website),
                                 tint = badgeColor,
                                 modifier = Modifier.size(10.dp)
                             )

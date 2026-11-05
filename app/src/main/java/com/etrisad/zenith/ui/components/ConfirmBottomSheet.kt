@@ -24,9 +24,11 @@ import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.toPath
+import com.etrisad.zenith.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -127,7 +129,7 @@ fun ConfirmBottomSheet(
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                text = "Nevermind",
+                text = stringResource(R.string.about_nevermind),
                 type = ZenithButtonType.Text,
                 contentColor = MaterialTheme.colorScheme.outline
             )
@@ -166,14 +168,14 @@ fun PhaseOnePuzzle(
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            "Phase 1: Security Puzzle",
+            stringResource(R.string.about_phase_security_puzzle),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
         if (timeoutSeconds != null) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                "Time remaining: ${timeLeft}s",
+                stringResource(R.string.about_time_remaining_seconds, timeLeft),
                 style = MaterialTheme.typography.labelLarge,
                 color = if (timeLeft < 5) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Black
@@ -181,7 +183,7 @@ fun PhaseOnePuzzle(
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            "Match the sequence",
+            stringResource(R.string.about_match_sequence),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -203,7 +205,11 @@ fun PhaseOnePuzzle(
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
-                            if (isOn) "ON" else "OFF",
+                            if (isOn) {
+                                stringResource(R.string.about_on)
+                            } else {
+                                stringResource(R.string.about_off)
+                            },
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
                             color = if (isOn) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant
@@ -335,9 +341,9 @@ fun PhaseTwoHold(durationMillis: Long, onComplete: () -> Unit) {
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Phase 2: Verification", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.about_phase_verification), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Hold the circle for ${durationMillis / 1000} seconds", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.about_hold_circle_seconds, durationMillis / 1000), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(48.dp))
 
         Box(
@@ -392,9 +398,9 @@ fun PhaseThreeLoading(durationMillis: Long, onComplete: () -> Unit) {
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Phase 3: Processing", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.about_phase_processing), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Finalizing permission...", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.about_finalizing_permission), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(48.dp))
 
         CircularWavyProgressIndicator(
@@ -408,16 +414,21 @@ fun PhaseThreeLoading(durationMillis: Long, onComplete: () -> Unit) {
 @Composable
 fun PhaseFourSelection(onConfirm: (Int?) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Access Granted", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text(stringResource(R.string.about_access_granted), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(8.dp))
-        Text("How long should we pause?", style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(R.string.about_pause_duration_question), style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(32.dp))
 
+        val oneHour = stringResource(R.string.about_pause_one_hour)
+        val sixHours = stringResource(R.string.about_pause_six_hours)
+        val twentyFourHours = stringResource(R.string.about_pause_twenty_four_hours)
+        val untilResume = stringResource(R.string.about_pause_until_resume)
+
         val options = listOf(
-            "1 Hour" to 1,
-            "6 Hours" to 6,
-            "24 Hours" to 24,
-            "Until I resume" to null
+            oneHour to 1,
+            sixHours to 6,
+            twentyFourHours to 24,
+            untilResume to null
         )
 
         options.forEachIndexed { index, (label, value) ->

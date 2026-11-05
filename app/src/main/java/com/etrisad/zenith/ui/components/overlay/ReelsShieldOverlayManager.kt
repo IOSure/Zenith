@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -62,6 +63,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import com.etrisad.zenith.R
 import com.etrisad.zenith.data.preferences.FontOption
 import com.etrisad.zenith.data.preferences.UserPreferences
 import com.etrisad.zenith.ui.theme.GSFlexSettings
@@ -374,8 +376,16 @@ private fun ReelsShieldPill(
     val caption = scheme.onSurfaceVariant
     val badge = scheme.onSurface.copy(alpha = 0.08f)
     val chipContainer = scheme.surfaceContainerHighest
-    val remainingLabel = if (remaining < 0) "∞ left" else "$remaining left"
-    val sessionCaption = if (atLimit) "Limit reached" else label.ifBlank { "This session" }
+    val remainingLabel = if (remaining < 0) {
+        stringResource(R.string.small_unlimited_left)
+    } else {
+        stringResource(R.string.small_remaining_left, remaining)
+    }
+    val sessionCaption = when {
+        atLimit -> stringResource(R.string.small_limit_reached)
+        label.isNotBlank() -> label
+        else -> stringResource(R.string.small_this_session)
+    }
     val sessionAccent = if (atLimit) scheme.error else content
 
     Row(
@@ -397,7 +407,7 @@ private fun ReelsShieldPill(
             icon = Icons.Outlined.SwapVert,
             iconTint = content,
             value = if (limit > 0) "$pool/$limit" else "$pool",
-            caption = "Limit",
+            caption = stringResource(R.string.small_limit),
             chipText = null,
             chipColor = chipContainer,
             chipContentColor = content
