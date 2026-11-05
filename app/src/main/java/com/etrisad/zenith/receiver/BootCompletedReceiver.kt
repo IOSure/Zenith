@@ -30,6 +30,11 @@ class BootCompletedReceiver : BroadcastReceiver() {
                     AlarmBroadcastReceiver.rescheduleAllAlarms(context, enabledAlarms)
                 } else {
                 }
+                try {
+                    if (prefs.awakeOverlayEnabled) {
+                        com.etrisad.zenith.service.AppUsageMonitorService.startMonitorService(context)
+                    }
+                } catch (_: Exception) {}
                 val hasWidgets = try {
                     androidx.glance.appwidget.GlanceAppWidgetManager(context)
                         .getGlanceIds(com.etrisad.zenith.ui.widget.TotalScreenTimeWidget::class.java).isNotEmpty() ||

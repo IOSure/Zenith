@@ -39,7 +39,8 @@ class ZenithHeartbeatReceiver : BroadcastReceiver() {
                         }
                         val needsService = prefs == null || prefs.alarmMasterEnabled ||
                             prefs.bedtimeEnabled || prefs.eyeCareEnabled ||
-                            prefs.usageGlimpseEnabled || prefs.pomodoroEnabled
+                            prefs.usageGlimpseEnabled || prefs.pomodoroEnabled ||
+                            prefs.awakeOverlayEnabled
                         if (needsService) startMonitorLocked(context, action)
                     } catch (e: Exception) {
                         try { startMonitorLocked(context, action) } catch (_: Exception) {}

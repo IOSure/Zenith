@@ -127,7 +127,12 @@ class AppUsageMonitorService : Service() {
     private var awakeSessionStart = 0L
     @Volatile
     private var awakeOverlayHiddenUntil = 0L
+    @Volatile
+    private var awakeStartedWhileLocked = false
     private val AWAKE_OVERLAY_TICK_MS = 5_000L
+    private val keyguardManager by lazy {
+        getSystemService(Context.KEYGUARD_SERVICE) as android.app.KeyguardManager
+    }
 
     @Volatile
     private var eyeCareCumulativeSeconds = 0
@@ -166,6 +171,7 @@ class AppUsageMonitorService : Service() {
                     isScreenOn = true
                     AppStateHolder.isScreenOn.value = true
                     awakeSessionStart = System.currentTimeMillis()
+                    awakeStartedWhileLocked = keyguardManager.isKeyguardLocked
                     awakeOverlayHiddenUntil = 0L
                     currentSessionPackage = null
                     cachedForegroundApp = null
@@ -196,10 +202,18 @@ class AppUsageMonitorService : Service() {
                     }
                     sessionUsageOverlayManager.restoreAllHUDViews()
                 }
+                Intent.ACTION_USER_PRESENT -> {
+                    if (awakeStartedWhileLocked) {
+                        awakeSessionStart = System.currentTimeMillis()
+                        awakeOverlayHiddenUntil = 0L
+                        awakeStartedWhileLocked = false
+                    }
+                }
                 Intent.ACTION_SCREEN_OFF -> {
                     isScreenOn = false
                     AppStateHolder.isScreenOn.value = false
                     awakeSessionStart = 0L
+                    awakeStartedWhileLocked = false
                     awakeOverlayManager?.hide()
                     currentShieldCache = null
                     currentSessionPackage = null
@@ -292,6 +306,7 @@ class AppUsageMonitorService : Service() {
             if (prefs.bedtimeEnabled) return true
             if (prefs.eyeCareEnabled) return true
             if (prefs.usageGlimpseEnabled) return true
+            if (prefs.awakeOverlayEnabled) return true
             if (prefs.alarmMasterEnabled) return true
             if (prefs.pomodoroEnabled &&
                 prefs.pomodoroSessionEndTimestamp > System.currentTimeMillis()
@@ -544,6 +559,7 @@ class AppUsageMonitorService : Service() {
         val filter = android.content.IntentFilter().apply {
             addAction(Intent.ACTION_SCREEN_ON)
             addAction(Intent.ACTION_SCREEN_OFF)
+            addAction(Intent.ACTION_USER_PRESENT)
             addAction(android.os.PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)
             addAction(Intent.ACTION_POWER_DISCONNECTED)
         }
@@ -553,7 +569,8 @@ class AppUsageMonitorService : Service() {
             registerReceiver(screenStateReceiver, filter)
         }
         isScreenOn = powerManager.isInteractive
-        if (isScreenOn) awakeSessionStart = System.currentTimeMillis()
+        awakeSessionStart = resolveAwakeSessionStart()
+        awakeStartedWhileLocked = isScreenOn && keyguardManager.isKeyguardLocked
         AppStateHolder.isPowerSaveMode.value = powerManager.isPowerSaveMode
 
         lastCheckedDayDate = java.time.LocalDate.now()
@@ -1117,6 +1134,44 @@ class AppUsageMonitorService : Service() {
         }
     }
 
+    /**
+     * Wall-clock start of the current screen-on session.
+     *
+     * Screen-on/unlock broadcasts are only delivered to a running service, so a
+     * service that (re)starts mid-session would otherwise fall back to "now" and
+     * the overlay would show a wrong, near-zero elapsed time. Ask UsageStats for
+     * the last interactive/unlock event instead.
+     */
+    private fun resolveAwakeSessionStart(): Long {
+        if (!powerManager.isInteractive) return 0L
+        val now = System.currentTimeMillis()
+        try {
+            val usageStats = getSystemService(Context.USAGE_STATS_SERVICE) as? android.app.usage.UsageStatsManager
+            if (usageStats != null) {
+                val events = usageStats.queryEvents(now - 24 * 60 * 60 * 1000L, now)
+                val event = android.app.usage.UsageEvents.Event()
+                var lastInteractive = 0L
+                var lastNonInteractive = 0L
+                var lastUnlock = 0L
+                while (events.hasNextEvent()) {
+                    events.getNextEvent(event)
+                    when (event.eventType) {
+                        android.app.usage.UsageEvents.Event.SCREEN_INTERACTIVE ->
+                            lastInteractive = event.timeStamp
+                        android.app.usage.UsageEvents.Event.SCREEN_NON_INTERACTIVE ->
+                            lastNonInteractive = event.timeStamp
+                        android.app.usage.UsageEvents.Event.KEYGUARD_HIDDEN ->
+                            lastUnlock = event.timeStamp
+                    }
+                }
+                val started = maxOf(lastInteractive, lastUnlock)
+                if (started > lastNonInteractive && started <= now) return started
+            }
+        } catch (_: Exception) {
+        }
+        return now
+    }
+
     private fun startAwakeOverlayTracker() {
         awakeOverlayJob?.cancel()
         awakeOverlayJob = serviceScope.launch {
@@ -1125,6 +1180,10 @@ class AppUsageMonitorService : Service() {
                 val manager = awakeOverlayManager ?: continue
                 val prefs = SharedMonitoringState.currentPreferences
                 if (prefs == null || !prefs.awakeOverlayEnabled || !isScreenOn || awakeSessionStart == 0L) {
+                    if (manager.isShowing) manager.hide()
+                    continue
+                }
+                if (keyguardManager.isKeyguardLocked) {
                     if (manager.isShowing) manager.hide()
                     continue
                 }
