@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asComposePath
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +35,7 @@ import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.database.UsageGraphLogBuffer
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.ui.viewmodel.DailyUsage
+import com.etrisad.zenith.util.DateTimeUtils
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.ceil
@@ -407,7 +409,7 @@ fun UsageGraph(
     }
 
     val dateFormat = remember { SimpleDateFormat("dd", Locale.getDefault()) }
-    val dayFormat = remember { SimpleDateFormat("EEE", Locale.getDefault()) }
+    val context = LocalContext.current
     val todayDate = remember { dateFormat.format(System.currentTimeMillis()) }
 
     var animateTrigger by remember { mutableStateOf(false) }
@@ -659,7 +661,7 @@ fun UsageGraph(
                                     verticalArrangement = Arrangement.Center
                                 ) {
                                     Text(
-                                        text = dayFormat.format(usage.date).first().toString(),
+                                        text = DateTimeUtils.weekdayShortLabel(context, usage.date),
                                         style = MaterialTheme.typography.labelSmall,
                                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,

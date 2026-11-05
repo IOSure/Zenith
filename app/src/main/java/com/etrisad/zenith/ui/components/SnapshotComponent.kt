@@ -32,6 +32,7 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +41,7 @@ import coil.compose.AsyncImage
 import com.etrisad.zenith.R
 import com.etrisad.zenith.data.local.entity.FocusType
 import com.etrisad.zenith.ui.viewmodel.AppUsageInfo
+import com.etrisad.zenith.util.DateTimeUtils
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -359,6 +361,7 @@ fun SnapshotCard(
     val referenceTime = referenceDateMillis ?: System.currentTimeMillis()
     val currentHour = remember { Calendar.getInstance().get(Calendar.HOUR_OF_DAY) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     val streaks = remember(stamps) {
         stamps.indices.map { i ->
@@ -645,7 +648,7 @@ fun SnapshotCard(
                                     val indexInStamps = pageIndex * 7 + appIndex
                                     val daysAgo = (stamps.size - 1) - indexInStamps
                                     cal.add(Calendar.DAY_OF_YEAR, -daysAgo)
-                                    SimpleDateFormat("E", Locale.getDefault()).format(cal.time).first().toString()
+                                    DateTimeUtils.weekdayShortLabel(context, cal.timeInMillis)
                                 }
                                 Text(
                                     text = dayLabel,

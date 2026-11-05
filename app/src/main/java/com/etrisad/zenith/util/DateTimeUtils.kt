@@ -5,12 +5,28 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+import com.etrisad.zenith.R
+
 object DateTimeUtils {
     private val dateFormatTL = object : ThreadLocal<SimpleDateFormat>() {
         override fun initialValue() = SimpleDateFormat("yyyy-MM-dd", Locale.US)
     }
 
     fun getDateFormat(): SimpleDateFormat = dateFormatTL.get()!!
+
+    /**
+     * Compact, localized weekday label for the given day, used under the
+     * history bars ("一".."日" in Chinese, "M".."S" in English).
+     *
+     * The resource array is Sunday-first so its index matches
+     * [Calendar.DAY_OF_WEEK] minus one.
+     */
+    fun weekdayShortLabel(context: android.content.Context, timeMillis: Long): String {
+        val labels = context.resources.getStringArray(R.array.weekday_short_labels)
+        val dayOfWeek = Calendar.getInstance().apply { this.timeInMillis = timeMillis }
+            .get(Calendar.DAY_OF_WEEK)
+        return labels.getOrElse(dayOfWeek - 1) { "" }
+    }
 
     fun getDayStartTime(
         now: Long = System.currentTimeMillis(),
